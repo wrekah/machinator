@@ -29,6 +29,7 @@ public class WorkbenchController {
         IntStream.range(0, 1000).forEach(num -> observableList.add(new Server("localhost:" + num)));
         FilteredList<Server> filteredData = new FilteredList<>(observableList, p -> true);
 
+        serverList.setCellFactory(new ServerCellFactory());
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(person -> {
                 // If filter text is empty, display all persons.
