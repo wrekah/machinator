@@ -8,5 +8,7 @@ module vboxcm {
 
 
     exports com.github.tpiskorski.vboxcm;
-    opens com.github.tpiskorski.vboxcm to spring.core;
+    opens com.github.tpiskorski.vboxcm to spring.core, spring.beans;
+    opens com.github.tpiskorski.vboxcm.controller to spring.core, spring.beans, javafx.fxml;
+
 }

@@ -3,8 +3,6 @@ package com.github.tpiskorski.vboxcm;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,8 +31,7 @@ public class App extends javafx.application.Application {
     public void init() throws Exception {
         springContext = SpringApplication.run(App.class);
         fxmlLoader = new FXMLLoader();
-        URL resource = getClass().getResource("/fmxl/sample.fxml");
-        System.out.println(resource.getFile());
+        URL resource = getClass().getResource("/fxml/workbench.fxml");
         fxmlLoader.setLocation(resource);
         fxmlLoader.setControllerFactory(springContext::getBean);
     }
