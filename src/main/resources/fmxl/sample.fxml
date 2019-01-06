@@ -1,0 +1,7 @@
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane >
+    <center>
+        <Label text="Hello World"/>
+    </center>
+</BorderPane>
