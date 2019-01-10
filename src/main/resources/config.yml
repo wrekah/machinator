@@ -1,0 +1,4 @@
+poll_interval_in_sec: 30
+backups_location: /home/backups/
+ssh_user: root
+ssh_pw: root

@@ -22,9 +22,10 @@
         <fileSet>
             <directory>.</directory>
             <outputDirectory>config</outputDirectory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
+            <includes>
+                <include>config.yml</include>
+                <include>log4j2.xml</include>
+            </includes>
         </fileSet>
     </fileSets>
 </assembly>
