@@ -5,9 +5,11 @@ open module vboxcm {
     requires spring.context;
     requires spring.boot;
     requires spring.boot.autoconfigure;
-    requires org.apache.logging.log4j;
+    requires transitive org.apache.logging.log4j;
+    requires spring.core;
+    requires spring.beans;
     requires slf4j.api;
-    requires cfg4j.core;
+    requires java.sql;
 
     exports com.github.tpiskorski.vboxcm;
 }
