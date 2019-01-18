@@ -17,13 +17,15 @@ class ConfigWriterTest extends Specification {
         given:
         def config = new Config()
         def properties = new Properties()
+        def filePath = 'some/file/path'
 
         when:
-        configWriter.write(config)
+
+        configWriter.write(filePath, config)
 
         then:
         1 * converter.convert(config) >> properties
-        1 * writer.write(properties)
+        1 * writer.write(filePath, properties)
     }
 
 }
