@@ -4,6 +4,11 @@
             fx:controller="com.github.tpiskorski.vboxcm.controller.WorkbenchController">
 
 
+    <top>
+        <MenuBar>
+            <fx:include source="config.fxml"/>
+        </MenuBar>
+    </top>
     <left>
         <VBox>
             <HBox alignment="CENTER" spacing="5.0">

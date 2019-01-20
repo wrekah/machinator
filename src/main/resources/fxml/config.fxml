@@ -1,0 +1,7 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<Menu text="Config" xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.controller.ConfigController">
+    <MenuItem text="Read" onAction="#something"/>
+</Menu>
