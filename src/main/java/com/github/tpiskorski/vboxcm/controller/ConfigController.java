@@ -3,14 +3,7 @@ package com.github.tpiskorski.vboxcm.controller;
 import com.github.tpiskorski.vboxcm.config.Config;
 import com.github.tpiskorski.vboxcm.config.ConfigService;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
