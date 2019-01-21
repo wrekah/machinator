@@ -2,11 +2,14 @@ package com.github.tpiskorski.vboxcm.config;
 
 public class Config {
 
-    private int pollInterval;
-    private String backupLocation;
-    private String sshUser;
-    private String sshPassword;
+    private int pollInterval = 30;
+    private String backupLocation = "/dev/null";
+    private String sshUser = "root";
+    private String sshPassword = "root";
 
+    public static Config createDefault() {
+        return new Config();
+    }
 
     public int getPollInterval() {
         return pollInterval;
