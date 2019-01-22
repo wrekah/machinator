@@ -13,6 +13,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${project.build.directory}/classes</directory>
+            <outputDirectory>config</outputDirectory>
+            <includes>
+                <include>config.properties</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>.</directory>
             <outputDirectory>logs</outputDirectory>
             <excludes>
