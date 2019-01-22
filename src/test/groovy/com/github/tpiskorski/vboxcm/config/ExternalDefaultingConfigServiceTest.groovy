@@ -1,8 +1,8 @@
 package com.github.tpiskorski.vboxcm.config
 
-import com.github.tpiskorski.vboxcm.config.io.ConfigNotFoundException
 import com.github.tpiskorski.vboxcm.config.io.ExternalConfigLoader
 import com.github.tpiskorski.vboxcm.config.io.InternalConfigLoader
+import com.github.tpiskorski.vboxcm.config.io.exception.ConfigNotFoundException
 import spock.lang.Specification
 import spock.lang.Subject
 

@@ -1,18 +1,20 @@
-package com.github.tpiskorski.vboxcm.config
+package com.github.tpiskorski.vboxcm.config.io
 
 import com.github.tpiskorski.vboxcm.config.Config
-import com.github.tpiskorski.vboxcm.config.ConfigReader
-import com.github.tpiskorski.vboxcm.config.PropertiesConfigConverter
+import com.github.tpiskorski.vboxcm.config.io.ConfigReader
+import com.github.tpiskorski.vboxcm.config.io.resource.ResourceReader
+import com.github.tpiskorski.vboxcm.config.io.resource.ResourceReaderFactory
 import spock.lang.Specification
 import spock.lang.Subject
 
 class ConfigReaderTest extends Specification {
 
-    def reader = Mock(ConfigReader.Reader)
+    def resourceReaderFactory = Mock(ResourceReaderFactory)
     def converter = Mock(PropertiesConfigConverter)
 
+
     @Subject configReader = new ConfigReader(
-            reader: reader,
+            resourceReaderFactory: resourceReaderFactory,
             converter: converter
     )
 
@@ -20,6 +22,7 @@ class ConfigReaderTest extends Specification {
         given:
         def config = new Config()
         def properties = new Properties()
+        def resourceReader = Mock(ResourceReader)
         def filePath = 'some/file/path'
 
         when:
@@ -29,7 +32,8 @@ class ConfigReaderTest extends Specification {
         result == config
 
         and:
-        1 * reader.read(filePath) >> properties
+        1 * resourceReaderFactory.get(filePath) >> resourceReader
+        1 * resourceReader.read(filePath) >> properties
         1 * converter.convert(properties) >> config
     }
 }
