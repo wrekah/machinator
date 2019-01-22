@@ -1,4 +1,6 @@
-package com.github.tpiskorski.vboxcm.config;
+package com.github.tpiskorski.vboxcm.config.io;
+
+import com.github.tpiskorski.vboxcm.config.Config;
 
 import java.util.Properties;
 

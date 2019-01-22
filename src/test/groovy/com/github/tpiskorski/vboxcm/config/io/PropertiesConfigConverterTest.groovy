@@ -1,5 +1,7 @@
-package com.github.tpiskorski.vboxcm.config
+package com.github.tpiskorski.vboxcm.config.io
 
+import com.github.tpiskorski.vboxcm.config.Config
+import com.github.tpiskorski.vboxcm.config.io.PropertiesConfigConverter
 import spock.lang.Specification
 import spock.lang.Subject
 
