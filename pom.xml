@@ -62,12 +62,6 @@
             <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.8.21</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
