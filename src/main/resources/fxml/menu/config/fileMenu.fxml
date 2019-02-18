@@ -1,0 +1,12 @@
+<?import javafx.scene.control.*?>
+<Menu xmlns:fx="http://javafx.com/fxml" text="File"
+      fx:controller="com.github.tpiskorski.vboxcm.controller.config.FileMenuController">
+    <fx:define>
+        <Alert fx:id="reloadAlert" alertType="INFORMATION" title="Configuration" contentText="Configuration reloaded!"
+               headerText=""/>
+    </fx:define>
+    <MenuItem text="Config..." onAction="#modify"/>
+    <MenuItem text="Reload config" onAction="#reloadConfig"/>
+    <SeparatorMenuItem/>
+    <MenuItem text="Exit" onAction="#exit"/>
+</Menu>
