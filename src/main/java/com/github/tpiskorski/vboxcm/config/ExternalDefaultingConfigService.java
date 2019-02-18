@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Profile("!dev")
 @Service
-public class ExternalDefaultingConfigService implements ConfigService {
+public class ExternalDefaultingConfigService extends ConfigService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalDefaultingConfigService.class);
 
