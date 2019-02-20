@@ -10,6 +10,7 @@ open module vboxcm {
     requires spring.beans;
     requires slf4j.api;
     requires java.sql;
+    requires java.desktop;
 
     exports com.github.tpiskorski.vboxcm;
 }

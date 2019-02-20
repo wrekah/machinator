@@ -17,8 +17,8 @@
             </HBox>
             <ListView fx:id="serverList"/>
             <HBox alignment="CENTER" spacing="5.0">
-                <Button text="Add server"/>
-                <Button text="Remove server"/>
+                <Button text="Add server" onAction="#addServer"/>
+                <Button text="Remove server" fx:id="removeServerButton" onAction="#removeServer"/>
             </HBox>
         </VBox>
     </left>
