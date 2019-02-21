@@ -16,14 +16,16 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
     @Override
     public ListCell<Server> call(ListView<Server> param) {
         return new ListCell<>() {
-
             @Override
             protected void updateItem(Server server, boolean bln) {
+
                 super.updateItem(server, bln);
-                ImageView imageView = new ImageView();
                 if (bln || server == null || server.getAddress() == null) {
                     setText(null);
+                    setGraphic(null);
                 } else {
+                    ImageView imageView = new ImageView();
+
                     if (server.isReachable().get()) {
                         imageView.setImage(OK);
                     } else {
