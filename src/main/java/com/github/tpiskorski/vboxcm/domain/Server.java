@@ -1,6 +1,8 @@
 package com.github.tpiskorski.vboxcm.domain;
 
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Callback;
@@ -10,13 +12,23 @@ import java.util.Objects;
 public class Server {
 
     private StringProperty address = new SimpleStringProperty();
+    private BooleanProperty reachable = new SimpleBooleanProperty();
 
     public Server(String address) {
         this.address.set(address);
     }
 
     static Callback<Server, Observable[]> extractor() {
-        return (Server server) -> new Observable[]{server.getAddress()};
+        return (Server server) -> new Observable[]{server.getAddress(), server.isReachable()};
+    }
+
+
+    public void setReachable(boolean isReachable) {
+        this.reachable.set(isReachable);
+    }
+
+    public BooleanProperty isReachable() {
+        return reachable;
     }
 
     public StringProperty getAddress() {

@@ -15,9 +15,17 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 super.updateItem(server, bln);
 
                 if (bln || server == null || server.getAddress() == null){
-
+                    setText(null);
                 }else{
+                    if(server.isReachable().get()){
+                        this.setStyle("-fx-background-color: green;");
+
+                    }else{
+                        this. setStyle("-fx-background-color: red;");
+                    }
+
                     setText(server.getAddress().get());
+
                 }
 
             }
