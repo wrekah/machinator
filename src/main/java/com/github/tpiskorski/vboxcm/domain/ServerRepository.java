@@ -18,7 +18,7 @@ public class ServerRepository {
         return serverObservableList;
     }
 
-    public void remove() {
-        serverObservableList.remove(0);
+    public void remove(Server serverToRemove) {
+        serverObservableList.remove(serverToRemove);
     }
 }

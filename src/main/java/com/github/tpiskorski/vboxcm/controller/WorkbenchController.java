@@ -7,7 +7,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
-
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -49,7 +47,7 @@ public class WorkbenchController {
     public void initialize() {
         removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
         serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if(mouseEvent.getButton() == MouseButton.SECONDARY){
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 serverList.getSelectionModel().clearSelection();
             }
 
@@ -70,12 +68,10 @@ public class WorkbenchController {
                 // Compare first name and last name of every person with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
 
+                // Filter matches last name.
                 if (person.getAddress().get().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
-                } else if (person.getAddress().get().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name.
-                }
-                return false; // Does not match.
+                } else return person.getAddress().get().toLowerCase().contains(lowerCaseFilter);
             });
         });
 
@@ -84,9 +80,10 @@ public class WorkbenchController {
     }
 
 
-    public void removeServer(   ) {
-        serverRepository.remove();
-        serverList.getSelectionModel().getSelectedItem();
+    public void removeServer() {
+        Server serverToRemove = serverList.getSelectionModel().getSelectedItem();
+        serverRepository.remove(serverToRemove);
+
     }
 
     public void addServer() throws IOException {
