@@ -1,5 +1,6 @@
 package com.github.tpiskorski.vboxcm;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,9 +9,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.IOException;
 
+@EnableScheduling
 @SpringBootApplication
 public class App extends javafx.application.Application {
 
@@ -42,8 +45,16 @@ public class App extends javafx.application.Application {
 
         stage.setTitle("Hello World");
         Scene scene = new Scene(rootNode);
+
+        stage.setOnHiding(event -> Platform.runLater(() -> {
+            springContext.close();
+            Platform.exit();
+        }));
+
         stage.setScene(scene);
         stage.show();
+
+
     }
 
 }
