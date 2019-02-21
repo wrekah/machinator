@@ -24,7 +24,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.util.stream.IntStream;
 
 @Controller
 public class WorkbenchController {
@@ -53,8 +52,6 @@ public class WorkbenchController {
 
         });
 
-
-        IntStream.range(0, 25).forEach(num -> serverRepository.add(new Server("localhost:" + num)));
         FilteredList<Server> filteredData = new FilteredList<>(serverRepository.getServersList(), p -> true);
 
         serverList.setCellFactory(new ServerCellFactory());
