@@ -1,5 +1,6 @@
 package com.github.tpiskorski.vboxcm.domain;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
@@ -7,18 +8,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ServerRepository {
 
-    private ObservableList<Server> observableList = FXCollections.observableArrayList();
+    private ObservableList<Server> serverObservableList = FXCollections.observableArrayList(person -> new Observable[]{person.getAddress()});
 
     public void add(Server server) {
-        observableList.add(server);
+        serverObservableList.add(server);
     }
 
-
-    public ObservableList<Server>  getList() {
-        return observableList;
+    public ObservableList<Server> getServersList() {
+        return serverObservableList;
     }
 
     public void remove() {
-        observableList.remove(0);
+        serverObservableList.remove(0);
     }
 }

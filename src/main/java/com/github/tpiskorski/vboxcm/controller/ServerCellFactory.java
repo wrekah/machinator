@@ -13,9 +13,13 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
             @Override
             protected void updateItem(Server server, boolean bln) {
                 super.updateItem(server, bln);
-                if (server != null) {
-                    setText(server.getAddress());
+
+                if (bln || server == null || server.getAddress() == null){
+
+                }else{
+                    setText(server.getAddress().get());
                 }
+
             }
         };
     }

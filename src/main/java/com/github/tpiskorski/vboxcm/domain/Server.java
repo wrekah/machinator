@@ -1,18 +1,22 @@
 package com.github.tpiskorski.vboxcm.domain;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Server {
 
-    private   String address;
+    private StringProperty address = new SimpleStringProperty();
 
     public Server(String address) {
-        this.address = address;
+        this.address.set(address);
     }
 
-    public String getAddress() {
+    public StringProperty getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.address.set(address);
+
     }
 }

@@ -7,7 +7,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,19 +48,16 @@ public class WorkbenchController {
 
     public void initialize() {
         removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
-        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(mouseEvent.getButton() == MouseButton.SECONDARY){
-                    serverList.getSelectionModel().clearSelection();
-                }
-
+        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if(mouseEvent.getButton() == MouseButton.SECONDARY){
+                serverList.getSelectionModel().clearSelection();
             }
+
         });
 
 
-        IntStream.range(0, 1000).forEach(num -> serverRepository.add(new Server("localhost:" + num)));
-        FilteredList<Server> filteredData = new FilteredList<>(serverRepository.getList(), p -> true);
+        IntStream.range(0, 25).forEach(num -> serverRepository.add(new Server("localhost:" + num)));
+        FilteredList<Server> filteredData = new FilteredList<>(serverRepository.getServersList(), p -> true);
 
         serverList.setCellFactory(new ServerCellFactory());
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -74,9 +70,9 @@ public class WorkbenchController {
                 // Compare first name and last name of every person with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (person.getAddress().toLowerCase().contains(lowerCaseFilter)) {
+                if (person.getAddress().get().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
-                } else if (person.getAddress().toLowerCase().contains(lowerCaseFilter)) {
+                } else if (person.getAddress().get().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches last name.
                 }
                 return false; // Does not match.
