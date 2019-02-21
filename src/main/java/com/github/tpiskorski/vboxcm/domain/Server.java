@@ -1,7 +1,9 @@
 package com.github.tpiskorski.vboxcm.domain;
 
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.util.Callback;
 
 import java.util.Objects;
 
@@ -11,6 +13,10 @@ public class Server {
 
     public Server(String address) {
         this.address.set(address);
+    }
+
+    static Callback<Server, Observable[]> extractor() {
+        return (Server server) -> new Observable[]{server.getAddress()};
     }
 
     public StringProperty getAddress() {
