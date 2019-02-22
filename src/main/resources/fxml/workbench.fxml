@@ -38,8 +38,8 @@
                     <TableColumn text="VM name"/>
                     <TableColumn text="Server"/>
                     <TableColumn text="State"/>
-                    <TableColumn text="CPU usage"/>
-                    <TableColumn text="Watched"/>
+                    <TableColumn text="CPU cores"/>
+                    <TableColumn text="Memory"/>
                 </columns>
             </TableView>
 
