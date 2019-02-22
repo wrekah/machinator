@@ -66,11 +66,12 @@ public class WorkbenchController {
          }
       });
 
-      FilteredList<Server> filteredData = new FilteredList<>(serverRepository.getServersList(), p -> true);
+      FilteredList<Server> filterableServers = new FilteredList<>(serverRepository.getServersList(), p -> true);
+      FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineRepository.getServersList(), p -> true);
 
       serverList.setCellFactory(new ServerCellFactory());
       filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-         filteredData.setPredicate(person -> {
+         filterableServers.setPredicate(person -> {
             // If filter text is empty, display all persons.
             if (newValue == null || newValue.isEmpty()) {
                return true;
@@ -86,10 +87,25 @@ public class WorkbenchController {
          });
       });
 
-      serverList.setItems(filteredData);
+      filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+         filterableVirtualMachines.setPredicate(person -> {
+            // If filter text is empty, display all persons.
+            if (newValue == null || newValue.isEmpty()) {
+               return true;
+            }
 
+            // Compare first name and last name of every person with filter text.
+            String lowerCaseFilter = newValue.toLowerCase();
 
-      virtualMachines.setItems(virtualMachineRepository.getServersList());
+            // Filter matches last name.
+            if (person.getServer() .toLowerCase().contains(lowerCaseFilter)) {
+               return true; // Filter matches first name.
+            } else return person.getServer() .toLowerCase().contains(lowerCaseFilter);
+         });
+      });
+
+      serverList.setItems(filterableServers) ;
+      virtualMachines.setItems(filterableVirtualMachines);
    }
 
    public void removeServer() {
