@@ -1,5 +1,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.github.tpiskorski.vboxcm.controller.WorkbenchController">
 
@@ -26,20 +27,40 @@
         <VBox>
             <HBox alignment="CENTER">
 
-                <Button text="Turn on vm"/>
-                <Button text="Turn off vm"/>
-                <Button text="Power off vm"/>
-                <Button text="Reset vm"/>
-                <Button text="Remove vm"/>
+                <Button text="Turn on vm" fx:id="turnOnVmButton"/>
+                <Button text="Turn off vm" fx:id="turnOffVmButton"/>
+                <Button text="Power off vm" fx:id="powerOffVmButton"/>
+                <Button text="Reset vm" fx:id="resetVmButton"/>
+                <Button text="Remove vm" fx:id="removeVmButton"/>
             </HBox>
 
             <TableView fx:id="virtualMachines">
                 <columns>
-                    <TableColumn text="VM name"/>
-                    <TableColumn text="Server"/>
-                    <TableColumn text="State"/>
-                    <TableColumn text="CPU cores"/>
-                    <TableColumn text="Memory"/>
+                    <TableColumn  text="VM name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="vmName" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Server">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="server" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="State">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="state" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="CPU cores">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="cpuCores" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Memory">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="ramMemory" />
+                        </cellValueFactory>
+                    </TableColumn>
                 </columns>
             </TableView>
 
