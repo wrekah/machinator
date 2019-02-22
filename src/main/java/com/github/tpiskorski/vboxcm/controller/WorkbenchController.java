@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -50,6 +52,12 @@ public class WorkbenchController {
                 serverList.getSelectionModel().clearSelection();
             }
 
+        });
+
+        serverList.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                serverList.getSelectionModel().clearSelection();
+            }
         });
 
         FilteredList<Server> filteredData = new FilteredList<>(serverRepository.getServersList(), p -> true);
