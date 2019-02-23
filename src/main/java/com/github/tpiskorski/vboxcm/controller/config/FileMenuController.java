@@ -1,17 +1,12 @@
 package com.github.tpiskorski.vboxcm.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.ConfigService;
+import com.github.tpiskorski.vboxcm.controller.ContextAwareSceneLoader;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -19,13 +14,17 @@ import java.io.IOException;
 @Controller
 public class FileMenuController {
 
+    private final ContextAwareSceneLoader contextAwareSceneLoader;
+    private final ConfigurableApplicationContext springContext;
     private final ConfigService configService;
+
     @FXML private Alert reloadAlert;
 
-    @Autowired private ConfigurableApplicationContext springContext;
 
-    @Autowired public FileMenuController(ConfigService configService) {
+    @Autowired public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext) {
         this.configService = configService;
+        this.contextAwareSceneLoader = contextAwareSceneLoader;
+        this.springContext = springContext;
     }
 
     public void reloadConfig() {
@@ -34,17 +33,7 @@ public class FileMenuController {
     }
 
     public void modify() throws IOException {
-        Stage stage = new Stage();
-        stage.setResizable(false);
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        ClassPathResource mainFxml = new ClassPathResource("/fxml/menu/config/settings/containerWindow.fxml");
-        fxmlLoader.setControllerFactory(springContext::getBean);
-        fxmlLoader.setLocation(mainFxml.getURL());
-        Parent rootNode = fxmlLoader.load();
-
-        Scene scene = new Scene(rootNode);
-        stage.setScene(scene);
-        stage.show();
+        contextAwareSceneLoader.loadAndShow("/fxml/menu/config/settings/containerWindow.fxml");
     }
 
     public void exit() {

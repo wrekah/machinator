@@ -7,18 +7,12 @@ import com.github.tpiskorski.vboxcm.domain.VirtualMachineRepository;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -28,7 +22,8 @@ public class WorkbenchController {
 
    @FXML private TableColumn vmNameColumn;
 
-   @Autowired private ConfigurableApplicationContext springContext;
+   @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
+
    @Autowired private ServerRepository serverRepository;
    @Autowired private VirtualMachineRepository virtualMachineRepository;
 
@@ -114,17 +109,6 @@ public class WorkbenchController {
    }
 
    public void addServer() throws IOException {
-      Stage stage = new Stage();
-      stage.setResizable(false);
-      FXMLLoader fxmlLoader = new FXMLLoader();
-      ClassPathResource mainFxml = new ClassPathResource("/fxml/addServer.fxml");
-      fxmlLoader.setControllerFactory(springContext::getBean);
-      fxmlLoader.setLocation(mainFxml.getURL());
-      Parent rootNode = fxmlLoader.load();
-
-      Scene scene = new Scene(rootNode);
-      stage.setScene(scene);
-
-      stage.showAndWait();
+      contextAwareSceneLoader.loadAndShow("/fxml/addServer.fxml");
    }
 }
