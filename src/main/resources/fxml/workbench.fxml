@@ -20,6 +20,7 @@
             <HBox alignment="CENTER" spacing="5.0">
                 <Button text="Add server" onAction="#addServer"/>
                 <Button text="Remove server" fx:id="removeServerButton" onAction="#removeServer"/>
+                <Button text="Jobs" fx:id="showJobsButton" onAction="#showJobs"/>
             </HBox>
         </VBox>
     </left>

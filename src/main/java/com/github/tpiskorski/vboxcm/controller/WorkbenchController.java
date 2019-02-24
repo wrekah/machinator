@@ -111,4 +111,8 @@ public class WorkbenchController {
    public void addServer() throws IOException {
       contextAwareSceneLoader.loadAndShow("/fxml/addServer.fxml");
    }
+
+   public void showJobs() throws IOException {
+      contextAwareSceneLoader.loadAndShow("/fxml/jobs.fxml");
+   }
 }
