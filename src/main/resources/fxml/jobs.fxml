@@ -41,8 +41,8 @@
     </center>
     <bottom>
         <HBox alignment="CENTER">
-            <Button text="Stop job" fx:id="stopJobButton"/>
-            <Button text="Stop all jobs" fx:id="stopAllJobsButton"/>
+            <Button text="Stop job" fx:id="stopJobButton" onAction="#stopJob"/>
+            <Button text="Stop all jobs" fx:id="stopAllJobsButton" onAction="#stopAllJobs"/>
         </HBox>
     </bottom>
 

@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
 import javafx.util.Callback;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Job {
 
@@ -67,5 +68,19 @@ public class Job {
 
     public ObjectProperty<LocalDateTime> startTimeProperty() {
         return startTime;
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(jobName.get().hashCode(), startTime.hashCode());
+    }
+
+    @Override public boolean equals(Object obj) {
+        if (!(obj instanceof Job)) {
+            return false;
+        }
+        Job that = (Job) obj;
+
+        return Objects.equals(this.jobName.get(), that.jobName.get()) && Objects.equals(this.startTime, that.startTime);
+
     }
 }
