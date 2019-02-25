@@ -1,8 +1,11 @@
 package com.github.tpiskorski.vboxcm.domain;
 
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.util.Callback;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +14,12 @@ public class Job {
     private StringProperty jobName = new SimpleStringProperty();
     private StringProperty status = new SimpleStringProperty();
     private StringProperty progress = new SimpleStringProperty();
-    private ObjectProperty<LocalDateTime> startTime;
+    private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
+
+    static Callback<Job, Observable[]> extractor() {
+        return (Job job) -> new Observable[]{job.jobNameProperty(), job.statusProperty(), job.progressProperty(), job.startTimeProperty()};
+    }
+
 
     public String getJobName() {
         return jobName.get();

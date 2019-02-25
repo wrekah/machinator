@@ -28,7 +28,7 @@
         <VBox>
             <HBox alignment="CENTER">
 
-                <Button text="Turn on vm" fx:id="turnOnVmButton"/>
+                <Button text="Turn on vm" fx:id="turnOnVmButton" onAction="#turnOnVm"/>
                 <Button text="Turn off vm" fx:id="turnOffVmButton"/>
                 <Button text="Power off vm" fx:id="powerOffVmButton"/>
                 <Button text="Reset vm" fx:id="resetVmButton"/>

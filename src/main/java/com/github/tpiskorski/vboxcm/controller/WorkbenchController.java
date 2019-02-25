@@ -1,11 +1,9 @@
 package com.github.tpiskorski.vboxcm.controller;
 
-import com.github.tpiskorski.vboxcm.domain.Server;
-import com.github.tpiskorski.vboxcm.domain.ServerRepository;
-import com.github.tpiskorski.vboxcm.domain.VirtualMachine;
-import com.github.tpiskorski.vboxcm.domain.VirtualMachineRepository;
+import com.github.tpiskorski.vboxcm.domain.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Controller
 public class WorkbenchController {
@@ -26,6 +25,7 @@ public class WorkbenchController {
 
    @Autowired private ServerRepository serverRepository;
    @Autowired private VirtualMachineRepository virtualMachineRepository;
+   @Autowired private JobRepository jobRepository;
 
    @FXML private Button removeServerButton;
 
@@ -114,5 +114,15 @@ public class WorkbenchController {
 
    public void showJobs() throws IOException {
       contextAwareSceneLoader.loadAndShow("/fxml/jobs.fxml");
+   }
+
+   public void turnOnVm() {
+      VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+      Job job = new Job();
+      job.setJobName("Turn on vm: "+selectedItem.getVmName());
+      job.setProgress("Started");
+      job.setStartTime(LocalDateTime.now());
+      job.setStatus("In progress");
+      jobRepository.add(job);
    }
 }
