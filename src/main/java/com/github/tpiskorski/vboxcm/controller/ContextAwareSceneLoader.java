@@ -21,7 +21,7 @@ public class ContextAwareSceneLoader {
         this.springContext = springContext;
     }
 
-    public void loadAndShow(String fxmlPath) throws IOException {
+    public Stage loadAndShow(String fxmlPath) throws IOException {
         Stage stage = new Stage();
         Scene scene = getScene(fxmlPath);
 
@@ -29,6 +29,17 @@ public class ContextAwareSceneLoader {
         stage.setScene(scene);
 
         stage.showAndWait();
+        return stage;
+    }
+
+    public Stage load(String fxmlPath) throws IOException {
+        Stage stage = new Stage();
+        Scene scene = getScene(fxmlPath);
+
+        stage.setResizable(false);
+        stage.setScene(scene);
+
+        return stage;
     }
 
     private Scene getScene(String fxmlPath) throws IOException {

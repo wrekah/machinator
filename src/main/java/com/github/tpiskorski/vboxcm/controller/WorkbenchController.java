@@ -3,13 +3,13 @@ package com.github.tpiskorski.vboxcm.controller;
 import com.github.tpiskorski.vboxcm.domain.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -39,8 +39,12 @@ public class WorkbenchController {
    @FXML private TextField filterField;
    @FXML private ListView<Server> serverList;
 
-   public void initialize() {
+   private Stage jobsStage;
+   private Stage addServerStage;
 
+   public void initialize() throws IOException {
+      jobsStage = contextAwareSceneLoader.load("/fxml/jobs.fxml");
+      addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
 
       removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
       resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
@@ -109,11 +113,19 @@ public class WorkbenchController {
    }
 
    public void addServer() throws IOException {
-      contextAwareSceneLoader.loadAndShow("/fxml/addServer.fxml");
+      if (addServerStage.isShowing()) {
+         addServerStage.hide();
+      } else {
+         addServerStage.show();
+      }
    }
 
-   public void showJobs() throws IOException {
-      contextAwareSceneLoader.loadAndShow("/fxml/jobs.fxml");
+   public void showJobs(){
+       if (jobsStage.isShowing()) {
+           jobsStage.hide();
+       } else {
+           jobsStage.show();
+       }
    }
 
    public void turnOnVm() {
