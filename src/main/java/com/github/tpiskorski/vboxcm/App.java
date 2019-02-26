@@ -43,7 +43,7 @@ public class App extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         Parent rootNode = fxmlLoader.load();
 
-        stage.setTitle("Hello World");
+        stage.setTitle("vboxcm");
         Scene scene = new Scene(rootNode);
 
         stage.setOnHiding(event -> Platform.runLater(() -> {
@@ -53,8 +53,6 @@ public class App extends javafx.application.Application {
 
         stage.setScene(scene);
         stage.show();
-
-
     }
 
 }
