@@ -34,7 +34,11 @@ public class VirtualMachineRowFactory implements Callback<TableView<VirtualMachi
 
 
         tableRow.setOnDragDetected(event -> {
-            LOGGER.info("VM row factory drag detected");
+            if (tableRow.getItem() == null) {
+                return;
+            }
+
+            LOGGER.info("VM row factory drag detected on {}", tableRow.getItem().toString());
             Dragboard dragBoard = tableRow.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
             localDragContainer.putVirtualMachine(tableRow.getItem());
