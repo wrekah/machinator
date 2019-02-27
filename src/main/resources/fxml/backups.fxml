@@ -1,0 +1,50 @@
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.controller.BackupsController">
+
+
+    <center>
+        <TableView fx:id="backupsTableView">
+            <columns>
+                <TableColumn text="Virtual Machine">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="virtualMachine"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="First Backup day">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="firstBackupDay"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Frequency">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="frequency"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Backup time">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="backupTime"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="File limit">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="fileLimit"/>
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox>
+            <Button text="Add virtual machine"/>
+            <Button text="Remove virtual machine"/>
+            <Button text="Modify..."/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

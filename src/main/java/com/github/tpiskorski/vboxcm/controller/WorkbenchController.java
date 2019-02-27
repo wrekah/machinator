@@ -3,6 +3,7 @@ package com.github.tpiskorski.vboxcm.controller;
 import com.github.tpiskorski.vboxcm.domain.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -42,6 +43,7 @@ public class WorkbenchController {
 
    private Stage jobsStage;
    private Stage addServerStage;
+   private Stage backupsStage;
 
    public void initialize() throws IOException {
       serverList.setCellFactory(serverCellFactory);
@@ -49,6 +51,7 @@ public class WorkbenchController {
 
       jobsStage = contextAwareSceneLoader.load("/fxml/jobs.fxml");
       addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
+      backupsStage = contextAwareSceneLoader.load("/fxml/backups.fxml");
 
       removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
       resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
@@ -140,5 +143,14 @@ public class WorkbenchController {
       job.setStartTime(LocalDateTime.now());
       job.setStatus("In progress");
       jobRepository.add(job);
+   }
+
+   public void showBackups(   ) {
+      if (backupsStage.isShowing()) {
+         backupsStage.hide();
+      } else {
+         backupsStage.show();
+      }
+
    }
 }

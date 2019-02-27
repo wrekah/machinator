@@ -1,6 +1,6 @@
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.github.tpiskorski.vboxcm.controller.WorkbenchController">
 
@@ -20,7 +20,8 @@
             <HBox alignment="CENTER" spacing="5.0">
                 <Button text="Add server" onAction="#addServer"/>
                 <Button text="Remove server" fx:id="removeServerButton" onAction="#removeServer"/>
-                <Button text="Jobs" fx:id="showJobsButton" onAction="#showJobs"/>
+                <Button text="Jobs" onAction="#showJobs"/>
+                <Button text="Backups" onAction="#showBackups"/>
             </HBox>
         </VBox>
     </left>
@@ -37,29 +38,29 @@
 
             <TableView fx:id="virtualMachines">
                 <columns>
-                    <TableColumn  text="VM name">
+                    <TableColumn text="VM name">
                         <cellValueFactory>
-                            <PropertyValueFactory property="vmName" />
+                            <PropertyValueFactory property="vmName"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn text="Server">
                         <cellValueFactory>
-                            <PropertyValueFactory property="server" />
+                            <PropertyValueFactory property="server"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn text="State">
                         <cellValueFactory>
-                            <PropertyValueFactory property="state" />
+                            <PropertyValueFactory property="state"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn text="CPU cores">
                         <cellValueFactory>
-                            <PropertyValueFactory property="cpuCores" />
+                            <PropertyValueFactory property="cpuCores"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn text="Memory">
                         <cellValueFactory>
-                            <PropertyValueFactory property="ramMemory" />
+                            <PropertyValueFactory property="ramMemory"/>
                         </cellValueFactory>
                     </TableColumn>
                 </columns>
