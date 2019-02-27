@@ -3,12 +3,11 @@ package com.github.tpiskorski.vboxcm.controller;
 import com.github.tpiskorski.vboxcm.domain.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.input.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +21,8 @@ public class WorkbenchController {
    @FXML private TableColumn vmNameColumn;
 
    @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
+   @Autowired private  VirtualMachineRowFactory virtualMachineRowFactory;
+   @Autowired private  ServerCellFactory serverCellFactory;
 
    @Autowired private ServerRepository serverRepository;
    @Autowired private VirtualMachineRepository virtualMachineRepository;
@@ -43,6 +44,9 @@ public class WorkbenchController {
    private Stage addServerStage;
 
    public void initialize() throws IOException {
+      serverList.setCellFactory(serverCellFactory);
+      virtualMachines.setRowFactory(virtualMachineRowFactory);
+
       jobsStage = contextAwareSceneLoader.load("/fxml/jobs.fxml");
       addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
 
@@ -68,7 +72,7 @@ public class WorkbenchController {
       FilteredList<Server> filterableServers = new FilteredList<>(serverRepository.getServersList(), p -> true);
       FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineRepository.getServersList(), p -> true);
 
-      serverList.setCellFactory(new ServerCellFactory());
+
       filterField.textProperty().addListener((observable, oldValue, newValue) -> {
          filterableServers.setPredicate(person -> {
             // If filter text is empty, display all persons.

@@ -93,4 +93,15 @@ public class VirtualMachine {
 
       return Objects.equals(this.getServer(), that.getVmName());
    }
+
+   @Override
+   public String toString() {
+      return "VirtualMachine{" +
+              "vmName=" + vmName +
+              ", state=" + state +
+              ", server=" + server +
+              ", cpuCores=" + cpuCores +
+              ", ramMemory=" + ramMemory +
+              '}';
+   }
 }
