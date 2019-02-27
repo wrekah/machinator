@@ -26,7 +26,7 @@ public class ServerListStubGenerator implements InitializingBean {
     }
 
     @Override public void afterPropertiesSet() {
-        int serversInList = ThreadLocalRandom.current().nextInt(0, 10);
+        int serversInList = ThreadLocalRandom.current().nextInt(1, 10);
         IntStream.range(0, serversInList).forEach(num -> {
             String address = "localhost:" + 10 * num;
             serverRepository.add(new Server(address));
