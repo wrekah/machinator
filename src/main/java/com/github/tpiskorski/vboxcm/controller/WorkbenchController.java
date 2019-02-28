@@ -41,7 +41,6 @@ public class WorkbenchController {
    @FXML private TextField filterField;
    @FXML private ListView<Server> serverList;
 
-   private Stage jobsStage;
    private Stage addServerStage;
 
 
@@ -49,9 +48,7 @@ public class WorkbenchController {
       serverList.setCellFactory(serverCellFactory);
       virtualMachines.setRowFactory(virtualMachineRowFactory);
 
-      jobsStage = contextAwareSceneLoader.load("/fxml/jobs.fxml");
       addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
-
 
       removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
       resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
@@ -119,20 +116,12 @@ public class WorkbenchController {
       serverRepository.remove(serverToRemove);
    }
 
-   public void addServer() throws IOException {
+   public void addServer() {
       if (addServerStage.isShowing()) {
          addServerStage.hide();
       } else {
          addServerStage.show();
       }
-   }
-
-   public void showJobs(){
-       if (jobsStage.isShowing()) {
-           jobsStage.hide();
-       } else {
-           jobsStage.show();
-       }
    }
 
    public void turnOnVm() {
@@ -144,6 +133,5 @@ public class WorkbenchController {
       job.setStatus("In progress");
       jobRepository.add(job);
    }
-
 
 }
