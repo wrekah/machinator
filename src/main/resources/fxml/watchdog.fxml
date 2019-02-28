@@ -1,0 +1,47 @@
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.controller.WatchdogController">
+
+
+    <center>
+        <TableView fx:id="backupsTableView">
+            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            <columns>
+                <TableColumn text="Server">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="server"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="VM">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="vm"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Backed up by server">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="firstBackupDay"/>
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+
+        </TableView>
+    </center>
+
+    <bottom>
+
+
+        <HBox alignment="CENTER">
+            <Button text="Watch vm"/>
+            <Button text="Unwatch vm"/>
+            <Button text="History"/>
+        </HBox>
+
+
+    </bottom>
+
+</BorderPane>
