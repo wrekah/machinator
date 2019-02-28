@@ -1,31 +1,41 @@
 package com.github.tpiskorski.vboxcm.domain;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class BackupableVirtualMachine {
 
-    private ObjectProperty<VirtualMachine> virtualMachine = new SimpleObjectProperty<>();
+    private StringProperty server = new SimpleStringProperty();
+    private StringProperty vm = new SimpleStringProperty();
     private ObjectProperty<LocalDate> firstBackupDay = new SimpleObjectProperty<>();
     private IntegerProperty frequency = new SimpleIntegerProperty();
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
 
-    public VirtualMachine getVirtualMachine() {
-        return virtualMachine.get();
+    public String getServer() {
+        return server.get();
     }
 
-    public void setVirtualMachine(VirtualMachine virtualMachine) {
-        this.virtualMachine.set(virtualMachine);
+    public void setServer(String server) {
+        this.server.set(server);
     }
 
-    public ObjectProperty<VirtualMachine> virtualMachineProperty() {
-        return virtualMachine;
+    public StringProperty serverProperty() {
+        return server;
+    }
+
+    public String getVm() {
+        return vm.get();
+    }
+
+    public void setVm(String vm) {
+        this.vm.set(vm);
+    }
+
+    public StringProperty vmProperty() {
+        return vm;
     }
 
     public LocalDate getFirstBackupDay() {

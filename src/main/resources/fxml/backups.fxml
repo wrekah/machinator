@@ -3,15 +3,23 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.controller.BackupsController">
 
 
     <center>
         <TableView fx:id="backupsTableView">
+            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
             <columns>
-                <TableColumn text="Virtual Machine">
+                <TableColumn text="Server">
                     <cellValueFactory>
-                        <PropertyValueFactory property="virtualMachine"/>
+                        <PropertyValueFactory property="server"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="VM">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="vm"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="First Backup day">
@@ -29,10 +37,18 @@
                         <PropertyValueFactory property="backupTime"/>
                     </cellValueFactory>
                 </TableColumn>
+                <TableColumn text="Current files">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="backupTime"/>
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn text="File limit">
                     <cellValueFactory>
                         <PropertyValueFactory property="fileLimit"/>
                     </cellValueFactory>
+                </TableColumn>
+                <TableColumn  fx:id="viewColumn" >
+
                 </TableColumn>
             </columns>
 
@@ -40,11 +56,19 @@
     </center>
 
     <bottom>
-        <HBox>
-            <Button text="Add virtual machine"/>
-            <Button text="Remove virtual machine"/>
-            <Button text="Modify..."/>
-        </HBox>
+        <VBox>
+            <HBox alignment="CENTER"  spacing="10">
+                <Label text="Backup location"/>
+                <TextField text="/dev/null" editable="false"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Button text="Add virtual machine"/>
+                <Button text="Remove virtual machine"/>
+                <Button text="Modify..."/>
+                <Button text="History"/>
+            </HBox>
+        </VBox>
+
     </bottom>
 
 </BorderPane>
