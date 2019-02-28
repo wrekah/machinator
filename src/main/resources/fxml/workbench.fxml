@@ -75,6 +75,15 @@
 
                     </BorderPane>
                 </Tab>
+                <Tab text="Backups">
+                    <fx:include fx:id="barTabPage" source="backups.fxml"/>
+                </Tab>
+                <Tab text="Watchdog">
+                    <fx:include source="watchdog.fxml"/>
+                </Tab>
+                <Tab text="Jobs">
+                    <fx:include source="jobs.fxml"/>
+                </Tab>
             </tabs>
 
         </TabPane>
