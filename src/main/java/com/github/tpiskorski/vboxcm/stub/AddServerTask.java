@@ -1,19 +1,24 @@
 package com.github.tpiskorski.vboxcm.stub;
 
 import com.github.tpiskorski.vboxcm.domain.Server;
+import com.github.tpiskorski.vboxcm.domain.ServerRepository;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 public class AddServerTask extends Task<Void> {
 
+    private ServerRepository serverRepository;
     private Server server;
 
-    public AddServerTask(Server server) {
+    public AddServerTask(ServerRepository serverRepository, Server server) {
+        this.serverRepository = serverRepository;
         this.server = server;
     }
 
     @Override
     protected Void call() throws Exception {
         Thread.sleep(5000);
+        Platform.runLater(() -> serverRepository.add(server));
         return null;
     }
 }

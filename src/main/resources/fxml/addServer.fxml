@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.AddServerController"
-           fx:id="addServerGridPane"
+           fx:id="addServerStackPane"
 >
 
     <fx:define>
@@ -13,7 +13,7 @@
     </fx:define>
 
 
-    <GridPane fx:id="inner">
+    <GridPane fx:id="addServerGridPane">
         <padding>
             <Insets top="25" right="25" bottom="25" left="25"/>
         </padding>

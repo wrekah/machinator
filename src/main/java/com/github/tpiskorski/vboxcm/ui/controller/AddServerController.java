@@ -1,8 +1,8 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.domain.Server;
-import com.github.tpiskorski.vboxcm.domain.ServerRepository;
 import com.github.tpiskorski.vboxcm.stub.AddServerTask;
+import com.github.tpiskorski.vboxcm.stub.AddServerTaskFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -18,22 +18,24 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddServerController {
 
-    private final ServerRepository serverRepository;
+    private final AddServerTaskFactory addServerTaskFactory;
     private final WorkbenchController workbenchController;
 
-    private AddServerTask addServerTask;
+    private AddServerTask task;
 
+    @FXML private StackPane addServerStackPane;
+    @FXML private GridPane addServerGridPane;
     @FXML private VBox progressLayer;
-    @FXML private GridPane inner;
-    @FXML private StackPane addServerGridPane;
+
     @FXML private Button addButton;
     @FXML private Button closeButton;
+
     @FXML private TextField address;
     @FXML private TextField port;
 
     @Autowired
-    public AddServerController(ServerRepository serverRepository, WorkbenchController workbenchController) {
-        this.serverRepository = serverRepository;
+    public AddServerController(AddServerTaskFactory addServerTaskFactory, WorkbenchController workbenchController) {
+        this.addServerTaskFactory = addServerTaskFactory;
         this.workbenchController = workbenchController;
     }
 
@@ -53,33 +55,32 @@ public class AddServerController {
     }
 
     public void saveConfig() {
-        inner.getScene().getWindow().setOnHiding(event -> {
-            if (addServerTask != null) {
-                addServerTask.cancel();
+        addServerGridPane.getScene().getWindow().setOnHiding(event -> {
+            if (task != null) {
+                task.cancel();
             }
         });
 
-        inner.setDisable(true);
+        addServerGridPane.setDisable(true);
         workbenchController.disableMainWindow();
-        addServerGridPane.getChildren().add(progressLayer);
+        addServerStackPane.getChildren().add(progressLayer);
 
         Server server = new Server(address.getText() + ":" + port.getText());
 
-        addServerTask = new AddServerTask(server);
-        addServerTask.setOnCancelled(workerStateEvent -> closeWindow(server));
-        addServerTask.setOnFailed(workerStateEvent -> closeWindow(server));
-        addServerTask.setOnSucceeded(workerStateEvent -> closeWindow(server));
+        task = addServerTaskFactory.taskFor(server);
+        task.setOnCancelled(workerStateEvent -> closeWindow());
+        task.setOnFailed(workerStateEvent -> closeWindow());
+        task.setOnSucceeded(workerStateEvent -> closeWindow());
 
-        new Thread(addServerTask).start();
+        new Thread(task).start();
     }
 
-    private void closeWindow(Server server) {
-        addServerGridPane.getChildren().remove(progressLayer);
+    private void closeWindow() {
+        addServerStackPane.getChildren().remove(progressLayer);
 
-        inner.setDisable(false);
+        addServerGridPane.setDisable(false);
         workbenchController.enableMainWindow();
         Stage stage = (Stage) addButton.getScene().getWindow();
-        serverRepository.add(server);
 
         address.clear();
         port.clear();
