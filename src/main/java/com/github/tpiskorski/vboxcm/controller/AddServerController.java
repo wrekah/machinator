@@ -4,11 +4,9 @@ import com.github.tpiskorski.vboxcm.domain.Server;
 import com.github.tpiskorski.vboxcm.domain.ServerRepository;
 import com.github.tpiskorski.vboxcm.stub.AddServerTask;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -20,52 +18,73 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddServerController {
 
+    private final ServerRepository serverRepository;
+    private final WorkbenchController workbenchController;
+
+    private AddServerTask addServerTask;
+
     @FXML private VBox progressLayer;
     @FXML private GridPane inner;
     @FXML private StackPane addServerGridPane;
     @FXML private Button addButton;
     @FXML private Button closeButton;
-
     @FXML private TextField address;
     @FXML private TextField port;
 
-    private final ServerRepository serverRepository;
-
     @Autowired
-    public AddServerController(ServerRepository serverRepository) {
+    public AddServerController(ServerRepository serverRepository, WorkbenchController workbenchController) {
         this.serverRepository = serverRepository;
+        this.workbenchController = workbenchController;
     }
 
     @FXML
     public void initialize() {
-        addButton.disableProperty().bind(
-            Bindings.isEmpty(address.textProperty())
-                .or(Bindings.isEmpty(port.textProperty()))
+        BooleanBinding nonBlankAddress = Bindings.createBooleanBinding(() ->
+                address.getText().trim().isEmpty(),
+            address.textProperty()
         );
+
+        BooleanBinding nonBlankPort = Bindings.createBooleanBinding(() ->
+                port.getText().trim().isEmpty(),
+            port.textProperty()
+        );
+
+        addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort));
     }
 
     public void saveConfig() {
+        inner.getScene().getWindow().setOnHiding(event -> {
+            if (addServerTask != null) {
+                addServerTask.cancel();
+            }
+        });
+
         inner.setDisable(true);
+        workbenchController.getWorkbenchPane().setDisable(true);
         addServerGridPane.getChildren().add(progressLayer);
 
         Server server = new Server(address.getText() + ":" + port.getText());
 
-        AddServerTask addServerTask = new AddServerTask(server);
-
-        addServerTask.setOnSucceeded(workerStateEvent -> {
-            addServerGridPane.getChildren().remove(progressLayer);
-
-            inner.setDisable(false);
-            Stage stage = (Stage) addButton.getScene().getWindow();
-            serverRepository.add(server);
-
-            address.clear();
-            port.clear();
-
-            stage.close();
-        });
+        addServerTask = new AddServerTask(server);
+        addServerTask.setOnCancelled(workerStateEvent -> closeWindow(server));
+        addServerTask.setOnFailed(workerStateEvent -> closeWindow(server));
+        addServerTask.setOnSucceeded(workerStateEvent -> closeWindow(server));
 
         new Thread(addServerTask).start();
+    }
+
+    private void closeWindow(Server server) {
+        addServerGridPane.getChildren().remove(progressLayer);
+
+        inner.setDisable(false);
+        workbenchController.getWorkbenchPane().setDisable(false);
+        Stage stage = (Stage) addButton.getScene().getWindow();
+        serverRepository.add(server);
+
+        address.clear();
+        port.clear();
+
+        stage.close();
     }
 
     @FXML
