@@ -12,7 +12,6 @@ class ConfigReaderTest extends Specification {
     def resourceReaderFactory = Mock(ResourceReaderFactory)
     def converter = Mock(PropertiesConfigConverter)
 
-
     @Subject configReader = new ConfigReader(
             resourceReaderFactory: resourceReaderFactory,
             converter: converter

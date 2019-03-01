@@ -37,9 +37,7 @@ public class StubServerMonitor {
             server.setReachable(!server.isReachable().get());
         });
 
-
         LOGGER.info("Finished monitor cycle");
     }
-
 }
 

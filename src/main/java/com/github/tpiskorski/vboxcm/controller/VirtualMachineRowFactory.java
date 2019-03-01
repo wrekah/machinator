@@ -32,7 +32,6 @@ public class VirtualMachineRowFactory implements Callback<TableView<VirtualMachi
             }
         };
 
-
         tableRow.setOnDragDetected(event -> {
             if (tableRow.getItem() == null) {
                 return;

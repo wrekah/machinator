@@ -1,16 +1,16 @@
-<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.controller.WatchdogController">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.github.tpiskorski.vboxcm.controller.WatchdogController">
 
 
     <center>
         <TableView fx:id="backupsTableView">
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
             <columns>
                 <TableColumn text="Server">
                     <cellValueFactory>

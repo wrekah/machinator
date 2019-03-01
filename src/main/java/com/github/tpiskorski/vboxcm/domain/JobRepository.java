@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.domain;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;

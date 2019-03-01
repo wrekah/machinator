@@ -41,5 +41,4 @@ class ExternalConfigLoaderTest extends Specification {
         1 * configWriter.write(configPath, _ as Config)
         1 * configReader.read(configPath)
     }
-
 }

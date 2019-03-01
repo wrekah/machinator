@@ -4,11 +4,9 @@ import com.github.tpiskorski.vboxcm.domain.Server;
 import com.github.tpiskorski.vboxcm.domain.ServerRepository;
 import com.github.tpiskorski.vboxcm.stub.AddServerTask;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -17,60 +15,91 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+interface Command {
+
+}
+
 @Controller
 public class AddServerController {
 
-   @FXML private VBox progressLayer;
-   @FXML private GridPane inner;
-   @FXML private StackPane addServerGridPane;
-   @FXML private Button addButton;
-   @FXML private Button closeButton;
+    private final ServerRepository serverRepository;
+    AddServerTask addServerTask;
 
-   @FXML private TextField address;
-   @FXML private TextField port;
+    @Autowired private WorkbenchController workbenchController;
 
-   private final ServerRepository serverRepository;
+    @FXML private VBox progressLayer;
+    @FXML private GridPane inner;
+    @FXML private StackPane addServerGridPane;
+    @FXML private Button addButton;
+    @FXML private Button closeButton;
+    @FXML private TextField address;
+    @FXML private TextField port;
 
-   @Autowired
-   public AddServerController(ServerRepository serverRepository) {
-      this.serverRepository = serverRepository;
-   }
+    @Autowired
+    public AddServerController(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
+    }
 
-   @FXML
-   public void initialize() {
-      addButton.disableProperty().bind(
-         Bindings.isEmpty(address.textProperty())
-            .or(Bindings.isEmpty(port.textProperty()))
-      );
-   }
+    @FXML
+    public void initialize() {
+        BooleanBinding nonBlankAddress = Bindings.createBooleanBinding(() ->
+                address.getText().trim().isEmpty(),
+            address.textProperty()
+        );
 
-   public void saveConfig() {
-      inner.setDisable(true);
-      addServerGridPane.getChildren().add(progressLayer);
+        BooleanBinding nonBlankPort = Bindings.createBooleanBinding(() ->
+                port.getText().trim().isEmpty(),
+            port.textProperty()
+        );
 
-      Server server = new Server(address.getText() + ":" + port.getText());
+        addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort));
+    }
 
-      AddServerTask addServerTask = new AddServerTask(server);
+    public void saveConfig() {
+        inner.getScene().getWindow().setOnHiding(event -> {
+            if (addServerTask != null) {
+                addServerTask.cancel();
+            }
+        });
 
-      addServerTask.setOnSucceeded(workerStateEvent -> {
-         addServerGridPane.getChildren().remove(progressLayer);
+        inner.setDisable(true);
+        workbenchController.border.setDisable(true);
+        addServerGridPane.getChildren().add(progressLayer);
 
-         inner.setDisable(false);
-         Stage stage = (Stage) addButton.getScene().getWindow();
-         serverRepository.add(server);
+        Server server = new Server(address.getText() + ":" + port.getText());
 
-         address.clear();
-         port.clear();
+        addServerTask = new AddServerTask(server);
 
-         stage.close();
-      });
+        addServerTask.setOnCancelled(workerStateEvent -> {
+            closeWindow(server);
+        });
+        addServerTask.setOnFailed(workerStateEvent -> {
+            closeWindow(server);
+        });
+        addServerTask.setOnSucceeded(workerStateEvent -> {
+            closeWindow(server);
+        });
 
-      new Thread(addServerTask).start();
-   }
+        new Thread(addServerTask).start();
+    }
 
-   @FXML
-   private void closeButtonAction() {
-      Stage stage = (Stage) closeButton.getScene().getWindow();
-      stage.close();
-   }
+    private void closeWindow(Server server) {
+        addServerGridPane.getChildren().remove(progressLayer);
+
+        inner.setDisable(false);
+        workbenchController.border.setDisable(false);
+        Stage stage = (Stage) addButton.getScene().getWindow();
+        serverRepository.add(server);
+
+        address.clear();
+        port.clear();
+
+        stage.close();
+    }
+
+    @FXML
+    private void closeButtonAction() {
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        stage.close();
+    }
 }

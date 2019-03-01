@@ -2,7 +2,6 @@ package com.github.tpiskorski.vboxcm.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.Config;
 import com.github.tpiskorski.vboxcm.config.ConfigService;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;

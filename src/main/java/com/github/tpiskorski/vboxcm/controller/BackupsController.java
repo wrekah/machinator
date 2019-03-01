@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import org.springframework.stereotype.Controller;
 
@@ -20,13 +19,12 @@ import java.time.LocalTime;
 @Controller
 public class BackupsController {
 
-    @FXML private TableColumn viewColumn;
-    ObservableList<BackupableVirtualMachine> vms = FXCollections.observableArrayList();
-
     public TableView<BackupableVirtualMachine> backupsTableView;
+    ObservableList<BackupableVirtualMachine> vms = FXCollections.observableArrayList();
+    @FXML private TableColumn viewColumn;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
         Callback<TableColumn<BackupableVirtualMachine, Void>, TableCell<BackupableVirtualMachine, Void>> cellFactory = new Callback<>() {
             @Override

@@ -27,5 +27,4 @@ class ClassPathResourceReaderTest extends Specification {
         1 * defaultResourceLoader.getResource(filePath) >> resource
         1 * propertiesReader.read(resource)
     }
-
 }

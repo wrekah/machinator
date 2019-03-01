@@ -22,5 +22,4 @@ public class ConfigReader {
         ResourceReader resourceReader = resourceReaderFactory.get(filePath);
         return resourceReader.read(filePath);
     }
-
 }

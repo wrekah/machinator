@@ -21,7 +21,6 @@ public class Job {
         return (Job job) -> new Observable[]{job.jobNameProperty(), job.statusProperty(), job.progressProperty(), job.startTimeProperty()};
     }
 
-
     public String getJobName() {
         return jobName.get();
     }
@@ -81,6 +80,5 @@ public class Job {
         Job that = (Job) obj;
 
         return Objects.equals(this.jobName.get(), that.jobName.get()) && Objects.equals(this.startTime, that.startTime);
-
     }
 }

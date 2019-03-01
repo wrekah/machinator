@@ -32,6 +32,4 @@ class ExternalDefaultingConfigServiceTest extends Specification {
         1 * externalConfigLoader.loadExternalConfig() >> { throw new ConfigNotFoundException() }
         1 * internalConfigLoader.loadInternalConfig()
     }
-
-
 }

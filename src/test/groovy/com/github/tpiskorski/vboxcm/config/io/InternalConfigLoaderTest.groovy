@@ -5,7 +5,6 @@ import spock.lang.Subject
 
 class InternalConfigLoaderTest extends Specification {
 
-
     def configReader = Mock(ConfigReader)
 
     @Subject loader = new InternalConfigLoader(configReader)
@@ -21,5 +20,4 @@ class InternalConfigLoaderTest extends Specification {
         then:
         1 * configReader.read(config)
     }
-
 }

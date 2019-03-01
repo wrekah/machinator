@@ -54,7 +54,6 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                     setGraphic(imageView);
                     setText(server.getAddress().get());
                 }
-
             }
         };
 
@@ -83,9 +82,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 event.acceptTransferModes(TransferMode.ANY);
                 event.consume();
             }
-
         });
-
 
         listCell.setOnDragDropped((DragEvent event) ->
         {
@@ -102,8 +99,8 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 String message = String.format("Do you want to move %s vm from server %s to server %s", localDragContainer.getVirtualMachine().getVmName(), localDragContainer.getVirtualMachine().getServer(), listCell.getItem().getAddress().get());
 
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                        message,
-                        ButtonType.YES, ButtonType.NO
+                    message,
+                    ButtonType.YES, ButtonType.NO
                 );
 
                 alert.setTitle("Moving VM between Servers");
@@ -115,11 +112,9 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                     LOGGER.info("Dropped vm {}-{} on server {}", virtualMachine.getServer(), virtualMachine.getVmName(), listCell.getItem().getAddress());
                     success = true;
                 }
-
             }
             event.setDropCompleted(success);
             event.consume();
-
         });
 
         return listCell;

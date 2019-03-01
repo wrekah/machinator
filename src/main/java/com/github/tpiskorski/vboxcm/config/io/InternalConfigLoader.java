@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class InternalConfigLoader {
 
@@ -25,5 +24,4 @@ public class InternalConfigLoader {
         LOGGER.info("Going to read internal config {}", internalConfigFilePath);
         return configReader.read(internalConfigFilePath);
     }
-
 }

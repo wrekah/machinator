@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.config
 
-
 import com.github.tpiskorski.vboxcm.config.io.ConfigWriter
 import com.github.tpiskorski.vboxcm.config.io.PropertiesConfigConverter
 import com.github.tpiskorski.vboxcm.config.io.exception.ConfigNotCreatedException
@@ -47,5 +46,4 @@ class ConfigWriterTest extends Specification {
         and:
         thrown(ConfigNotCreatedException)
     }
-
 }

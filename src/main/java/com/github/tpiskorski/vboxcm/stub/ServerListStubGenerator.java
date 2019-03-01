@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.stub;
 
-
 import com.github.tpiskorski.vboxcm.domain.Server;
 import com.github.tpiskorski.vboxcm.domain.ServerRepository;
 import com.github.tpiskorski.vboxcm.domain.VirtualMachine;
@@ -20,7 +19,8 @@ public class ServerListStubGenerator implements InitializingBean {
     private final ServerRepository serverRepository;
     private final VirtualMachineRepository virtualMachineRepository;
 
-    @Autowired public ServerListStubGenerator(ServerRepository serverRepository, VirtualMachineRepository virtualMachineRepository) {
+    @Autowired
+    public ServerListStubGenerator(ServerRepository serverRepository, VirtualMachineRepository virtualMachineRepository) {
         this.serverRepository = serverRepository;
         this.virtualMachineRepository = virtualMachineRepository;
     }
@@ -36,12 +36,10 @@ public class ServerListStubGenerator implements InitializingBean {
                 vm.setCpuCores(4);
                 vm.setServer(address);
                 vm.setState("ON");
-                vm.setVmName("vm@"+i);
+                vm.setVmName("vm@" + i);
                 vm.setRamMemory(1024);
                 virtualMachineRepository.add(vm);
             }
-
-
         });
     }
 }

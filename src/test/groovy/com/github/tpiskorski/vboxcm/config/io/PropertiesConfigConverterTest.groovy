@@ -26,7 +26,6 @@ class PropertiesConfigConverterTest extends Specification {
         config.sshPassword == 'root'
         config.pollInterval == 20
         config.backupLocation == 'some/location'
-
     }
 
     def 'should convert config to properties'() {

@@ -17,7 +17,6 @@ import java.io.IOException;
 @SpringBootApplication
 public class App extends javafx.application.Application {
 
-
     private ConfigurableApplicationContext springContext;
     private FXMLLoader fxmlLoader;
 
@@ -54,5 +53,4 @@ public class App extends javafx.application.Application {
         stage.setScene(scene);
         stage.show();
     }
-
 }

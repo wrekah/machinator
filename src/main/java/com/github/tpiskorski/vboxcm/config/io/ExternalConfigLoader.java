@@ -34,5 +34,4 @@ public class ExternalConfigLoader {
         LOGGER.info("Reading external config {}", externalConfigFilePath);
         return configReader.read(externalConfigFilePath);
     }
-
 }

@@ -17,7 +17,8 @@ public class ExternalDefaultingConfigService extends ConfigService {
     private final ExternalConfigLoader externalConfigLoader;
     private final InternalConfigLoader internalConfigLoader;
 
-    @Autowired public ExternalDefaultingConfigService(ExternalConfigLoader externalConfigLoader, InternalConfigLoader internalConfigLoader) {
+    @Autowired
+    public ExternalDefaultingConfigService(ExternalConfigLoader externalConfigLoader, InternalConfigLoader internalConfigLoader) {
         this.externalConfigLoader = externalConfigLoader;
         this.internalConfigLoader = internalConfigLoader;
     }
@@ -32,5 +33,4 @@ public class ExternalDefaultingConfigService extends ConfigService {
             return internalConfigLoader.loadInternalConfig();
         }
     }
-
 }

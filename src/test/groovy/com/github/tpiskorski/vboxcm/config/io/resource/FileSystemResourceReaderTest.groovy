@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.config.io.resource
 
-
 import org.springframework.core.io.FileSystemResourceLoader
 import org.springframework.core.io.Resource
 import spock.lang.Specification
@@ -28,5 +27,4 @@ class FileSystemResourceReaderTest extends Specification {
         1 * fileSystemResourceLoader.getResource(filePath) >> resource
         1 * propertiesReader.read(resource)
     }
-
 }

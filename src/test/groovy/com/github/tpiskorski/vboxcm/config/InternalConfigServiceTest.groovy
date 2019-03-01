@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.config
 
-
 import com.github.tpiskorski.vboxcm.config.io.InternalConfigLoader
 import spock.lang.Specification
 import spock.lang.Subject
@@ -18,5 +17,4 @@ class InternalConfigServiceTest extends Specification {
         then:
         1 * internalConfigLoader.loadInternalConfig()
     }
-
 }

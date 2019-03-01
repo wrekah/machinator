@@ -26,5 +26,4 @@ public class InternalConfigService extends ConfigService {
         LOGGER.info("Going to read internal config {}", internalConfigFilePath);
         return internalConfigLoader.loadInternalConfig();
     }
-
 }

@@ -1,10 +1,8 @@
 package com.github.tpiskorski.vboxcm.controller;
 
 import com.github.tpiskorski.vboxcm.domain.Job;
-import com.github.tpiskorski.vboxcm.domain.JobRepository;
 import com.github.tpiskorski.vboxcm.domain.JobService;
 import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -30,7 +28,7 @@ public class JobsController {
         jobService.stopAllJobs();
     }
 
-    public void stopJob( ) {
+    public void stopJob() {
         Job selectedJob = jobs.getSelectionModel().getSelectedItem();
         jobService.stopJob(selectedJob);
     }

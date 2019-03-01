@@ -5,14 +5,15 @@ import javafx.concurrent.Task;
 
 public class AddServerTask extends Task<Void> {
 
-   private Server server;
+    private Server server;
 
-   public AddServerTask(Server server) {
-      this.server = server;
-   }
+    public AddServerTask(Server server) {
+        this.server = server;
+    }
 
-   @Override protected Void call() throws Exception {
-      Thread.sleep(5000);
-      return null;
-   }
+    @Override
+    protected Void call() throws Exception {
+        Thread.sleep(5000);
+        return null;
+    }
 }

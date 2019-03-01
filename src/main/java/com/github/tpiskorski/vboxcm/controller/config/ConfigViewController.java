@@ -43,9 +43,6 @@ public class ConfigViewController {
 
                 settingsContainer.setRight(changeConfig);
             }
-
         };
     }
-
-
 }

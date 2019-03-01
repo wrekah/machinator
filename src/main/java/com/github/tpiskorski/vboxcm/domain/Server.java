@@ -22,7 +22,6 @@ public class Server {
         return (Server server) -> new Observable[]{server.getAddress(), server.isReachable()};
     }
 
-
     public void setReachable(boolean isReachable) {
         this.reachable.set(isReachable);
     }
@@ -37,7 +36,6 @@ public class Server {
 
     public void setAddress(String address) {
         this.address.set(address);
-
     }
 
     @Override public int hashCode() {
@@ -50,6 +48,5 @@ public class Server {
         }
         Server that = (Server) obj;
         return Objects.equals(this.getAddress().get(), that.getAddress().get());
-
     }
 }

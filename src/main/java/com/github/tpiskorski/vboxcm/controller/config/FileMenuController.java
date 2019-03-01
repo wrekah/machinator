@@ -20,8 +20,8 @@ public class FileMenuController {
 
     @FXML private Alert reloadAlert;
 
-
-    @Autowired public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext) {
+    @Autowired
+    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext) {
         this.configService = configService;
         this.contextAwareSceneLoader = contextAwareSceneLoader;
         this.springContext = springContext;

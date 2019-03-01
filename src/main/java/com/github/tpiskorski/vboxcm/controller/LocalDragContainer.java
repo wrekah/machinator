@@ -12,7 +12,6 @@ public class LocalDragContainer {
         this.virtualMachine = virtualMachine;
     }
 
-
     public VirtualMachine getVirtualMachine() {
         return virtualMachine;
     }

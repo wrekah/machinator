@@ -1,5 +1,5 @@
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
@@ -13,8 +13,10 @@
     </top>
 
     <center>
-        <TableView fx:id="jobs"  >
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+        <TableView fx:id="jobs">
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
             <columns>
                 <TableColumn text="Job">
                     <cellValueFactory>
