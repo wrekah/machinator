@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.controller.config;
+package com.github.tpiskorski.vboxcm.ui.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.Config;
 import com.github.tpiskorski.vboxcm.config.ConfigService;

@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.controller;
+package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.domain.Server;
 import com.github.tpiskorski.vboxcm.domain.ServerRepository;

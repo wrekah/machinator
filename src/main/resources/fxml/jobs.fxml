@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.tpiskorski.vboxcm.controller.JobsController">
+            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.JobsController">
 
     <top>
         <HBox alignment="CENTER" spacing="5.0">

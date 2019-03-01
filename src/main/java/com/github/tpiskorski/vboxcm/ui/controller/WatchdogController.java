@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.controller;
+package com.github.tpiskorski.vboxcm.ui.controller;
 
 import org.springframework.stereotype.Controller;
 

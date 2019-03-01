@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.controller.config;
+package com.github.tpiskorski.vboxcm.ui.controller.config;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;

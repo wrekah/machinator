@@ -1,7 +1,7 @@
-package com.github.tpiskorski.vboxcm.controller.config;
+package com.github.tpiskorski.vboxcm.ui.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.ConfigService;
-import com.github.tpiskorski.vboxcm.controller.ContextAwareSceneLoader;
+import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

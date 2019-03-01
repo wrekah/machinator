@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.controller;
+package com.github.tpiskorski.vboxcm.ui.core;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
