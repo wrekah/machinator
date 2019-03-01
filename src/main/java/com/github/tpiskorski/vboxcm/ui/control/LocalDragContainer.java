@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.ui.controller;
+package com.github.tpiskorski.vboxcm.ui.control;
 
 import com.github.tpiskorski.vboxcm.domain.VirtualMachine;
 import org.springframework.stereotype.Repository;
@@ -8,11 +8,11 @@ public class LocalDragContainer {
 
     private VirtualMachine virtualMachine;
 
-    public void putVirtualMachine(VirtualMachine virtualMachine) {
+    void putVirtualMachine(VirtualMachine virtualMachine) {
         this.virtualMachine = virtualMachine;
     }
 
-    public VirtualMachine getVirtualMachine() {
+    VirtualMachine getVirtualMachine() {
         return virtualMachine;
     }
 }

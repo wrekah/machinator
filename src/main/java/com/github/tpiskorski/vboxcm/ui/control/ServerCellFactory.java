@@ -1,6 +1,5 @@
 package com.github.tpiskorski.vboxcm.ui.control;
 
-import com.github.tpiskorski.vboxcm.ui.controller.LocalDragContainer;
 import com.github.tpiskorski.vboxcm.domain.Server;
 import com.github.tpiskorski.vboxcm.domain.VirtualMachine;
 import javafx.scene.control.Alert;
