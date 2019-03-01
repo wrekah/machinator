@@ -43,8 +43,12 @@ public class WorkbenchController {
 
     private Stage addServerStage;
 
-    public BorderPane getWorkbenchPane() {
-        return workbenchPane;
+    public void disableMainWindow() {
+        workbenchPane.setDisable(false);
+    }
+
+    public void enableMainWindow() {
+        workbenchPane.setDisable(true);
     }
 
     @FXML

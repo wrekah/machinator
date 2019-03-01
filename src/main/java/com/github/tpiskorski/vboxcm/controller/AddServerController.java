@@ -60,7 +60,7 @@ public class AddServerController {
         });
 
         inner.setDisable(true);
-        workbenchController.getWorkbenchPane().setDisable(true);
+        workbenchController.disableMainWindow();
         addServerGridPane.getChildren().add(progressLayer);
 
         Server server = new Server(address.getText() + ":" + port.getText());
@@ -77,7 +77,7 @@ public class AddServerController {
         addServerGridPane.getChildren().remove(progressLayer);
 
         inner.setDisable(false);
-        workbenchController.getWorkbenchPane().setDisable(false);
+        workbenchController.enableMainWindow();
         Stage stage = (Stage) addButton.getScene().getWindow();
         serverRepository.add(server);
 
