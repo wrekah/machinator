@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddServerController {
 
+   @FXML private VBox progressLayer;
    @FXML private GridPane inner;
    @FXML private StackPane addServerGridPane;
    @FXML private Button addButton;
@@ -28,8 +29,14 @@ public class AddServerController {
    @FXML private TextField address;
    @FXML private TextField port;
 
-   @Autowired private ServerRepository serverRepository;
+   private final ServerRepository serverRepository;
 
+   @Autowired
+   public AddServerController(ServerRepository serverRepository) {
+      this.serverRepository = serverRepository;
+   }
+
+   @FXML
    public void initialize() {
       addButton.disableProperty().bind(
          Bindings.isEmpty(address.textProperty())
@@ -37,32 +44,23 @@ public class AddServerController {
       );
    }
 
-   public void saveConfig() throws InterruptedException {
-      ProgressIndicator pi = new ProgressIndicator();
-      VBox vbox1 = new VBox(pi);
-      Label label = new Label("Adding...");
-      VBox vbox2 = new VBox(label);
-
-      vbox1.getChildren().add(label);
-      vbox2.getChildren().add(label);
-      vbox1.setAlignment(Pos.CENTER);
-      vbox2.setAlignment(Pos.CENTER);
-
+   public void saveConfig() {
       inner.setDisable(true);
-      addServerGridPane.getChildren().add(vbox2);
-
-      addServerGridPane.getChildren().add(vbox1);
+      addServerGridPane.getChildren().add(progressLayer);
 
       Server server = new Server(address.getText() + ":" + port.getText());
 
       AddServerTask addServerTask = new AddServerTask(server);
 
       addServerTask.setOnSucceeded(workerStateEvent -> {
-         addServerGridPane.getChildren().remove(vbox1);
-         addServerGridPane.getChildren().remove(vbox2);
+         addServerGridPane.getChildren().remove(progressLayer);
+
          inner.setDisable(false);
          Stage stage = (Stage) addButton.getScene().getWindow();
          serverRepository.add(server);
+
+         address.clear();
+         port.clear();
 
          stage.close();
       });

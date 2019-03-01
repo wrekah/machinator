@@ -49,6 +49,7 @@ public class WorkbenchController {
       virtualMachines.setRowFactory(virtualMachineRowFactory);
 
       addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
+      addServerStage.setTitle("Adding server...");
 
       removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
       resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
