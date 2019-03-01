@@ -47,11 +47,11 @@ public class WorkbenchController {
     private Stage addServerStage;
 
     public void disableMainWindow() {
-        workbenchPane.setDisable(false);
+        workbenchPane.setDisable(true);
     }
 
     public void enableMainWindow() {
-        workbenchPane.setDisable(true);
+        workbenchPane.setDisable(false);
     }
 
     @FXML
