@@ -3,13 +3,12 @@ package com.github.tpiskorski.vboxcm.controller;
 import com.github.tpiskorski.vboxcm.domain.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.input.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,12 +19,11 @@ import java.time.LocalDateTime;
 @Controller
 public class WorkbenchController {
 
-    public BorderPane border;
     @FXML private TableColumn vmNameColumn;
 
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
-    @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
-    @Autowired private ServerCellFactory serverCellFactory;
+    @Autowired private  VirtualMachineRowFactory virtualMachineRowFactory;
+    @Autowired private  ServerCellFactory serverCellFactory;
 
     @Autowired private ServerRepository serverRepository;
     @Autowired private VirtualMachineRepository virtualMachineRepository;
@@ -44,6 +42,7 @@ public class WorkbenchController {
     @FXML private ListView<Server> serverList;
 
     private Stage addServerStage;
+
 
     public void initialize() throws IOException {
         serverList.setCellFactory(serverCellFactory);
@@ -74,6 +73,7 @@ public class WorkbenchController {
         FilteredList<Server> filterableServers = new FilteredList<>(serverRepository.getServersList(), p -> true);
         FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineRepository.getServersList(), p -> true);
 
+
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterableServers.setPredicate(person -> {
                 // If filter text is empty, display all persons.
@@ -102,13 +102,13 @@ public class WorkbenchController {
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 // Filter matches last name.
-                if (person.getServer().toLowerCase().contains(lowerCaseFilter)) {
+                if (person.getServer() .toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
-                } else return person.getServer().toLowerCase().contains(lowerCaseFilter);
+                } else return person.getServer() .toLowerCase().contains(lowerCaseFilter);
             });
         });
 
-        serverList.setItems(filterableServers);
+        serverList.setItems(filterableServers) ;
         virtualMachines.setItems(filterableVirtualMachines);
     }
 
@@ -128,10 +128,11 @@ public class WorkbenchController {
     public void turnOnVm() {
         VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
         Job job = new Job();
-        job.setJobName("Turn on vm: " + selectedItem.getVmName());
+        job.setJobName("Turn on vm: "+selectedItem.getVmName());
         job.setProgress("Started");
         job.setStartTime(LocalDateTime.now());
         job.setStatus("In progress");
         jobRepository.add(job);
     }
+
 }
