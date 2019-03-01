@@ -1,5 +1,5 @@
 # VBOXCM
-VBOXCM aims at virtualbox cluster orchestration and managment.
+VBOXCM aims at virtualbox cluster orchestration and management.
 
 
 ## Requirements
@@ -18,3 +18,8 @@ Linux:`./mvnw clean spring-boot:run` <br/>
 Windows: `./mvnw.cmd clean spring-boot:run`
 ##### With maven installed 
 Use `mvn clean spring-boot:run`, ensure u have *JAVA_PATH* defined as env variable
+#### Spring profiles
+You can run vboxcm with following profiles
+* **stub** - autogenerates content for demo and development purposes
+* **dev** - vboxcm restricts itself to use just in memory config and console logging
+
