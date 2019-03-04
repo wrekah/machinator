@@ -3,7 +3,7 @@ package com.github.tpiskorski.vboxcm.stub;
 import com.github.tpiskorski.vboxcm.server.Server;
 import com.github.tpiskorski.vboxcm.server.ServerService;
 import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.vm.VirtualMachineRepository;
+import com.github.tpiskorski.vboxcm.vm.VirtualMachineService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -17,12 +17,12 @@ import java.util.stream.IntStream;
 public class ServerListStubGenerator implements InitializingBean {
 
     private final ServerService serverService;
-    private final VirtualMachineRepository virtualMachineRepository;
+    private final VirtualMachineService virtualMachineService;
 
     @Autowired
-    public ServerListStubGenerator(ServerService serverService, VirtualMachineRepository virtualMachineRepository) {
+    public ServerListStubGenerator(ServerService serverService, VirtualMachineService virtualMachineService) {
         this.serverService = serverService;
-        this.virtualMachineRepository = virtualMachineRepository;
+        this.virtualMachineService = virtualMachineService;
     }
 
     @Override public void afterPropertiesSet() {
@@ -38,7 +38,7 @@ public class ServerListStubGenerator implements InitializingBean {
                 vm.setState("ON");
                 vm.setVmName("vm@" + i);
                 vm.setRamMemory(1024);
-                virtualMachineRepository.add(vm);
+                virtualMachineService.add(vm);
             }
         });
     }

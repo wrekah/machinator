@@ -1,13 +1,14 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
+import com.github.tpiskorski.vboxcm.domain.Job;
+import com.github.tpiskorski.vboxcm.domain.JobRepository;
 import com.github.tpiskorski.vboxcm.server.Server;
 import com.github.tpiskorski.vboxcm.server.ServerService;
 import com.github.tpiskorski.vboxcm.ui.control.ServerCellFactory;
 import com.github.tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
-import com.github.tpiskorski.vboxcm.domain.*;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.vm.VirtualMachineRepository;
+import com.github.tpiskorski.vboxcm.vm.VirtualMachineService;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -35,7 +36,7 @@ public class WorkbenchController {
     @Autowired private ServerCellFactory serverCellFactory;
     @Autowired private ServerService serverService;
 
-    @Autowired private VirtualMachineRepository virtualMachineRepository;
+    @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private JobRepository jobRepository;
 
     @FXML private BorderPane workbenchPane;
@@ -87,7 +88,7 @@ public class WorkbenchController {
         });
 
         FilteredList<Server> filterableServers = new FilteredList<>(serverService.getServers(), p -> true);
-        FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineRepository.getServersList(), p -> true);
+        FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineService.getVms(), p -> true);
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterableServers.setPredicate(person -> {

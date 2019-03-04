@@ -9,15 +9,15 @@ public class VirtualMachineRepository {
 
     private ObservableList<VirtualMachine> vmObservableList = FXCollections.observableArrayList(VirtualMachine.extractor());
 
-    public void add(VirtualMachine vm) {
+    void add(VirtualMachine vm) {
         vmObservableList.add(vm);
     }
 
-    public ObservableList<VirtualMachine> getServersList() {
+    ObservableList<VirtualMachine> getServersList() {
         return vmObservableList;
     }
 
-    public void remove(VirtualMachine vm) {
+    void remove(VirtualMachine vm) {
         vmObservableList.remove(vm);
     }
 }

@@ -17,6 +17,14 @@ public class VirtualMachine {
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
 
+
+    public VirtualMachine(){}
+
+    public VirtualMachine(String server, String vmName){
+        this.server.set(server);
+        this.vmName.set(vmName);
+    }
+
     static Callback<VirtualMachine, Observable[]> extractor() {
         return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.stateProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty()};
     }
@@ -91,7 +99,8 @@ public class VirtualMachine {
         }
         VirtualMachine that = (VirtualMachine) obj;
 
-        return Objects.equals(this.getServer(), that.getVmName());
+        return Objects.equals(this.getServer(), that.getServer())
+            && Objects.equals(this.getVmName(), that.getVmName());
     }
 
     @Override
