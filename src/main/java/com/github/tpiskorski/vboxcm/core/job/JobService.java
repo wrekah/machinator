@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.domain;
+package com.github.tpiskorski.vboxcm.core.job;
 
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +26,13 @@ public class JobService {
 
     public ObservableList<Job> getJobs() {
         return jobRepository.getJobsList();
+    }
+
+    public void add(Job job) {
+        jobRepository.add(job);
+    }
+
+    public void remove(Job job) {
+        jobRepository.remove(job);
     }
 }

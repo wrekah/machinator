@@ -1,14 +1,14 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
-import com.github.tpiskorski.vboxcm.domain.Job;
-import com.github.tpiskorski.vboxcm.domain.JobRepository;
+import com.github.tpiskorski.vboxcm.core.job.Job;
+import com.github.tpiskorski.vboxcm.core.job.JobService;
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import com.github.tpiskorski.vboxcm.ui.control.ServerCellFactory;
 import com.github.tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -34,10 +34,10 @@ public class WorkbenchController {
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
     @Autowired private ServerCellFactory serverCellFactory;
-    @Autowired private ServerService serverService;
 
+    @Autowired private ServerService serverService;
     @Autowired private VirtualMachineService virtualMachineService;
-    @Autowired private JobRepository jobRepository;
+    @Autowired private JobService jobService;
 
     @FXML private BorderPane workbenchPane;
     @FXML private Button removeServerButton;
@@ -148,6 +148,6 @@ public class WorkbenchController {
         job.setProgress("Started");
         job.setStartTime(LocalDateTime.now());
         job.setStatus("In progress");
-        jobRepository.add(job);
+        jobService.add(job);
     }
 }

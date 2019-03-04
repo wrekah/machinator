@@ -60,7 +60,7 @@ class VirtualMachineServiceTest extends Specification {
         service.getVms().empty
     }
 
-    def 'should no remove the vm that is not present'() {
+    def 'should not remove the vm that is not present'() {
         given:
         def vm1 = new VirtualMachine('server1', 'vm1')
         def vm2 = new VirtualMachine('server1', 'vm2')

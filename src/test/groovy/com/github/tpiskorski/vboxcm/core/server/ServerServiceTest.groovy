@@ -52,7 +52,7 @@ class ServerServiceTest extends Specification {
         service.getServers().empty
     }
 
-    def 'should no remove the server that is not present'() {
+    def 'should not remove the server that is not present'() {
         given:
         def server1 = new Server('some:address')
         def server2 = new Server('some:otheraddress')

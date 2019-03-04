@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
-import com.github.tpiskorski.vboxcm.domain.Job;
-import com.github.tpiskorski.vboxcm.domain.JobService;
+import com.github.tpiskorski.vboxcm.core.job.Job;
+import com.github.tpiskorski.vboxcm.core.job.JobService;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;

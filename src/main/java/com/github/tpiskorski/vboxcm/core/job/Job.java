@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.domain;
+package com.github.tpiskorski.vboxcm.core.job;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -13,12 +13,24 @@ import java.util.Objects;
 public class Job {
 
     private StringProperty jobName = new SimpleStringProperty();
-    private StringProperty status = new SimpleStringProperty();
-    private StringProperty progress = new SimpleStringProperty();
+    private StringProperty status = new SimpleStringProperty("");
+    private StringProperty progress = new SimpleStringProperty("");
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
+
+    public Job() {
+    }
+
+    public Job(String jobName, LocalDateTime startTime) {
+        this.jobName.set(jobName);
+        this.startTime.set(startTime);
+    }
 
     static Callback<Job, Observable[]> extractor() {
         return (Job job) -> new Observable[]{job.jobNameProperty(), job.statusProperty(), job.progressProperty(), job.startTimeProperty()};
+    }
+
+    public boolean isStopped() {
+        return status.get().equals("STOPPED") && progress.get().equals("STOPPED");
     }
 
     public String getJobName() {
