@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.stub;
 
 import com.github.tpiskorski.vboxcm.server.Server;
-import com.github.tpiskorski.vboxcm.server.ServerRepository;
+import com.github.tpiskorski.vboxcm.server.ServerService;
 import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.vm.VirtualMachineRepository;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,12 +16,12 @@ import java.util.stream.IntStream;
 @Component
 public class ServerListStubGenerator implements InitializingBean {
 
-    private final ServerRepository serverRepository;
+    private final ServerService serverService;
     private final VirtualMachineRepository virtualMachineRepository;
 
     @Autowired
-    public ServerListStubGenerator(ServerRepository serverRepository, VirtualMachineRepository virtualMachineRepository) {
-        this.serverRepository = serverRepository;
+    public ServerListStubGenerator(ServerService serverService, VirtualMachineRepository virtualMachineRepository) {
+        this.serverService = serverService;
         this.virtualMachineRepository = virtualMachineRepository;
     }
 
@@ -29,7 +29,7 @@ public class ServerListStubGenerator implements InitializingBean {
         int serversInList = ThreadLocalRandom.current().nextInt(1, 10);
         IntStream.range(0, serversInList).forEach(num -> {
             String address = "localhost:" + 10 * num;
-            serverRepository.add(new Server(address));
+            serverService.add(new Server(address));
             int virtualMachines = ThreadLocalRandom.current().nextInt(1, 3);
             for (int i = 0; i < virtualMachines; i++) {
                 VirtualMachine vm = new VirtualMachine();

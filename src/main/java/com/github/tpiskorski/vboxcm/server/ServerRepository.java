@@ -7,17 +7,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ServerRepository {
 
-    private ObservableList<Server> serverObservableList = FXCollections.observableArrayList(Server.extractor());
+    private final ObservableList<Server> serverObservableList = FXCollections.observableArrayList(Server.extractor());
 
-    public void add(Server server) {
+    void add(Server server) {
         serverObservableList.add(server);
     }
 
-    public ObservableList<Server> getServersList() {
+    ObservableList<Server> getServersList() {
         return serverObservableList;
     }
 
-    public void remove(Server server) {
+    void remove(Server server) {
         serverObservableList.remove(server);
     }
 }

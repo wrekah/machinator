@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.stub;
 
 import com.github.tpiskorski.vboxcm.server.Server;
-import com.github.tpiskorski.vboxcm.server.ServerRepository;
+import com.github.tpiskorski.vboxcm.server.ServerService;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -19,16 +19,16 @@ public class StubServerMonitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StubServerMonitor.class);
 
-    private final ServerRepository serverRepository;
+    private final ServerService serverService;
 
-    @Autowired public StubServerMonitor(ServerRepository serverRepository) {
-        this.serverRepository = serverRepository;
+    @Autowired public StubServerMonitor(ServerService serverService) {
+        this.serverService = serverService;
     }
 
     @Scheduled(fixedRate = 10000L)
     public void monitor() {
         LOGGER.info("About to monitor...");
-        ObservableList<Server> list = serverRepository.getServersList();
+        ObservableList<Server> list = serverService.getServers();
         int randomElementIndex = ThreadLocalRandom.current().nextInt(list.size());
 
         Platform.runLater(() -> {

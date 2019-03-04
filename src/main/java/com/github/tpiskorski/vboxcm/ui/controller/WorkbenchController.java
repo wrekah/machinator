@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.server.Server;
-import com.github.tpiskorski.vboxcm.server.ServerRepository;
+import com.github.tpiskorski.vboxcm.server.ServerService;
 import com.github.tpiskorski.vboxcm.ui.control.ServerCellFactory;
 import com.github.tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 import com.github.tpiskorski.vboxcm.domain.*;
@@ -33,7 +33,8 @@ public class WorkbenchController {
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
     @Autowired private ServerCellFactory serverCellFactory;
-    @Autowired private ServerRepository serverRepository;
+    @Autowired private ServerService serverService;
+
     @Autowired private VirtualMachineRepository virtualMachineRepository;
     @Autowired private JobRepository jobRepository;
 
@@ -85,7 +86,7 @@ public class WorkbenchController {
             }
         });
 
-        FilteredList<Server> filterableServers = new FilteredList<>(serverRepository.getServersList(), p -> true);
+        FilteredList<Server> filterableServers = new FilteredList<>(serverService.getServers(), p -> true);
         FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineRepository.getServersList(), p -> true);
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -128,7 +129,7 @@ public class WorkbenchController {
 
     public void removeServer() {
         Server serverToRemove = serverList.getSelectionModel().getSelectedItem();
-        serverRepository.remove(serverToRemove);
+        serverService.remove(serverToRemove);
     }
 
     public void addServer() {
