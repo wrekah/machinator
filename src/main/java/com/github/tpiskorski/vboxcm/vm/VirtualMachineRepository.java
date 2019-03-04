@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.domain;
+package com.github.tpiskorski.vboxcm.vm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

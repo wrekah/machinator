@@ -1,6 +1,6 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
-import com.github.tpiskorski.vboxcm.domain.Server;
+import com.github.tpiskorski.vboxcm.server.Server;
 import com.github.tpiskorski.vboxcm.stub.AddServerTask;
 import com.github.tpiskorski.vboxcm.stub.AddServerTaskFactory;
 import javafx.beans.binding.Bindings;

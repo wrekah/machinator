@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.stub;
 
-import com.github.tpiskorski.vboxcm.domain.Server;
-import com.github.tpiskorski.vboxcm.domain.ServerRepository;
+import com.github.tpiskorski.vboxcm.server.Server;
+import com.github.tpiskorski.vboxcm.server.ServerRepository;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 

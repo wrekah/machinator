@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.ui.control;
 
-import com.github.tpiskorski.vboxcm.domain.Server;
-import com.github.tpiskorski.vboxcm.domain.VirtualMachine;
+import com.github.tpiskorski.vboxcm.server.Server;
+import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;

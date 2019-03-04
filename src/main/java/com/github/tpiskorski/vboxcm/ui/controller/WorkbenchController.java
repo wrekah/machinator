@@ -1,9 +1,13 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
+import com.github.tpiskorski.vboxcm.server.Server;
+import com.github.tpiskorski.vboxcm.server.ServerRepository;
 import com.github.tpiskorski.vboxcm.ui.control.ServerCellFactory;
 import com.github.tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 import com.github.tpiskorski.vboxcm.domain.*;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
+import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.vm.VirtualMachineRepository;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;

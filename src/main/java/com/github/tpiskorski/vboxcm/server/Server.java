@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.domain;
+package com.github.tpiskorski.vboxcm.server;
 
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
