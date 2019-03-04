@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.server;
+package com.github.tpiskorski.vboxcm.core.server;
 
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;

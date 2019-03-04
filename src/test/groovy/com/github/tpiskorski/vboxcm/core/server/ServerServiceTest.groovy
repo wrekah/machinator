@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.server
+package com.github.tpiskorski.vboxcm.core.server
 
 import spock.lang.Specification
 import spock.lang.Subject

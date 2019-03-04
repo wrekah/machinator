@@ -1,6 +1,6 @@
 package com.github.tpiskorski.vboxcm.ui.control;
 
-import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,9 +1,9 @@
 package com.github.tpiskorski.vboxcm.stub;
 
-import com.github.tpiskorski.vboxcm.server.Server;
-import com.github.tpiskorski.vboxcm.server.ServerService;
-import com.github.tpiskorski.vboxcm.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.vm.VirtualMachineService;
+import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

@@ -1,11 +1,11 @@
-package com.github.tpiskorski.vboxcm.server;
+package com.github.tpiskorski.vboxcm.core.server;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ServerRepository {
+class ServerRepository {
 
     private final ObservableList<Server> serverObservableList = FXCollections.observableArrayList(Server.extractor());
 

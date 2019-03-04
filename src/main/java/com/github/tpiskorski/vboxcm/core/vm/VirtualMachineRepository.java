@@ -1,11 +1,11 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.core.vm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class VirtualMachineRepository {
+class VirtualMachineRepository {
 
     private ObservableList<VirtualMachine> vmObservableList = FXCollections.observableArrayList(VirtualMachine.extractor());
 

@@ -1,7 +1,7 @@
 package com.github.tpiskorski.vboxcm.stub;
 
-import com.github.tpiskorski.vboxcm.server.Server;
-import com.github.tpiskorski.vboxcm.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

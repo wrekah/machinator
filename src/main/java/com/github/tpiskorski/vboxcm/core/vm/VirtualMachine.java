@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.core.vm;
 
 import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
