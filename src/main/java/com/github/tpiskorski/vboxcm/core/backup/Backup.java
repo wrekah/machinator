@@ -25,7 +25,7 @@ public class Backup {
     }
 
     @Override public int hashCode() {
-        return Objects.hash(getServer().hashCode(), getVm().hashCode());
+        return Objects.hash(getServer(), getVm());
     }
 
     @Override public boolean equals(Object obj) {

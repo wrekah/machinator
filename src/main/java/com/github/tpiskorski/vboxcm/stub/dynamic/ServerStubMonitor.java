@@ -33,8 +33,8 @@ public class ServerStubMonitor {
 
         Platform.runLater(() -> {
             Server server = list.get(randomElementIndex);
-            System.out.println(server.getAddress().get());
-            server.setReachable(!server.isReachable().get());
+            System.out.println(server.getAddress());
+            server.setReachable(!server.isReachable());
         });
 
         LOGGER.info("Finished monitor cycle");

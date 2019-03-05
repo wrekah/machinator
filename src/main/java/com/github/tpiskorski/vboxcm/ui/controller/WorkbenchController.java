@@ -101,9 +101,9 @@ public class WorkbenchController {
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 // Filter matches last name.
-                if (person.getAddress().get().toLowerCase().contains(lowerCaseFilter)) {
+                if (person.getAddress().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
-                } else return person.getAddress().get().toLowerCase().contains(lowerCaseFilter);
+                } else return person.getAddress().toLowerCase().contains(lowerCaseFilter);
             });
         });
 

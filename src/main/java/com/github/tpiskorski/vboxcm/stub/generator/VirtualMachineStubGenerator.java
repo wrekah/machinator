@@ -37,7 +37,7 @@ public class VirtualMachineStubGenerator implements InitializingBean {
         for (int i = 0; i < virtualMachinesNumber; i++) {
             VirtualMachine vm = new VirtualMachine();
             vm.setCpuCores(4);
-            vm.setServer(server.getAddressString());
+            vm.setServer(server.getAddress());
             vm.setState("ON");
             vm.setVmName("vm@" + i);
             vm.setRamMemory(1024);

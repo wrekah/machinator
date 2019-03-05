@@ -82,7 +82,7 @@ public class Job {
     }
 
     @Override public int hashCode() {
-        return Objects.hash(jobName.get().hashCode(), startTime.hashCode());
+        return Objects.hash(getJobName(), getStartTime());
     }
 
     @Override public boolean equals(Object obj) {

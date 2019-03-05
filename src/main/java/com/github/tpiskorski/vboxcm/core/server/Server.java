@@ -19,31 +19,35 @@ public class Server {
     }
 
     static Callback<Server, Observable[]> extractor() {
-        return (Server server) -> new Observable[]{server.getAddress(), server.isReachable()};
+        return (Server server) -> new Observable[]{server.addressProperty(), server.reachableProperty()};
     }
 
-    public void setReachable(boolean isReachable) {
-        this.reachable.set(isReachable);
-    }
-
-    public BooleanProperty isReachable() {
-        return reachable;
-    }
-
-    public StringProperty getAddress() {
-        return address;
+    public String getAddress() {
+        return address.get();
     }
 
     public void setAddress(String address) {
         this.address.set(address);
     }
 
-    public String getAddressString() {
-        return address.get();
+    public StringProperty addressProperty() {
+        return address;
+    }
+
+    public boolean isReachable() {
+        return reachable.get();
+    }
+
+    public void setReachable(boolean reachable) {
+        this.reachable.set(reachable);
+    }
+
+    public BooleanProperty reachableProperty() {
+        return reachable;
     }
 
     @Override public int hashCode() {
-        return Objects.hashCode(address.get().hashCode());
+        return Objects.hashCode(getAddress());
     }
 
     @Override public boolean equals(Object obj) {
@@ -51,6 +55,6 @@ public class Server {
             return false;
         }
         Server that = (Server) obj;
-        return Objects.equals(this.getAddress().get(), that.getAddress().get());
+        return Objects.equals(this.getAddress(), that.getAddress());
     }
 }

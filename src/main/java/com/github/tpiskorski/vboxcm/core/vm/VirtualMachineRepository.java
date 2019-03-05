@@ -24,7 +24,7 @@ class VirtualMachineRepository {
 
     ObservableList<VirtualMachine> getVms(Server server) {
         return vmObservableList.filtered(
-            virtualMachine -> virtualMachine.getServer().equals(server.getAddressString())
+            virtualMachine -> virtualMachine.getServer().equals(server.getAddress())
         );
     }
 }

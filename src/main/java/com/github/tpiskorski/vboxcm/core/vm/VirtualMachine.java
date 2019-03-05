@@ -17,10 +17,10 @@ public class VirtualMachine {
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
 
+    public VirtualMachine() {
+    }
 
-    public VirtualMachine(){}
-
-    public VirtualMachine(String server, String vmName){
+    public VirtualMachine(String server, String vmName) {
         this.server.set(server);
         this.vmName.set(vmName);
     }
@@ -90,7 +90,7 @@ public class VirtualMachine {
     }
 
     @Override public int hashCode() {
-        return Objects.hash(server, vmName);
+        return Objects.hash(getServer(), getVmName());
     }
 
     @Override public boolean equals(Object obj) {

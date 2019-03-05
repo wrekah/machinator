@@ -45,14 +45,14 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 } else {
                     ImageView imageView = new ImageView();
 
-                    if (server.isReachable().get()) {
+                    if (server.isReachable()) {
                         imageView.setImage(OK);
                     } else {
                         imageView.setImage(NOT_OK);
                     }
 
                     setGraphic(imageView);
-                    setText(server.getAddress().get());
+                    setText(server.getAddress());
                 }
             }
         };
@@ -96,7 +96,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
             boolean success = false;
             if (db.hasString()) {
 
-                String message = String.format("Do you want to move %s vm from server %s to server %s", localDragContainer.getVirtualMachine().getVmName(), localDragContainer.getVirtualMachine().getServer(), listCell.getItem().getAddress().get());
+                String message = String.format("Do you want to move %s vm from server %s to server %s", localDragContainer.getVirtualMachine().getVmName(), localDragContainer.getVirtualMachine().getServer(), listCell.getItem().getAddress());
 
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                     message,
