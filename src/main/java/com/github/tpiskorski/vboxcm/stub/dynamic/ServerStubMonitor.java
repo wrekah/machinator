@@ -29,11 +29,17 @@ public class ServerStubMonitor {
     public void monitor() {
         LOGGER.info("About to monitor...");
         ObservableList<Server> list = serverService.getServers();
+
+        if (list.isEmpty()) {
+            LOGGER.info("Nothing to monitor");
+            return;
+        }
+
         int randomElementIndex = ThreadLocalRandom.current().nextInt(list.size());
 
         Platform.runLater(() -> {
             Server server = list.get(randomElementIndex);
-            System.out.println(server.getAddress());
+            LOGGER.info("Server {} is reachable[{}]", server.getAddress(), server.isReachable());
             server.setReachable(!server.isReachable());
         });
 
