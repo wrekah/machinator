@@ -19,14 +19,19 @@ public class VirtualMachineService {
     }
 
     public ObservableList<VirtualMachine> getVms() {
-        return virtualMachineRepository.getVms();
+        return virtualMachineRepository.getVmsByServer();
     }
 
     public ObservableList<VirtualMachine> getVms(Server server) {
-        return virtualMachineRepository.getVms(server);
+        return virtualMachineRepository.getVmsByServer(server);
     }
 
     public void remove(VirtualMachine vmToRemove) {
         virtualMachineRepository.remove(vmToRemove);
+    }
+
+    public void removeByServer(Server serverToRemove) {
+      virtualMachineRepository.removeByServer(serverToRemove);
+
     }
 }
