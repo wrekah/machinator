@@ -20,4 +20,8 @@ public class BackupService {
     public void add(Backup backup) {
         backupRepository.add(backup);
     }
+
+    public void remove(Backup backup) {
+        backupRepository.remove(backup);
+    }
 }

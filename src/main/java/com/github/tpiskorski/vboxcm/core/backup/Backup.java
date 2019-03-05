@@ -6,6 +6,7 @@ import javafx.util.Callback;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Backup {
 
@@ -21,6 +22,19 @@ public class Backup {
             backup.serverProperty(), backup.vmProperty(), backup.firstBackupDayProperty(),
             backup.frequencyProperty(), backup.backupTimeProperty(), backup.fileLimitProperty()
         };
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(getServer().hashCode(), getVm().hashCode());
+    }
+
+    @Override public boolean equals(Object obj) {
+        if (!(obj instanceof Backup)) {
+            return false;
+        }
+        Backup that = (Backup) obj;
+
+        return Objects.equals(this.getServer(), that.getServer()) && Objects.equals(this.getVm(), that.getVm());
     }
 
     public String getServer() {

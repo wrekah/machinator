@@ -3,8 +3,7 @@ package com.github.tpiskorski.vboxcm.ui.controller;
 import com.github.tpiskorski.vboxcm.core.backup.Backup;
 import com.github.tpiskorski.vboxcm.core.backup.BackupService;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -18,21 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Controller
 public class BackupController {
 
     public TableView<Backup> backupsTableView;
+    public Button removeVmButton;
 
-    public TableView<BackupableVirtualMachine> backupsTableView;
-    ObservableList<BackupableVirtualMachine> vms = FXCollections.observableArrayList();
+    @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @FXML private TableColumn viewColumn;
+    @Autowired private BackupService backupService;
 
     @FXML
-    public void initialize() {
-
+    public void initialize() throws IOException {
+        removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
         Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Backup, Void> call(final TableColumn<Backup, Void> param) {
@@ -63,16 +61,12 @@ public class BackupController {
         };
 
         viewColumn.setCellFactory(cellFactory);
+        backupsTableView.setItems(backupService.getBackups());
+    }
 
-        BackupableVirtualMachine vm = new BackupableVirtualMachine();
-        vm.setServer("localhost:22");
-        vm.setVm("working-vm");
-        vm.setFileLimit(3);
-        vm.setFrequency(10);
-        vm.setBackupTime(LocalTime.of(12, 0));
-        vm.setFirstBackupDay(LocalDate.of(2019, 1, 1));
-
-        vms.add(vm);
-        backupsTableView.setItems(vms);
+    @FXML
+    public void removeVm() {
+        Backup backupToRemove = backupsTableView.getSelectionModel().getSelectedItem();
+        backupService.remove(backupToRemove);
     }
 }
