@@ -1,8 +1,8 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
-import com.github.tpiskorski.vboxcm.stub.AddServerTask;
-import com.github.tpiskorski.vboxcm.stub.AddServerTaskFactory;
+import com.github.tpiskorski.vboxcm.stub.dynamic.AddServerTask;
+import com.github.tpiskorski.vboxcm.stub.dynamic.AddServerTaskFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;

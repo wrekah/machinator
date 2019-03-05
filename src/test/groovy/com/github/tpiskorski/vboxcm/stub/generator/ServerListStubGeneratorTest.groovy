@@ -1,7 +1,8 @@
-package com.github.tpiskorski.vboxcm.stub
+package com.github.tpiskorski.vboxcm.stub.generator
 
 import com.github.tpiskorski.vboxcm.core.server.Server
 import com.github.tpiskorski.vboxcm.core.server.ServerService
+import com.github.tpiskorski.vboxcm.stub.generator.ServerListStubGenerator
 import spock.lang.Specification
 import spock.lang.Subject
 

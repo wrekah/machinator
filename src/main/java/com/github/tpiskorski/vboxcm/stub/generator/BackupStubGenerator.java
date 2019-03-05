@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.stub;
+package com.github.tpiskorski.vboxcm.stub.generator;
 
 import com.github.tpiskorski.vboxcm.core.backup.Backup;
 import com.github.tpiskorski.vboxcm.core.backup.BackupService;

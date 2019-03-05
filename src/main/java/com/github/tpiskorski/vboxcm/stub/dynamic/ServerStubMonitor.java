@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.stub;
+package com.github.tpiskorski.vboxcm.stub.dynamic;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-@Profile("stub")
+@Profile("stub_dynamic")
 @Component
-public class StubServerMonitor {
+public class ServerStubMonitor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StubServerMonitor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerStubMonitor.class);
 
     private final ServerService serverService;
 
-    @Autowired public StubServerMonitor(ServerService serverService) {
+    @Autowired public ServerStubMonitor(ServerService serverService) {
         this.serverService = serverService;
     }
 

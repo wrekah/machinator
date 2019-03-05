@@ -1,9 +1,10 @@
-package com.github.tpiskorski.vboxcm.stub
+package com.github.tpiskorski.vboxcm.stub.generator
 
 import com.github.tpiskorski.vboxcm.core.server.Server
 import com.github.tpiskorski.vboxcm.core.server.ServerService
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService
+import com.github.tpiskorski.vboxcm.stub.generator.VirtualMachineStubGenerator
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
