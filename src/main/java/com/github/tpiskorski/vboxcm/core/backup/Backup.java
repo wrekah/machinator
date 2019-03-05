@@ -1,11 +1,13 @@
-package com.github.tpiskorski.vboxcm.domain;
+package com.github.tpiskorski.vboxcm.core.backup;
 
+import javafx.beans.Observable;
 import javafx.beans.property.*;
+import javafx.util.Callback;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class BackupableVirtualMachine {
+public class Backup {
 
     private StringProperty server = new SimpleStringProperty();
     private StringProperty vm = new SimpleStringProperty();
@@ -13,6 +15,13 @@ public class BackupableVirtualMachine {
     private IntegerProperty frequency = new SimpleIntegerProperty();
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
+
+    static Callback<Backup, Observable[]> extractor() {
+        return (Backup backup) -> new Observable[]{
+            backup.serverProperty(), backup.vmProperty(), backup.firstBackupDayProperty(),
+            backup.frequencyProperty(), backup.backupTimeProperty(), backup.fileLimitProperty()
+        };
+    }
 
     public String getServer() {
         return server.get();

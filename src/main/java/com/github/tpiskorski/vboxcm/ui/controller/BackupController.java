@@ -1,6 +1,8 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
-import com.github.tpiskorski.vboxcm.domain.BackupableVirtualMachine;
+import com.github.tpiskorski.vboxcm.core.backup.Backup;
+import com.github.tpiskorski.vboxcm.core.backup.BackupService;
+import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,14 +12,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Controller
-public class BackupsController {
+public class BackupController {
+
+    public TableView<Backup> backupsTableView;
 
     public TableView<BackupableVirtualMachine> backupsTableView;
     ObservableList<BackupableVirtualMachine> vms = FXCollections.observableArrayList();
@@ -26,16 +33,16 @@ public class BackupsController {
     @FXML
     public void initialize() {
 
-        Callback<TableColumn<BackupableVirtualMachine, Void>, TableCell<BackupableVirtualMachine, Void>> cellFactory = new Callback<>() {
+        Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
             @Override
-            public TableCell<BackupableVirtualMachine, Void> call(final TableColumn<BackupableVirtualMachine, Void> param) {
-                final TableCell<BackupableVirtualMachine, Void> cell = new TableCell<>() {
+            public TableCell<Backup, Void> call(final TableColumn<Backup, Void> param) {
+                final TableCell<Backup, Void> cell = new TableCell<>() {
 
                     private final Button btn = new Button("View");
 
                     {
                         btn.setOnAction((ActionEvent event) -> {
-                            BackupableVirtualMachine data = getTableView().getItems().get(getIndex());
+                            Backup data = getTableView().getItems().get(getIndex());
                             System.out.println("selectedData: " + data);
                         });
                     }

@@ -38,6 +38,10 @@ public class Server {
         this.address.set(address);
     }
 
+    public String getAddressString() {
+        return address.get();
+    }
+
     @Override public int hashCode() {
         return Objects.hashCode(address.get().hashCode());
     }
