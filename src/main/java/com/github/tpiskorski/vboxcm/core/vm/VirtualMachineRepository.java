@@ -1,5 +1,6 @@
 package com.github.tpiskorski.vboxcm.core.vm;
 
+import com.github.tpiskorski.vboxcm.core.server.Server;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
@@ -13,11 +14,17 @@ class VirtualMachineRepository {
         vmObservableList.add(vm);
     }
 
-    ObservableList<VirtualMachine> getServersList() {
+    ObservableList<VirtualMachine> getVms() {
         return vmObservableList;
     }
 
     void remove(VirtualMachine vm) {
         vmObservableList.remove(vm);
+    }
+
+    ObservableList<VirtualMachine> getVms(Server server) {
+        return vmObservableList.filtered(
+            virtualMachine -> virtualMachine.getServer().equals(server.getAddressString())
+        );
     }
 }

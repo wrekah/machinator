@@ -1,7 +1,9 @@
 package com.github.tpiskorski.vboxcm.core.vm
 
+import com.github.tpiskorski.vboxcm.core.server.Server
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 class VirtualMachineServiceTest extends Specification {
 
@@ -76,6 +78,28 @@ class VirtualMachineServiceTest extends Specification {
 
         then:
         service.getVms() == [vm1]
+    }
+
+    @Unroll
+    def 'should get vms by server'() {
+        given:
+        def vm1 = new VirtualMachine('server1', 'vm1')
+        def vm2 = new VirtualMachine('server1', 'vm2')
+        def vm3 = new VirtualMachine('server2', 'vm1')
+
+        and:
+        service.add(vm1)
+        service.add(vm2)
+        service.add(vm3)
+
+        expect:
+        service.getVms(new Server(serverToFilter)).size() == expectedSize
+
+        where:
+        serverToFilter || expectedSize
+        'server1'      || 2
+        'server2'      || 1
+        'not a server' || 0
     }
 }
 
