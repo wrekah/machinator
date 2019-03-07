@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Profile("stub_dynamic")
@@ -41,6 +42,7 @@ public class ServerStubMonitor {
             Server server = list.get(randomElementIndex);
             LOGGER.info("Server {} is reachable[{}]", server.getAddress(), server.isReachable());
             server.setReachable(!server.isReachable());
+            server.setLastPing(LocalDateTime.now());
         });
 
         LOGGER.info("Finished monitor cycle");

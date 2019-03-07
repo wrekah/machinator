@@ -26,6 +26,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
     private final Image OK = new Image("/icon/success.png");
     private final Image NOT_OK = new Image("/icon/error.png");
+    private final Image UNKNOWN = new Image("/icon/unknown.png");
 
     @Autowired
     public ServerCellFactory(LocalDragContainer localDragContainer) {
@@ -45,10 +46,14 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 } else {
                     ImageView imageView = new ImageView();
 
-                    if (server.isReachable()) {
-                        imageView.setImage(OK);
+                    if (server.getLastPing() == null) {
+                        imageView.setImage(UNKNOWN);
                     } else {
-                        imageView.setImage(NOT_OK);
+                        if (server.isReachable()) {
+                            imageView.setImage(OK);
+                        } else {
+                            imageView.setImage(NOT_OK);
+                        }
                     }
 
                     setGraphic(imageView);

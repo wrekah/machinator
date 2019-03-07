@@ -7,12 +7,23 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Callback;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Server {
 
     private StringProperty address = new SimpleStringProperty();
     private BooleanProperty reachable = new SimpleBooleanProperty();
+
+    public LocalDateTime getLastPing() {
+        return lastPing;
+    }
+
+    public void setLastPing(LocalDateTime lastPing) {
+        this.lastPing = lastPing;
+    }
+
+    private LocalDateTime lastPing;
 
     public Server(String address) {
         this.address.set(address);
