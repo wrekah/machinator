@@ -1,8 +1,9 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
-import com.github.tpiskorski.vboxcm.stub.dynamic.AddServerTask;
-import com.github.tpiskorski.vboxcm.stub.dynamic.AddServerTaskFactory;
+import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTask;
+import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTaskFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -18,10 +19,11 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddServerController {
 
-    private final AddServerTaskFactory addServerTaskFactory;
+    private final ServerService serverService;
+    private final CheckConnectivityTaskFactory checkConnectivityTaskFactory;
     private final WorkbenchController workbenchController;
 
-    private AddServerTask task;
+    private CheckConnectivityTask task;
 
     @FXML private StackPane addServerStackPane;
     @FXML private GridPane addServerGridPane;
@@ -34,8 +36,9 @@ public class AddServerController {
     @FXML private TextField port;
 
     @Autowired
-    public AddServerController(AddServerTaskFactory addServerTaskFactory, WorkbenchController workbenchController) {
-        this.addServerTaskFactory = addServerTaskFactory;
+    public AddServerController(ServerService serverService, CheckConnectivityTaskFactory checkConnectivityTaskFactory, WorkbenchController workbenchController) {
+        this.serverService = serverService;
+        this.checkConnectivityTaskFactory = checkConnectivityTaskFactory;
         this.workbenchController = workbenchController;
     }
 
@@ -67,10 +70,13 @@ public class AddServerController {
 
         Server server = new Server(address.getText() + ":" + port.getText());
 
-        task = addServerTaskFactory.taskFor(server);
+        task = checkConnectivityTaskFactory.taskFor(server);
         task.setOnCancelled(workerStateEvent -> closeWindow());
         task.setOnFailed(workerStateEvent -> closeWindow());
-        task.setOnSucceeded(workerStateEvent -> closeWindow());
+        task.setOnSucceeded(workerStateEvent -> {
+            serverService.add(server);
+            closeWindow();
+        });
 
         new Thread(task).start();
     }
