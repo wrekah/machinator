@@ -57,6 +57,7 @@ public class AddServerController {
         addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort));
     }
 
+    @FXML
     public void saveConfig() {
         addServerGridPane.getScene().getWindow().setOnHiding(event -> {
             if (task != null) {

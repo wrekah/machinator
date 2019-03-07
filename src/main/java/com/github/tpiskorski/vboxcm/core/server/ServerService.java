@@ -28,4 +28,12 @@ public class ServerService {
     public void add(Server server) {
         serverRepository.add(server);
     }
+
+    public void updateReachable(Server server) {
+        server.setServerState(ServerState.REACHABLE);
+    }
+
+    public void updateUnreachable(Server server) {
+        server.setServerState(ServerState.NOT_REACHABLE);
+    }
 }

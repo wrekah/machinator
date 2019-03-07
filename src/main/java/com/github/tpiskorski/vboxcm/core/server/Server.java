@@ -1,10 +1,7 @@
 package com.github.tpiskorski.vboxcm.core.server;
 
 import javafx.beans.Observable;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.util.Callback;
 
 import java.util.Objects;
@@ -13,23 +10,27 @@ public class Server {
 
     private StringProperty address = new SimpleStringProperty();
     private BooleanProperty reachable = new SimpleBooleanProperty();
-
-    public ServerState getServerState() {
-        return serverState;
-    }
-
-    public void setServerState(ServerState serverState) {
-        this.serverState = serverState;
-    }
-
-    private ServerState serverState = ServerState.UNKNOWN;
+    private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
 
     public Server(String address) {
         this.address.set(address);
+        setServerState(ServerState.UNKNOWN);
     }
 
     static Callback<Server, Observable[]> extractor() {
-        return (Server server) -> new Observable[]{server.addressProperty(), server.reachableProperty()};
+        return (Server server) -> new Observable[]{server.addressProperty(), server.serverStateProperty()};
+    }
+
+    public ServerState getServerState() {
+        return serverState.get();
+    }
+
+    public void setServerState(ServerState serverState) {
+        this.serverState.set(serverState);
+    }
+
+    public ObjectProperty<ServerState> serverStateProperty() {
+        return serverState;
     }
 
     public String getAddress() {
