@@ -46,14 +46,16 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 } else {
                     ImageView imageView = new ImageView();
 
-                    if (server.getLastPing() == null) {
-                        imageView.setImage(UNKNOWN);
-                    } else {
-                        if (server.isReachable()) {
+                    switch (server.getServerState()) {
+                        case REACHABLE:
                             imageView.setImage(OK);
-                        } else {
+                            break;
+                        case NOT_REACHABLE:
                             imageView.setImage(NOT_OK);
-                        }
+                            break;
+                        case UNKNOWN:
+                            imageView.setImage(UNKNOWN);
+                            break;
                     }
 
                     setGraphic(imageView);

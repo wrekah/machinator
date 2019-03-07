@@ -2,6 +2,7 @@ package com.github.tpiskorski.vboxcm.stub.dynamic;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.server.ServerState;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -41,8 +42,7 @@ public class ServerStubMonitor {
         Platform.runLater(() -> {
             Server server = list.get(randomElementIndex);
             LOGGER.info("Server {} is reachable[{}]", server.getAddress(), server.isReachable());
-            server.setReachable(!server.isReachable());
-            server.setLastPing(LocalDateTime.now());
+            server.setServerState(ServerState.REACHABLE);
         });
 
         LOGGER.info("Finished monitor cycle");
