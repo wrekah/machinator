@@ -1,10 +1,7 @@
 package com.github.tpiskorski.vboxcm.core.vm;
 
 import javafx.beans.Observable;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.util.Callback;
 
 import java.util.Objects;
@@ -12,7 +9,7 @@ import java.util.Objects;
 public class VirtualMachine {
 
     private StringProperty vmName = new SimpleStringProperty();
-    private StringProperty state = new SimpleStringProperty();
+    private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
     private StringProperty server = new SimpleStringProperty();
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
@@ -23,10 +20,23 @@ public class VirtualMachine {
     public VirtualMachine(String server, String vmName) {
         this.server.set(server);
         this.vmName.set(vmName);
+        setState(VirtualMachineState.UNREACHABLE);
     }
 
     static Callback<VirtualMachine, Observable[]> extractor() {
-        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.stateProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty()};
+        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+    }
+
+    public VirtualMachineState getState() {
+        return state.get();
+    }
+
+    public void setState(VirtualMachineState state) {
+        this.state.set(state);
+    }
+
+    public ObjectProperty<VirtualMachineState> stateProperty() {
+        return state;
     }
 
     public String getVmName() {
@@ -39,18 +49,6 @@ public class VirtualMachine {
 
     public StringProperty vmNameProperty() {
         return vmName;
-    }
-
-    public String getState() {
-        return state.get();
-    }
-
-    public void setState(String state) {
-        this.state.set(state);
-    }
-
-    public StringProperty stateProperty() {
-        return state;
     }
 
     public String getServer() {

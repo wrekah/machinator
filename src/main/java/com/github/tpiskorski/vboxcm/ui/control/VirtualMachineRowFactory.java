@@ -1,6 +1,8 @@
 package com.github.tpiskorski.vboxcm.ui.control;
 
+import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;
@@ -29,18 +31,26 @@ public class VirtualMachineRowFactory implements Callback<TableView<VirtualMachi
             @Override
             protected void updateItem(VirtualMachine item, boolean empty) {
                 super.updateItem(item, empty);
+
+                if (item == null || item.getState() == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else if (item.getState().equals(VirtualMachineState.OFF)) {
+                    setStyle("-fx-background-color: wheat;");
+                }
             }
         };
 
         tableRow.setOnDragDetected(event -> {
-            if (tableRow.getItem() == null) {
+            VirtualMachine vm = tableRow.getItem();
+            if (vm == null) {
                 return;
             }
 
-            LOGGER.info("VM row factory drag detected on {}", tableRow.getItem().toString());
+            LOGGER.info("VM row factory drag detected on {}", vm.toString());
             Dragboard dragBoard = tableRow.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
-            localDragContainer.putVirtualMachine(tableRow.getItem());
+            localDragContainer.putVirtualMachine(vm);
             content.putString("copying");
             dragBoard.setContent(content);
             event.consume();
