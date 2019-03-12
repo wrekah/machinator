@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VirtualMachineService {
 
@@ -31,7 +33,21 @@ public class VirtualMachineService {
     }
 
     public void removeByServer(Server serverToRemove) {
-      virtualMachineRepository.removeByServer(serverToRemove);
+        virtualMachineRepository.removeByServer(serverToRemove);
+    }
 
+    public void updateNotReachableBy(Server server) {
+        virtualMachineRepository.getVmsByServer(server).forEach(vm -> {
+            vm.setState(VirtualMachineState.UNREACHABLE);
+        });
+    }
+
+    public void add(List<VirtualMachine> vms) {
+        vms.forEach(this::add);
+    }
+
+    public void replace(Server server, List<VirtualMachine> vms) {
+        virtualMachineRepository.removeByServer(server);
+        add(vms);
     }
 }

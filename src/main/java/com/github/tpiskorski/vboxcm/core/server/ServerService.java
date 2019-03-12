@@ -1,9 +1,12 @@
 package com.github.tpiskorski.vboxcm.core.server;
 
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ServerService {
@@ -35,5 +38,11 @@ public class ServerService {
 
     public void updateUnreachable(Server server) {
         server.setServerState(ServerState.NOT_REACHABLE);
+        virtualMachineService.updateNotReachableBy(server);
+    }
+
+    public void updateReachable(Server server, List<VirtualMachine> vms) {
+        server.setServerState(ServerState.REACHABLE);
+        virtualMachineService.replace(server, vms);
     }
 }

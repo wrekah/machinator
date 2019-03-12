@@ -2,6 +2,9 @@ package com.github.tpiskorski.vboxcm.stub.dynamic;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.stub.net.SshException;
+import com.github.tpiskorski.vboxcm.stub.net.StubSshClient;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -11,19 +14,20 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 
 @Profile("stub_dynamic")
 @Component
 public class ServerStubMonitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerStubMonitor.class);
+
     private final ServerService serverService;
+    private final StubSshClient stubSshClient;
 
-    private ThreadLocalRandom current = ThreadLocalRandom.current();
-
-    @Autowired public ServerStubMonitor(ServerService serverService) {
+    @Autowired public ServerStubMonitor(ServerService serverService, StubSshClient stubSshClient) {
         this.serverService = serverService;
+        this.stubSshClient = stubSshClient;
     }
 
     @Scheduled(fixedRate = 10000L)
@@ -37,18 +41,15 @@ public class ServerStubMonitor {
         }
 
         for (Server server : servers) {
-            randomStatusUpdate(server);
+            try {
+                List<VirtualMachine> vms = stubSshClient.getVms(server);
+                Platform.runLater(() -> serverService.updateReachable(server, vms));
+            } catch (SshException sshException) {
+                Platform.runLater(() -> serverService.updateUnreachable(server));
+            }
         }
 
         LOGGER.info("Finished monitor cycle");
-    }
-
-    private void randomStatusUpdate(Server server) {
-        if (current.nextBoolean()) {
-            Platform.runLater(() -> serverService.updateReachable(server));
-        } else {
-            Platform.runLater(() -> serverService.updateUnreachable(server));
-        }
     }
 }
 
