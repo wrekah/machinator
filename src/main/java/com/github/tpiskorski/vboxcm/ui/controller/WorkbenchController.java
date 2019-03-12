@@ -71,36 +71,8 @@ public class WorkbenchController {
         addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
         addServerStage.setTitle("Adding server...");
 
-        removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-
-        BooleanBinding booleanBinding = Bindings.createBooleanBinding(() -> {
-            boolean disableChangeType = false;
-            VirtualMachine vm = virtualMachines.getSelectionModel().getSelectedItem();;
-            if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE) {
-                disableChangeType = true;
-            }
-            return disableChangeType;
-        }, virtualMachines.getSelectionModel().selectedItemProperty());
-
-        turnOnVmButton.disableProperty().bind(
-            Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()).or(booleanBinding)
-        );
-
-        removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
-        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                serverList.getSelectionModel().clearSelection();
-            }
-        });
-
-        serverList.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                serverList.getSelectionModel().clearSelection();
-            }
-        });
+        setDisableBindings();
+        setInputBindings();
 
         FilteredList<Server> filterableServers = new FilteredList<>(serverService.getServers(), p -> true);
         FilteredList<VirtualMachine> filterableVirtualMachines = new FilteredList<>(virtualMachineService.getVms(), p -> true);
@@ -144,6 +116,42 @@ public class WorkbenchController {
 
         virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {
             virtualMachines.getSelectionModel().clearSelection();
+        });
+    }
+
+    private void setDisableBindings() {
+        removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+        resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+
+        BooleanBinding booleanBinding = Bindings.createBooleanBinding(() -> {
+            boolean disableChangeType = false;
+            VirtualMachine vm = virtualMachines.getSelectionModel().getSelectedItem();
+            if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE) {
+                disableChangeType = true;
+            }
+            return disableChangeType;
+        }, virtualMachines.getSelectionModel().selectedItemProperty());
+
+        turnOnVmButton.disableProperty().bind(
+            Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()).or(booleanBinding)
+        );
+
+        removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
+    }
+
+    private void setInputBindings() {
+        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                serverList.getSelectionModel().clearSelection();
+            }
+        });
+
+        serverList.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                serverList.getSelectionModel().clearSelection();
+            }
         });
     }
 
