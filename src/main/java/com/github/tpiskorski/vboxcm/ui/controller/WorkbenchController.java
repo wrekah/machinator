@@ -6,10 +6,13 @@ import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState;
 import com.github.tpiskorski.vboxcm.ui.control.ServerCellFactory;
 import com.github.tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -72,7 +75,19 @@ public class WorkbenchController {
         resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
         powerOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
         turnOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        turnOnVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+
+        BooleanBinding booleanBinding = Bindings.createBooleanBinding(() -> {
+            boolean disableChangeType = false;
+            VirtualMachine vm = virtualMachines.getSelectionModel().getSelectedItem();;
+            if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE) {
+                disableChangeType = true;
+            }
+            return disableChangeType;
+        }, virtualMachines.getSelectionModel().selectedItemProperty());
+
+        turnOnVmButton.disableProperty().bind(
+            Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()).or(booleanBinding)
+        );
 
         removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
         serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
@@ -126,6 +141,10 @@ public class WorkbenchController {
 
         serverList.setItems(filterableServers);
         virtualMachines.setItems(filterableVirtualMachines);
+
+        virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {
+            virtualMachines.getSelectionModel().clearSelection();
+        });
     }
 
     public void removeServer() {
