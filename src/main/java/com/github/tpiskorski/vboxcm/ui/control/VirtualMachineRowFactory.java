@@ -1,8 +1,6 @@
 package com.github.tpiskorski.vboxcm.ui.control;
 
-import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;
@@ -31,13 +29,6 @@ public class VirtualMachineRowFactory implements Callback<TableView<VirtualMachi
             @Override
             protected void updateItem(VirtualMachine item, boolean empty) {
                 super.updateItem(item, empty);
-
-                if (item == null || item.getState() == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else if (item.getState().equals(VirtualMachineState.OFF)) {
-                    setStyle("-fx-background-color: wheat;");
-                }
             }
         };
 
