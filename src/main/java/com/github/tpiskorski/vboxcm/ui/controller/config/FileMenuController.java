@@ -1,8 +1,10 @@
 package com.github.tpiskorski.vboxcm.ui.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.ConfigService;
+import com.github.tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,10 @@ public class FileMenuController {
     private final ConfigurableApplicationContext springContext;
     private final ConfigService configService;
 
+    @Autowired private ServerStubMonitor serverStubMonitor;
+
     @FXML private Alert reloadAlert;
+    @FXML private Alert monitorAlert;
 
     @Autowired
     public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext) {
@@ -39,5 +44,11 @@ public class FileMenuController {
     public void exit() {
         springContext.close();
         Platform.exit();
+    }
+
+    public void freezeMonitoring() {
+        serverStubMonitor.freeze();
+        monitorAlert.setContentText("Changed monitoring to: "+serverStubMonitor.getIsFreezed().get());
+        monitorAlert.showAndWait();
     }
 }

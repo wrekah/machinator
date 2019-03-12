@@ -2,11 +2,13 @@
 <Menu xmlns:fx="http://javafx.com/fxml" text="File"
       fx:controller="com.github.tpiskorski.vboxcm.ui.controller.config.FileMenuController">
     <fx:define>
-        <Alert fx:id="reloadAlert" alertType="INFORMATION" title="Configuration" contentText="Configuration reloaded!"
-               headerText=""/>
+        <Alert fx:id="reloadAlert" alertType="INFORMATION" title="Configuration" contentText="Configuration reloaded!" headerText=""/>
+        <Alert fx:id="monitorAlert" alertType="INFORMATION" title="Monitoring"  headerText=""/>
     </fx:define>
     <MenuItem text="Config..." onAction="#modify"/>
     <MenuItem text="Reload config" onAction="#reloadConfig"/>
+    <SeparatorMenuItem/>
+    <MenuItem text="Freeze monitoring" onAction="#freezeMonitoring"/>
     <SeparatorMenuItem/>
     <MenuItem text="Exit" onAction="#exit"/>
 </Menu>

@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Profile("stub_dynamic")
 @Component
@@ -24,6 +25,12 @@ public class ServerStubMonitor {
 
     private final ServerService serverService;
     private final StubSshClient stubSshClient;
+
+    public AtomicBoolean getIsFreezed() {
+        return isFreezed;
+    }
+
+    private AtomicBoolean isFreezed = new AtomicBoolean(false);
 
     @Autowired public ServerStubMonitor(ServerService serverService, StubSshClient stubSshClient) {
         this.serverService = serverService;
@@ -35,7 +42,7 @@ public class ServerStubMonitor {
         LOGGER.info("About to monitor...");
         ObservableList<Server> servers = serverService.getServers();
 
-        if (servers.isEmpty()) {
+        if (servers.isEmpty() || isFreezed.get()) {
             LOGGER.info("Nothing to monitor");
             return;
         }
@@ -50,6 +57,10 @@ public class ServerStubMonitor {
         }
 
         LOGGER.info("Finished monitor cycle");
+    }
+
+    public void freeze() {
+        isFreezed.set(!isFreezed.get());
     }
 }
 
