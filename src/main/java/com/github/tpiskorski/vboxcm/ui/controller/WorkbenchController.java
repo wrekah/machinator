@@ -13,6 +13,7 @@ import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -120,12 +121,20 @@ public class WorkbenchController {
     }
 
     private void setDisableBindings() {
-        removeVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        resetVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
-        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()));
+        ObservableList<VirtualMachine> selectedItems = virtualMachines.getSelectionModel().getSelectedItems();
+        BooleanBinding selectedUnreachableVm = createUnreachableVmBinding();
 
-        BooleanBinding booleanBinding = Bindings.createBooleanBinding(() -> {
+        removeVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        resetVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        turnOnVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+
+        removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
+    }
+
+    private BooleanBinding createUnreachableVmBinding() {
+        return Bindings.createBooleanBinding(() -> {
             boolean disableChangeType = false;
             VirtualMachine vm = virtualMachines.getSelectionModel().getSelectedItem();
             if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE) {
@@ -133,12 +142,6 @@ public class WorkbenchController {
             }
             return disableChangeType;
         }, virtualMachines.getSelectionModel().selectedItemProperty());
-
-        turnOnVmButton.disableProperty().bind(
-            Bindings.isEmpty(virtualMachines.getSelectionModel().getSelectedItems()).or(booleanBinding)
-        );
-
-        removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
     }
 
     private void setInputBindings() {
