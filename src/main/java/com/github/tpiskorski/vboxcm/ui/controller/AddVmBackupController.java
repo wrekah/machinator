@@ -1,16 +1,18 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
+import com.github.tpiskorski.vboxcm.core.backup.Backup;
+import com.github.tpiskorski.vboxcm.core.backup.BackupService;
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
-import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -18,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Controller;
 
-import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @DependsOn("workbenchController")
 @Controller
@@ -26,15 +29,20 @@ public class AddVmBackupController {
 
     public TextField frequency;
     public Button cancelButton;
+    public Button addButton;
+    public DatePicker firstBackup;
+    public TextField backupTime;
+    public TextField fileLimit;
+
     @Autowired private ServerService serverService;
     @Autowired private VirtualMachineService virtualMachineService;
-    @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
+    @Autowired private BackupService backupService;
 
     @FXML private ComboBox<Server> serverComboBox;
     @FXML private ComboBox<VirtualMachine> vmComboBox;
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize() {
 
         frequency.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
@@ -113,5 +121,33 @@ public class AddVmBackupController {
     public void close() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    public void add() {
+        Server server = serverComboBox.getSelectionModel().getSelectedItem();
+        VirtualMachine vm = vmComboBox.getSelectionModel().getSelectedItem();
+        LocalDate backupDay = firstBackup.getValue();
+        Integer every = Integer.parseInt(frequency.getText());
+        LocalTime backupTime = LocalTime.parse(this.backupTime.getText());
+        int fileLimit = Integer.parseInt(this.fileLimit.getText());
+
+        Backup backup = new Backup();
+        backup.setServer(server.getAddress());
+        backup.setVm(vm.getVmName());
+        backup.setFirstBackupDay(backupDay);
+        backup.setFrequency(every);
+        backup.setBackupTime(backupTime);
+        backup.setFileLimit(fileLimit);
+
+        backupService.add(backup);
+        ((Stage) addButton.getScene().getWindow()).close();
+
+      serverComboBox.getSelectionModel().clearSelection();
+         vmComboBox.getSelectionModel().clearSelection();
+        firstBackup.getEditor().clear();
+        frequency.clear();
+        this.backupTime.clear();
+        this.fileLimit.clear();
     }
 }

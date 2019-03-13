@@ -48,7 +48,7 @@ public class FileMenuController {
 
     public void freezeMonitoring() {
         serverStubMonitor.freeze();
-        monitorAlert.setContentText("Monitoring: "+serverStubMonitor.getIsFreezed().get());
+        monitorAlert.setContentText("Monitoring: "+ !serverStubMonitor.getIsFreezed().get());
         monitorAlert.showAndWait();
     }
 }
