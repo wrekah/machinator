@@ -35,6 +35,7 @@ class BackupStubGeneratorTest extends Specification {
         then:
         backup.server == server
         backup.vm == vmName
+        backup.currentFiles <= backup.fileLimit
     }
 
     @Unroll

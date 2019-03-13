@@ -39,7 +39,7 @@
                 </TableColumn>
                 <TableColumn text="Current files">
                     <cellValueFactory>
-                        <PropertyValueFactory property="backupTime"/>
+                        <PropertyValueFactory property="currentFiles"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="File limit">

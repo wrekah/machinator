@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
@@ -57,6 +58,7 @@ public class BackupStubGenerator implements InitializingBean {
         backup.setServer(virtualMachine.getServer());
         backup.setVm(virtualMachine.getVmName());
         backup.setFileLimit(3);
+        backup.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backup.getFileLimit()+1));
         backup.setFrequency(10);
         backup.setBackupTime(LocalTime.of(12, 0));
         backup.setFirstBackupDay(LocalDate.of(2019, 1, 1));

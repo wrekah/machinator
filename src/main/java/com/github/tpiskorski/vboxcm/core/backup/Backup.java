@@ -15,6 +15,7 @@ public class Backup {
     private ObjectProperty<LocalDate> firstBackupDay = new SimpleObjectProperty<>();
     private IntegerProperty frequency = new SimpleIntegerProperty();
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
+    private IntegerProperty currentFiles = new SimpleIntegerProperty();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
 
     static Callback<Backup, Observable[]> extractor() {
@@ -22,6 +23,18 @@ public class Backup {
             backup.serverProperty(), backup.vmProperty(), backup.firstBackupDayProperty(),
             backup.frequencyProperty(), backup.backupTimeProperty(), backup.fileLimitProperty()
         };
+    }
+
+    public int getCurrentFiles() {
+        return currentFiles.get();
+    }
+
+    public void setCurrentFiles(int currentFiles) {
+        this.currentFiles.set(currentFiles);
+    }
+
+    public IntegerProperty currentFilesProperty() {
+        return currentFiles;
     }
 
     @Override public int hashCode() {
