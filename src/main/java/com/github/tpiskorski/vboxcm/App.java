@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -31,7 +31,9 @@ public class App extends javafx.application.Application {
 
     @Override
     public void init() throws Exception {
-        springContext = SpringApplication.run(App.class);
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(App.class);
+        springContext = builder.headless(false).run();
+
         fxmlLoader = new FXMLLoader();
         ClassPathResource mainFxml = new ClassPathResource("/fxml/workbench.fxml");
         fxmlLoader.setLocation(mainFxml.getURL());
