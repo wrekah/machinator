@@ -62,7 +62,7 @@
                 <TextField text="/dev/null" editable="false"/>
             </HBox>
             <HBox alignment="CENTER">
-                <Button text="Add virtual machine"/>
+                <Button text="Add virtual machine" onAction="#showAddVm"/>
                 <Button text="Remove virtual machine" fx:id="removeVmButton" onAction="#removeVm"/>
                 <Button text="Modify..."/>
                 <Button text="History"/>

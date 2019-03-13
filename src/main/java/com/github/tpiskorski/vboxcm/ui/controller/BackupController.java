@@ -28,9 +28,18 @@ public class BackupController {
     @FXML private TableColumn viewColumn;
     @Autowired private BackupService backupService;
 
+    private Stage addServerStage;
+
     @FXML
     public void initialize() throws IOException {
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
+
+        addServerStage = contextAwareSceneLoader.load("/fxml/backups/addVm.fxml");
+        addServerStage.setResizable(false);
+        addServerStage.setTitle("Adding backup...");
+
+
+
         Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Backup, Void> call(final TableColumn<Backup, Void> param) {
@@ -62,6 +71,14 @@ public class BackupController {
 
         viewColumn.setCellFactory(cellFactory);
         backupsTableView.setItems(backupService.getBackups());
+    }
+
+    public void showAddVm() {
+        if (addServerStage.isShowing()) {
+            addServerStage.hide();
+        } else {
+            addServerStage.show();
+        }
     }
 
     @FXML
