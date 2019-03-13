@@ -6,7 +6,6 @@
 
 >
 
-
     <GridPane>
 
         <columnConstraints>
@@ -14,18 +13,16 @@
             <ColumnConstraints halignment="CENTER" prefWidth="150"/>
         </columnConstraints>
 
-
         <padding>
             <Insets top="25" right="25" bottom="25" left="25"/>
         </padding>
-
 
         <Label text="Server" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <ComboBox promptText="Pick server" fx:id="serverComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
                   prefWidth="150"/>
 
         <Label text="Vm" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <ComboBox promptText="Pick server first" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"
+        <ComboBox promptText="Pick vm" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"
                   prefWidth="150"/>
 
 
