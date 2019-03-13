@@ -16,6 +16,8 @@ import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 @Controller
@@ -38,8 +40,6 @@ public class BackupController {
         addServerStage.setResizable(false);
         addServerStage.setTitle("Adding backup...");
 
-
-
         Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<Backup, Void> call(final TableColumn<Backup, Void> param) {
@@ -50,6 +50,7 @@ public class BackupController {
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             Backup data = getTableView().getItems().get(getIndex());
+                            browseHomeDirectory();
                             System.out.println("selectedData: " + data);
                         });
                     }
@@ -71,6 +72,14 @@ public class BackupController {
 
         viewColumn.setCellFactory(cellFactory);
         backupsTableView.setItems(backupService.getBackups());
+    }
+
+    private void browseHomeDirectory() {
+        try {
+            Desktop.getDesktop().open(new File(System.getProperty("user.home")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showAddVm() {
