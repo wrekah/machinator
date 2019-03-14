@@ -24,4 +24,9 @@ public class BackupService {
     public void remove(Backup backup) {
         backupRepository.remove(backup);
     }
+
+    public void update(Backup backup) {
+        remove(backup);
+        add(backup);
+    }
 }

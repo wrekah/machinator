@@ -34,9 +34,12 @@ public class BackupController {
     private Stage addServerStage;
     private Stage modifyVmStage;
 
+    @Autowired private ModifyVmBackupController modifyVmBackupController;
+
     @FXML
     public void initialize() throws IOException {
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
+        modifyButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
         addServerStage = contextAwareSceneLoader.load("/fxml/backup/addVmBackup.fxml");
         addServerStage.setResizable(false);
@@ -44,7 +47,7 @@ public class BackupController {
 
         modifyVmStage = contextAwareSceneLoader.load("/fxml/backup/modifyVmBackup.fxml");
         modifyVmStage.setResizable(false);
-        modifyVmStage.setTitle("Adding backup...");
+        modifyVmStage.setTitle("Modifying backup...");
 
         Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
             @Override
@@ -105,8 +108,12 @@ public class BackupController {
     @FXML
     public void modify() {
         if (modifyVmStage.isShowing()) {
+            modifyVmBackupController.clear();
             modifyVmStage.hide();
         } else {
+            Backup backup = backupsTableView.getSelectionModel().getSelectedItem();
+
+            modifyVmBackupController.prepareFor(backup);
             modifyVmStage.show();
         }
     }
