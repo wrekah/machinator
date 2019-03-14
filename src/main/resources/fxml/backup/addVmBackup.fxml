@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.github.tpiskorski.vboxcm.ui.controller.ModifyVmBackupController"
+      fx:controller="com.github.tpiskorski.vboxcm.ui.controller.backup.AddVmBackupController"
 
 >
 
@@ -18,11 +18,13 @@
         </padding>
 
         <Label text="Server" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField editable="false" fx:id="serverComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                   prefWidth="150"/>
+        <ComboBox promptText="Pick server" fx:id="serverComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                  prefWidth="150"/>
 
         <Label text="Vm" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <TextField editable="false" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="150"/>
+        <ComboBox promptText="Pick vm" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                  prefWidth="150"/>
+
 
         <Label text="First backup" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
         <DatePicker fx:id="firstBackup" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
@@ -41,8 +43,8 @@
             <GridPane.margin>
                 <Insets top="5"/>
             </GridPane.margin>
-            <Button defaultButton="true" text="Modify" fx:id="modifyButton" onAction="#modify"/>
-            <Button cancelButton="true" text="Cancel" fx:id="cancelButton" onAction="#close"/>
+            <Button text="Add" fx:id="addButton" onAction="#add"/>
+            <Button text="Cancel" fx:id="cancelButton" onAction="#close"/>
         </HBox>
     </GridPane>
 

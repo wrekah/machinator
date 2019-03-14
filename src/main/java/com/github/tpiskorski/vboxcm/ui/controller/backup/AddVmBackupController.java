@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.ui.controller;
+package com.github.tpiskorski.vboxcm.ui.controller.backup;
 
 import com.github.tpiskorski.vboxcm.core.backup.Backup;
 import com.github.tpiskorski.vboxcm.core.backup.BackupService;

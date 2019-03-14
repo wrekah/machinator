@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.ui.controller;
+package com.github.tpiskorski.vboxcm.ui.controller.backup;
 
 import com.github.tpiskorski.vboxcm.core.backup.Backup;
 import com.github.tpiskorski.vboxcm.core.backup.BackupService;
@@ -38,11 +38,11 @@ public class BackupController {
     public void initialize() throws IOException {
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
-        addServerStage = contextAwareSceneLoader.load("/fxml/backups/addVmBackup.fxml");
+        addServerStage = contextAwareSceneLoader.load("/fxml/backup/addVmBackup.fxml");
         addServerStage.setResizable(false);
         addServerStage.setTitle("Adding backup...");
 
-        modifyVmStage = contextAwareSceneLoader.load("/fxml/backups/modifyVmBackup.fxml");
+        modifyVmStage = contextAwareSceneLoader.load("/fxml/backup/modifyVmBackup.fxml");
         modifyVmStage.setResizable(false);
         modifyVmStage.setTitle("Adding backup...");
 

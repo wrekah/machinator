@@ -75,7 +75,7 @@
 
                     </BorderPane>
                 </Tab>
-                <Tab text="Backups">
+                <Tab text="Backup">
                     <fx:include fx:id="barTabPage" source="backups.fxml"/>
                 </Tab>
                 <Tab text="Watchdog">

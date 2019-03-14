@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.ui.controller;
+package com.github.tpiskorski.vboxcm.ui.controller.backup;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

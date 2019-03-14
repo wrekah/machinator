@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.ui.controller.BackupController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.github.tpiskorski.vboxcm.ui.controller.backup.BackupController">
 
 
     <center>
