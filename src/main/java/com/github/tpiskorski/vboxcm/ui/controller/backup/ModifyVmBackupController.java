@@ -15,6 +15,8 @@ import java.time.LocalTime;
 @Controller
 public class ModifyVmBackupController {
 
+    private final BackupService backupService;
+
     @FXML private Button modifyButton;
     @FXML private Button cancelButton;
     @FXML private TextField fileLimit;
@@ -24,7 +26,9 @@ public class ModifyVmBackupController {
     @FXML private TextField vmComboBox;
     @FXML private TextField serverComboBox;
 
-    @Autowired private BackupService backupService;
+    @Autowired public ModifyVmBackupController(BackupService backupService) {
+        this.backupService = backupService;
+    }
 
     @FXML
     public void modify() {

@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
 
 @Repository
-class VirtualMachineRepository {
+public class VirtualMachineRepository {
 
     private ObservableList<VirtualMachine> vmObservableList = FXCollections.observableArrayList(VirtualMachine.extractor());
 
