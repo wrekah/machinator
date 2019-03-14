@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/tpiskorski/vboxcm.svg?branch=master)](https://travis-ci.com/tpiskorski/vboxcm)
 # VBOXCM
 VBOXCM aims at virtualbox cluster orchestration and management.
 
