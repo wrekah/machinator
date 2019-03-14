@@ -143,11 +143,15 @@ public class AddVmBackupController {
         backupService.add(backup);
         ((Stage) addButton.getScene().getWindow()).close();
 
-      serverComboBox.getSelectionModel().clearSelection();
-         vmComboBox.getSelectionModel().clearSelection();
+        clear();
+    }
+
+    public void clear() {
+        serverComboBox.getSelectionModel().clearSelection();
+        vmComboBox.getSelectionModel().clearSelection();
         firstBackup.getEditor().clear();
         frequency.clear();
-        this.backupTime.clear();
-        this.fileLimit.clear();
+        backupTime.clear();
+        fileLimit.clear();
     }
 }

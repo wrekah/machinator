@@ -64,7 +64,7 @@
             <HBox alignment="CENTER">
                 <Button text="Add virtual machine" onAction="#showAddVm"/>
                 <Button text="Remove virtual machine" fx:id="removeVmButton" onAction="#removeVm"/>
-                <Button text="Modify..."/>
+                <Button text="Modify..." fx:id="modifyButton" onAction="#modify"/>
                 <Button text="History"/>
             </HBox>
         </VBox>
