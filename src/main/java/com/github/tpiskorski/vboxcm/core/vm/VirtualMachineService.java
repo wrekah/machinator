@@ -21,11 +21,11 @@ public class VirtualMachineService {
     }
 
     public ObservableList<VirtualMachine> getVms() {
-        return virtualMachineRepository.getVmsByServer();
+        return virtualMachineRepository.getVms();
     }
 
     public ObservableList<VirtualMachine> getVms(Server server) {
-        return virtualMachineRepository.getVmsByServer(server);
+        return virtualMachineRepository.getVms(server);
     }
 
     public void remove(VirtualMachine vmToRemove) {
@@ -37,7 +37,7 @@ public class VirtualMachineService {
     }
 
     public void updateNotReachableBy(Server server) {
-        virtualMachineRepository.getVmsByServer(server).forEach(vm -> {
+        virtualMachineRepository.getVms(server).forEach(vm -> {
             vm.setState(VirtualMachineState.UNREACHABLE);
         });
     }
