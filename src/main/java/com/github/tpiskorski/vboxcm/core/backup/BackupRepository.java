@@ -20,4 +20,10 @@ public class BackupRepository {
     void remove(Backup backup) {
         jobObservableList.remove(backup);
     }
+
+    Backup find(Backup backup) {
+        return jobObservableList.filtered(
+            oldBackup -> oldBackup.equals(backup)
+        ).get(0);
+    }
 }

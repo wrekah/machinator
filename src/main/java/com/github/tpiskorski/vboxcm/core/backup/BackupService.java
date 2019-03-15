@@ -26,7 +26,11 @@ public class BackupService {
     }
 
     public void update(Backup backup) {
-        remove(backup);
-        add(backup);
+        Backup backupToModify = backupRepository.find(backup);
+
+        backupToModify.setFirstBackupDay(backup.getFirstBackupDay());
+        backupToModify.setFileLimit(backup.getFileLimit());
+        backupToModify.setBackupTime(backup.getBackupTime());
+        backupToModify.setFrequency(backup.getFrequency());
     }
 }
