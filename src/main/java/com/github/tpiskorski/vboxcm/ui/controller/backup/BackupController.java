@@ -41,12 +41,10 @@ public class BackupController {
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
         modifyButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
-        addServerStage = contextAwareSceneLoader.load("/fxml/backup/addVmBackup.fxml");
-        addServerStage.setResizable(false);
+        addServerStage = contextAwareSceneLoader.loadPopup("/fxml/backup/addVmBackup.fxml");
         addServerStage.setTitle("Adding backup...");
 
-        modifyVmStage = contextAwareSceneLoader.load("/fxml/backup/modifyVmBackup.fxml");
-        modifyVmStage.setResizable(false);
+        modifyVmStage = contextAwareSceneLoader.loadPopup("/fxml/backup/modifyVmBackup.fxml");
         modifyVmStage.setTitle("Modifying backup...");
 
         Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {

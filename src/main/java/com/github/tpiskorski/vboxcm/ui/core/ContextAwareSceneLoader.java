@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -38,6 +39,13 @@ public class ContextAwareSceneLoader {
         stage.setResizable(false);
         stage.setScene(scene);
 
+        return stage;
+    }
+
+    public Stage loadPopup(String fxmlPath) throws IOException {
+        Stage stage = load(fxmlPath);
+        stage.setResizable(false);
+        stage.initStyle(StageStyle.UTILITY);
         return stage;
     }
 
