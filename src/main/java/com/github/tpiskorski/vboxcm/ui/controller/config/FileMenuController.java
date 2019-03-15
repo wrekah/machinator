@@ -4,9 +4,9 @@ import com.github.tpiskorski.vboxcm.config.ConfigService;
 import com.github.tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -20,35 +20,51 @@ public class FileMenuController {
     private final ConfigurableApplicationContext springContext;
     private final ConfigService configService;
 
-    @Autowired private ServerStubMonitor serverStubMonitor;
+    private final ServerStubMonitor serverStubMonitor;
 
     @FXML private Alert reloadAlert;
     @FXML private Alert monitorAlert;
 
+    private Stage containerWindow;
+
     @Autowired
-    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext) {
+    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext, ServerStubMonitor serverStubMonitor) {
         this.configService = configService;
         this.contextAwareSceneLoader = contextAwareSceneLoader;
         this.springContext = springContext;
+        this.serverStubMonitor = serverStubMonitor;
     }
 
+    @FXML
+    public void initialize() throws IOException {
+        containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/settings/baseConfigContainer.fxml");
+    }
+
+    @FXML
     public void reloadConfig() {
         configService.reload();
         reloadAlert.showAndWait();
     }
 
-    public void modify() throws IOException {
-        contextAwareSceneLoader.loadAndShow("/fxml/menu/config/settings/containerWindow.fxml");
+    @FXML
+    public void modify() {
+        if (containerWindow.isShowing()) {
+            containerWindow.hide();
+        } else {
+            containerWindow.show();
+        }
     }
 
+    @FXML
     public void exit() {
         springContext.close();
         Platform.exit();
     }
 
+    @FXML
     public void freezeMonitoring() {
         serverStubMonitor.freeze();
-        monitorAlert.setContentText("Monitoring: "+ !serverStubMonitor.getIsFreezed().get());
+        monitorAlert.setContentText("Monitoring: " + !serverStubMonitor.getIsFreezed().get());
         monitorAlert.showAndWait();
     }
 }
