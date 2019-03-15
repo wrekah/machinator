@@ -91,6 +91,6 @@ public class Job {
         }
         Job that = (Job) obj;
 
-        return Objects.equals(this.jobName.get(), that.jobName.get()) && Objects.equals(this.startTime, that.startTime);
+        return Objects.equals(this.getJobName(), that.getJobName()) && Objects.equals(this.getStartTime(), that.getStartTime());
     }
 }

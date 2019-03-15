@@ -24,6 +24,9 @@ class VirtualMachineTest extends Specification {
 
         expect:
         vm1 != vm2
+
+        and:
+        vm2 != vm1
     }
 
     def 'should properly compare not equal vms by server'() {
@@ -33,6 +36,9 @@ class VirtualMachineTest extends Specification {
 
         expect:
         vm1 != vm2
+
+        and:
+        vm2 != vm1
     }
 
     def 'should properly compare equal vms'() {
@@ -42,6 +48,21 @@ class VirtualMachineTest extends Specification {
 
         expect:
         vm1 == vm2
+        vm2 == vm1
+
+        and:
         vm1.hashCode() == vm2.hashCode()
+    }
+
+    def 'should properly compare not server'() {
+        given:
+        def something = new Object()
+        def vm = new VirtualMachine('server', 'vm')
+
+        expect:
+        something != vm
+
+        and:
+        vm != something
     }
 }

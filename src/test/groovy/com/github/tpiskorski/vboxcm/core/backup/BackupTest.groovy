@@ -11,6 +11,9 @@ class BackupTest extends Specification {
 
         expect:
         backup1 == backup2
+        backup2 == backup1
+
+        and:
         backup1.hashCode() == backup2.hashCode()
     }
 
@@ -24,5 +27,22 @@ class BackupTest extends Specification {
         backup1 != backup2
         backup2 != backup3
         backup1 != backup3
+
+        and:
+        backup2 != backup1
+        backup3 != backup2
+        backup3 != backup1
+    }
+
+    def 'should properly compare not backup'() {
+        given:
+        def something = new Object()
+        def backup = new Backup(server: 'server1', vm: 'vm1')
+
+        expect:
+        something != backup
+
+        and:
+        backup != something
     }
 }

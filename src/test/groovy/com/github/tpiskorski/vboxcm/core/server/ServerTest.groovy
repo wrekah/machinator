@@ -21,6 +21,9 @@ class ServerTest extends Specification {
 
         expect:
         server1 != server2
+
+        and:
+        server2 != server1
     }
 
     def 'should properly equal servers'() {
@@ -30,6 +33,21 @@ class ServerTest extends Specification {
 
         expect:
         server1 == server2
+        server2 == server1
+
+        and:
         server1.hashCode() == server2.hashCode()
+    }
+
+    def 'should properly compare not server'() {
+        given:
+        def something = new Object()
+        def server = new Server('some:server')
+
+        expect:
+        something != server
+
+        and:
+        server != something
     }
 }
