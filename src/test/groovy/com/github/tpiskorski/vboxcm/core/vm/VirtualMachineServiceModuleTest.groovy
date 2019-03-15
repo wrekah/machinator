@@ -5,7 +5,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class VirtualMachineServiceIntegrationTest extends Specification {
+class VirtualMachineServiceModuleTest extends Specification {
 
     def virtualMachineRepository = new VirtualMachineRepository()
 

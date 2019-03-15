@@ -7,7 +7,7 @@ import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState
 import spock.lang.Specification
 import spock.lang.Subject
 
-class ServerServiceIntegrationTest extends Specification {
+class ServerServiceModuleTest extends Specification {
 
     def serverRepository = new ServerRepository()
     def virtualMachineRepository = new VirtualMachineRepository()

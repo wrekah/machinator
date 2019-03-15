@@ -5,7 +5,7 @@ import spock.lang.Subject
 
 import java.time.LocalDateTime
 
-class JobServiceIntegrationTest extends Specification {
+class JobServiceModuleTest extends Specification {
 
     def jobRepository = new JobRepository()
 

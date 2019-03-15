@@ -3,7 +3,7 @@ package com.github.tpiskorski.vboxcm.core.backup
 import spock.lang.Specification
 import spock.lang.Subject
 
-class BackupServiceIntegrationTest extends Specification {
+class BackupServiceModuleTest extends Specification {
 
     def backupRepository = new BackupRepository()
 
