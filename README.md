@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/tpiskorski/vboxcm.svg?branch=master)](https://travis-ci.com/tpiskorski/vboxcm)
+[![codecov](https://codecov.io/gh/tpiskorski/vboxcm/branch/master/graph/badge.svg)](https://codecov.io/gh/tpiskorski/vboxcm)
 # VBOXCM
 VBOXCM aims at virtualbox cluster orchestration and management.
 
