@@ -41,13 +41,14 @@ class BackupServiceTest extends Specification {
 
     def 'should update backup'() {
         given:
-        def backup = Mock(Backup)
+        def updatedBackup = Mock(Backup)
+        def oldBackup = Mock(Backup)
 
         when:
-        service.update(backup)
+        service.update(updatedBackup)
 
         then:
-        1 * backupRepository.remove(backup)
-        1 * backupRepository.add(backup)
+        1 * backupRepository.find(updatedBackup) >> oldBackup
+        4 * oldBackup./set.*/(_)
     }
 }
