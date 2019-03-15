@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class ConfigViewController {
+public class BaseConfigContainerController {
 
     private final ChangeConfigController changeConfigController;
 
@@ -19,14 +19,16 @@ public class ConfigViewController {
     @FXML private BorderPane settingsContainer;
     @FXML private ListView<String> settingsMenu;
 
-    @Autowired public ConfigViewController(ChangeConfigController changeConfigController) {
+    @Autowired public BaseConfigContainerController(ChangeConfigController changeConfigController) {
         this.changeConfigController = changeConfigController;
     }
 
+    @FXML
     public void initialize() {
         ObservableList<String> settings = FXCollections.observableArrayList("general");
         settingsMenu.setItems(settings);
         settingsMenu.getSelectionModel().select(0);
+
         changeConfig.setVisible(true);
         changeConfigController.reload();
         settingsContainer.setRight(changeConfig);

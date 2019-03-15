@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.ui.controller.config;
+package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.config.ConfigService;
 import com.github.tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
@@ -37,7 +37,7 @@ public class FileMenuController {
 
     @FXML
     public void initialize() throws IOException {
-        containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/settings/baseConfigContainer.fxml");
+        containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/config/baseConfigContainer.fxml");
     }
 
     @FXML
@@ -47,7 +47,7 @@ public class FileMenuController {
     }
 
     @FXML
-    public void modify() {
+    public void configWindow() {
         if (containerWindow.isShowing()) {
             containerWindow.hide();
         } else {
