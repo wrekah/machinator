@@ -1,3 +1,4 @@
+<?import com.github.tpiskorski.vboxcm.ui.control.FormattedConverter?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -22,10 +23,15 @@
                    prefWidth="150"/>
 
         <Label text="Vm" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <TextField  disable="true" editable="false" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="150"/>
+        <TextField disable="true" editable="false" fx:id="vmComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                   prefWidth="150"/>
 
         <Label text="First backup" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <DatePicker fx:id="firstBackup" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <DatePicker fx:id="firstBackup" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <converter>
+                <FormattedConverter/>
+            </converter>
+        </DatePicker>
 
         <Label text="Every " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <TextField promptText="days" fx:id="frequency" GridPane.columnIndex="1" GridPane.rowIndex="3"/>

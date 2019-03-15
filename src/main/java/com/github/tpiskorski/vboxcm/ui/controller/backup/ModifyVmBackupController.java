@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Controller
@@ -35,7 +36,7 @@ public class ModifyVmBackupController {
         Backup backup = new Backup();
         backup.setServer(serverComboBox.getText());
         backup.setVm(vmComboBox.getText());
-        backup.setFirstBackupDay(firstBackup.getValue());
+        backup.setFirstBackupDay(LocalDate.parse(firstBackup.getEditor().getText()));
         backup.setFrequency(Integer.parseInt(frequency.getText()));
         backup.setBackupTime(LocalTime.parse(backupTime.getText()));
         backup.setFileLimit(Integer.parseInt(fileLimit.getText()));
