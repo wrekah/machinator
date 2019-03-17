@@ -36,10 +36,10 @@ public class ConfigWriter {
     }
 
     class Writer {
-        void write(String filePath, Properties prop) throws IOException {
-            Files.createDirectory(Paths.get(filePath).getParent());
-            try (OutputStream outFile = Files.newOutputStream(Paths.get(filePath), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
-                prop.store(outFile, null);
+        void write(String filePath, Properties properties) throws IOException {
+            Files.createDirectories(Paths.get(filePath).getParent());
+            try (OutputStream outFile = Files.newOutputStream(Paths.get(filePath), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                properties.store(outFile, null);
             }
         }
     }
