@@ -6,14 +6,12 @@ import java.util.Properties;
 
 public class PropertiesConfigConverter {
     public Config convert(Properties properties) {
-        Config config = new Config();
-
-        config.setBackupLocation(properties.getProperty("backup.location"));
-        config.setPollInterval(Integer.parseInt(properties.getProperty("poll.interval")));
-        config.setSshUser(properties.getProperty("ssh.user"));
-        config.setSshPassword(properties.getProperty("ssh.password"));
-
-        return config;
+        return Config.builder()
+            .backupLocation(properties.getProperty("backup.location"))
+            .pollInterval(Integer.parseInt(properties.getProperty("poll.interval")))
+            .sshUser(properties.getProperty("ssh.user"))
+            .sshPassword(properties.getProperty("ssh.password"))
+            .build();
     }
 
     public Properties convert(Config config) {
