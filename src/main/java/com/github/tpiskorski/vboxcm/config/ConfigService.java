@@ -1,9 +1,11 @@
 package com.github.tpiskorski.vboxcm.config;
 
 public abstract class ConfigService {
-    private Config config;
+
+    protected Config config;
 
     protected abstract Config loadConfig();
+    public abstract void modifyConfig(Config newConfig);
 
     public void reload() {
         config = loadConfig();

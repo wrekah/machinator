@@ -24,7 +24,7 @@ public class ExternalDefaultingConfigService extends ConfigService {
     }
 
     @Override
-    public Config loadConfig() {
+    protected Config loadConfig() {
         try {
             return externalConfigLoader.loadExternalConfig();
         } catch (Exception e) {
@@ -32,5 +32,9 @@ public class ExternalDefaultingConfigService extends ConfigService {
             LOGGER.warn("Defaulting to internal config...");
             return internalConfigLoader.loadInternalConfig();
         }
+    }
+
+    @Override public void modifyConfig(Config newConfig) {
+        externalConfigLoader.saveConfig(newConfig);
     }
 }

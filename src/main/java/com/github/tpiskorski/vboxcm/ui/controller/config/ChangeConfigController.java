@@ -2,7 +2,6 @@ package com.github.tpiskorski.vboxcm.ui.controller.config;
 
 import com.github.tpiskorski.vboxcm.config.Config;
 import com.github.tpiskorski.vboxcm.config.ConfigService;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -35,8 +34,14 @@ public class ChangeConfigController {
     }
 
     public void saveConfig() {
+        Config newConfig = Config.builder()
+            .backupLocation(backupLocation.getText())
+            .pollInterval(Integer.parseInt(pollInterval.getText()))
+            .sshUser(sshUser.getText())
+            .sshPassword(sshPassword.getText())
+            .build();
 
-        //todo
+        configService.modifyConfig(newConfig);
     }
 
     @FXML

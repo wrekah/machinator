@@ -34,4 +34,8 @@ public class ExternalConfigLoader {
         LOGGER.info("Reading external config {}", externalConfigFilePath);
         return configReader.read(externalConfigFilePath);
     }
+
+    public void saveConfig(Config config){
+        configWriter.write(externalConfigFilePath, config);
+    }
 }
