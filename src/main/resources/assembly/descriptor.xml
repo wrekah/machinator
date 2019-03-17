@@ -1,7 +1,6 @@
 <assembly>
     <id>package</id>
     <formats>
-        <format>tar</format>
         <format>zip</format>
     </formats>
     <fileSets>
