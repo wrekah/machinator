@@ -19,7 +19,7 @@ class ConfigReaderTest extends Specification {
 
     def 'should read properties and create config'() {
         given:
-        def config = new Config()
+        def config = Mock(Config)
         def properties = new Properties()
         def resourceReader = Mock(ResourceReader)
         def filePath = 'some/file/path'

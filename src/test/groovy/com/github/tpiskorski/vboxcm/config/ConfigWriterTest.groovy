@@ -18,7 +18,7 @@ class ConfigWriterTest extends Specification {
 
     def 'should write config'() {
         given:
-        def config = new Config()
+        def config = Mock(Config)
         def properties = new Properties()
         def filePath = 'some/file/path'
 
@@ -32,7 +32,7 @@ class ConfigWriterTest extends Specification {
 
     def 'should throw an exception if writing fails'() {
         given:
-        def config = new Config()
+        def config = Mock(Config)
         def properties = new Properties()
         def filePath = 'some/file/path'
 

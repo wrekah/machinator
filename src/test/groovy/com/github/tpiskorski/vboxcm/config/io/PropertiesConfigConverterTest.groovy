@@ -30,12 +30,12 @@ class PropertiesConfigConverterTest extends Specification {
 
     def 'should convert config to properties'() {
         given:
-        def config = new Config(
-                sshUser: 'root',
-                sshPassword: 'root',
-                pollInterval: 20,
-                backupLocation: 'some/location'
-        )
+        def config = Config.builder()
+                .sshUser('root')
+                .sshPassword('root')
+                .pollInterval(20)
+                .backupLocation('some/location')
+                .build()
 
         when:
         def properties = converter.convert(config)
