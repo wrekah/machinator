@@ -3,11 +3,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.WatchdogController">
+            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.watchdog.WatchdogController">
 
 
     <center>
-        <TableView fx:id="backupsTableView">
+        <TableView fx:id="watchdogTableView">
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
@@ -36,11 +36,10 @@
 
 
         <HBox alignment="CENTER">
-            <Button text="Watch vm"/>
-            <Button text="Unwatch vm"/>
-            <Button text="History"/>
+            <Button text="Watch vm" onAction="#watchVm"/>
+            <Button text="Unwatch vm" onAction="#unwatchVm"/>
+            <Button text="Modify..." onAction="#modifyVm"/>
         </HBox>
-
 
     </bottom>
 
