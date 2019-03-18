@@ -59,7 +59,7 @@
         <VBox>
             <HBox alignment="CENTER" spacing="10">
                 <Label text="Backup location"/>
-                <TextField text="/dev/null" editable="false"/>
+                <TextField fx:id="backupLocation" editable="false"/>
             </HBox>
             <HBox alignment="CENTER">
                 <Button text="Add virtual machine" onAction="#showAddVm"/>

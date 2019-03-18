@@ -20,6 +20,7 @@ public class InMemoryConfigService extends ConfigService {
     }
 
     @Override public void modifyConfig(Config newConfig) {
+        firePropertyChange("configChange", config, newConfig);
         config = newConfig;
     }
 }

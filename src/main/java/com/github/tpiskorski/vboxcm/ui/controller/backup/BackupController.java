@@ -1,5 +1,7 @@
 package com.github.tpiskorski.vboxcm.ui.controller.backup;
 
+import com.github.tpiskorski.vboxcm.config.Config;
+import com.github.tpiskorski.vboxcm.config.ConfigService;
 import com.github.tpiskorski.vboxcm.core.backup.Backup;
 import com.github.tpiskorski.vboxcm.core.backup.BackupService;
 import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
@@ -8,9 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class BackupController {
     public Button removeVmButton;
     public Button modifyButton;
 
+    @FXML private TextField backupLocation;
+    @Autowired private ConfigService configService;
+
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @FXML private TableColumn viewColumn;
     @Autowired private BackupService backupService;
@@ -38,6 +42,12 @@ public class BackupController {
 
     @FXML
     public void initialize() throws IOException {
+        backupLocation.setText(configService.getConfig().getBackupLocation());
+        configService.addPropertyChangeListener(evt -> {
+            Config newValue = (Config) evt.getNewValue();
+            backupLocation.setText(newValue.getBackupLocation());
+        });
+
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
         modifyButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 

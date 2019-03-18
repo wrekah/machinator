@@ -42,10 +42,11 @@ public class ChangeConfigController {
             .build();
 
         configService.modifyConfig(newConfig);
+        close();
     }
 
     @FXML
-    public void close(   ) {
+    public void close() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
