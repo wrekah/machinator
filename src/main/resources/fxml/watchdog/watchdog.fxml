@@ -19,12 +19,12 @@
                 </TableColumn>
                 <TableColumn text="VM">
                     <cellValueFactory>
-                        <PropertyValueFactory property="vm"/>
+                        <PropertyValueFactory property="vmName"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Backed up by server">
                     <cellValueFactory>
-                        <PropertyValueFactory property="firstBackupDay"/>
+                        <PropertyValueFactory property="watchdogServer"/>
                     </cellValueFactory>
                 </TableColumn>
             </columns>

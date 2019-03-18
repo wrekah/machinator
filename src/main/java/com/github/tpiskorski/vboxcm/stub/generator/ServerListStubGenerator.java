@@ -22,7 +22,7 @@ public class ServerListStubGenerator implements InitializingBean {
     }
 
     @Override public void afterPropertiesSet() {
-        int numberOfServers = ThreadLocalRandom.current().nextInt(1, 10);
+        int numberOfServers = ThreadLocalRandom.current().nextInt(2, 10);
 
         generateServers(numberOfServers);
     }
