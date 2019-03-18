@@ -37,8 +37,7 @@
 
         <HBox alignment="CENTER">
             <Button text="Watch vm" onAction="#watchVm"/>
-            <Button text="Unwatch vm" onAction="#unwatchVm"/>
-            <Button text="Modify..." onAction="#modifyVm"/>
+            <Button text="Unwatch vm" fx:id="unwatchVmButton" onAction="#unwatchVm"/>
         </HBox>
 
     </bottom>

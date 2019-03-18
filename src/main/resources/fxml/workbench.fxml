@@ -79,7 +79,7 @@
                     <fx:include fx:id="barTabPage" source="backups.fxml"/>
                 </Tab>
                 <Tab text="Watchdog">
-                    <fx:include source="watchdog.fxml"/>
+                    <fx:include source="watchdog/watchdog.fxml"/>
                 </Tab>
                 <Tab text="Jobs">
                     <fx:include source="jobs.fxml"/>
