@@ -6,8 +6,6 @@ import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -52,29 +50,7 @@ public class AddVmBackupController {
 
         setConverters();
 
-        serverComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, server, t1) -> {
-            if (t1 != null) {
-
-            }
-        });
-
         vmComboBox.disableProperty().bind(serverComboBox.valueProperty().isNull());
-        vmComboBox.disableProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-                System.out.println(oldValue);
-                System.out.println(newValue);
-            }
-        });
-//        vmComboBox.disableProperty().addListener((observableValue, aBoolean, t1) -> {
-//            if(t1){
-//                vmComboBox.setPromptText("Pick server to pick vm");
-//            }else{
-//                vmComboBox.setPromptText("Pick server to pick vm");
-//
-//            }
-//        });
-
         serverComboBox.setItems(serverService.getServers());
 
         serverComboBox.getItems().addListener((ListChangeListener<Server>) change -> {
@@ -120,6 +96,7 @@ public class AddVmBackupController {
     @FXML
     public void close() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
+        clear();
         stage.close();
     }
 
@@ -142,7 +119,6 @@ public class AddVmBackupController {
 
         backupService.add(backup);
         ((Stage) addButton.getScene().getWindow()).close();
-
         clear();
     }
 
