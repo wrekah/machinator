@@ -23,6 +23,7 @@
                                 <HBox alignment="CENTER" spacing="5.0">
                                     <Button text="Add server" onAction="#addServer"/>
                                     <Button text="Remove server" fx:id="removeServerButton" onAction="#removeServer"/>
+                                    <Button text="Jobs" onAction="#showJobs"/>
                                 </HBox>
                             </VBox>
                         </left>
@@ -68,7 +69,6 @@
                                         </TableColumn>
                                     </columns>
                                 </TableView>
-
                             </VBox>
 
                         </center>
@@ -81,9 +81,7 @@
                 <Tab text="Watchdog">
                     <fx:include source="watchdog/watchdog.fxml"/>
                 </Tab>
-                <Tab text="Jobs">
-                    <fx:include source="jobs.fxml"/>
-                </Tab>
+
             </tabs>
 
         </TabPane>
