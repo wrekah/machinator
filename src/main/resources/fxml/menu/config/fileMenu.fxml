@@ -11,7 +11,7 @@
     <MenuItem text="Config..." onAction="#configWindow"/>
     <MenuItem text="Reload config" onAction="#reloadConfig"/>
     <SeparatorMenuItem/>
-    <MenuItem text="Freeze monitoring" onAction="#freezeMonitoring"/>
+    <MenuItem fx:id="monitoringMenuItem" text="Freeze monitoring" onAction="#freezeMonitoring"/>
     <SeparatorMenuItem/>
     <MenuItem text="Exit" onAction="#exit"/>
 

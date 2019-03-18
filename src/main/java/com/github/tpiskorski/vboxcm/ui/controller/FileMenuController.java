@@ -6,6 +6,7 @@ import com.github.tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,6 +22,8 @@ public class FileMenuController {
     private final ConfigService configService;
 
     private final ServerStubMonitor serverStubMonitor;
+
+    @FXML private MenuItem monitoringMenuItem;
 
     @FXML private Alert reloadAlert;
     @FXML private Alert monitorAlert;
@@ -38,6 +41,7 @@ public class FileMenuController {
     @FXML
     public void initialize() throws IOException {
         containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/config/baseConfigContainer.fxml");
+        monitoringMenuItem.setText(serverStubMonitor.getIsFreezed().get() ? "Start Monitoring" : "Stop Monitoring");
     }
 
     @FXML
@@ -64,6 +68,7 @@ public class FileMenuController {
     @FXML
     public void freezeMonitoring() {
         serverStubMonitor.freeze();
+        monitoringMenuItem.setText(serverStubMonitor.getIsFreezed().get() ? "Start Monitoring" : "Stop Monitoring");
         monitorAlert.setContentText("Monitoring: " + !serverStubMonitor.getIsFreezed().get());
         monitorAlert.showAndWait();
     }
