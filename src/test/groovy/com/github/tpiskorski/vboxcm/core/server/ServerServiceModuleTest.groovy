@@ -134,4 +134,24 @@ class ServerServiceModuleTest extends Specification {
         virtualMachineService.getVms(server1).contains(newVm1)
         virtualMachineService.getVms().contains(newVm1)
     }
+
+    def 'should check if contains server'() {
+        given:
+        def server1 = new Server('some:address')
+        def server2 = new Server('some:otheraddress')
+
+        when:
+        service.add(server1)
+
+        then:
+        service.contains(server1)
+        !service.contains(server2)
+
+        when:
+        service.remove(server1)
+
+        then:
+        !service.contains(server1)
+        !service.contains(server2)
+    }
 }

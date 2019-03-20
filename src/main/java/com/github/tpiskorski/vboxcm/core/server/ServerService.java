@@ -41,4 +41,8 @@ public class ServerService {
         server.setServerState(ServerState.REACHABLE);
         virtualMachineService.replace(server, vms);
     }
+
+    public boolean contains(Server server) {
+        return serverRepository.contains(server);
+    }
 }

@@ -1,137 +1,81 @@
 package com.github.tpiskorski.vboxcm.core.server
 
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineRepository
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState
 import spock.lang.Specification
 import spock.lang.Subject
 
 class ServerServiceTest extends Specification {
 
-    def serverRepository = new ServerRepository()
-    def virtualMachineRepository = new VirtualMachineRepository()
-    def virtualMachineService = new VirtualMachineService(virtualMachineRepository)
+    def serverRepository = Mock(ServerRepository)
+    def virtualMachineService = Mock(VirtualMachineService)
 
     @Subject service = new ServerService(serverRepository, virtualMachineService)
 
-    def 'should get no servers if nothing was added'() {
-        expect:
-        service.getServers().empty
+    def 'should get servers from repository'() {
+        when:
+        service.getServers()
+
+        then:
+        1 * serverRepository.getServersList()
     }
 
-    def 'should get servers that were added'() {
+    def 'should add server'() {
         given:
-        def server1 = new Server('some:address')
-        def server2 = new Server('some:otheraddress')
+        def server = Mock(Server)
 
         when:
-        service.add(server1)
-        service.add(server2)
+        service.add(server)
 
         then:
-        service.getServers() == [server1, server2]
+        1 * serverRepository.add(server)
     }
 
-    def 'should properly remove servers'() {
+    def 'should remove server and corresponding vms'() {
         given:
-        def server1 = new Server('some:address')
-        def server2 = new Server('some:otheraddress')
+        def server = Mock(Server)
 
         when:
-        service.add(server1)
-        service.add(server2)
+        service.remove(server)
 
         then:
-        service.getServers() == [server1, server2]
-
-        when:
-        service.remove(server1)
-
-        then:
-        service.getServers() == [server2]
-
-        when:
-        service.remove(server2)
-
-        then:
-        service.getServers().empty
+        1 * serverRepository.remove(server)
+        1 * virtualMachineService.removeByServer(server)
     }
 
-    def 'should not remove the server that is not present'() {
+    def 'should update unreachable to server and vms'() {
         given:
-        def server1 = new Server('some:address')
-        def server2 = new Server('some:otheraddress')
+        def server = Mock(Server)
 
         when:
-        service.add(server1)
+        service.updateUnreachable(server)
 
         then:
-        service.getServers() == [server1]
-
-        when:
-        service.remove(server2)
-
-        then:
-        service.getServers() == [server1]
+        1 * server.setServerState(ServerState.NOT_REACHABLE)
+        1 * virtualMachineService.updateNotReachableBy(server)
     }
 
-    def 'should update not_reachable state to the server and vms'() {
+    def 'should update reachable to server and vms'() {
         given:
-        def server1 = new Server('some:address')
-        def server2 = new Server('some:otheraddress')
-
-        def vm1 = new VirtualMachine('some:address', 'vm1')
-        def vm2 = new VirtualMachine('some:address', 'vm2')
-        def vm3 = new VirtualMachine('some:otheraddress', 'v1')
-
-        and:
-        service.add(server1)
-        service.add(server2)
-
-        and:
-        virtualMachineService.add(vm1)
-        virtualMachineService.add(vm2)
-        virtualMachineService.add(vm3)
+        def server = Mock(Server)
+        def vms = [Mock(VirtualMachine)]
 
         when:
-        service.updateUnreachable(server1)
+        service.updateReachable(server, vms)
 
         then:
-        server1.serverState == ServerState.NOT_REACHABLE
-        vm1.state == VirtualMachineState.UNREACHABLE
-        vm2.state == VirtualMachineState.UNREACHABLE
+        1 * server.setServerState(ServerState.REACHABLE)
+        1 * virtualMachineService.replace(server, vms)
     }
 
-    def 'should update reachable state to the server and vms'() {
+    def 'should check if it contains server'() {
         given:
-        def server1 = new Server('some:address')
-        def server2 = new Server('some:otheraddress')
-
-        def vm1 = new VirtualMachine('some:address', 'vm1')
-        def vm2 = new VirtualMachine('some:address', 'vm2')
-        def vm3 = new VirtualMachine('some:otheraddress', 'v1')
-
-        and:
-        service.add(server1)
-        service.add(server2)
-
-        and:
-        virtualMachineService.add(vm1)
-        virtualMachineService.add(vm2)
-        virtualMachineService.add(vm3)
-
-        and:
-        def newVm1 = new VirtualMachine('some:address', 'some new vm')
+        def server = Mock(Server)
 
         when:
-        service.updateReachable(server1, [newVm1])
+        service.contains(server)
 
         then:
-        server1.serverState == ServerState.REACHABLE
-
-        and:
-        virtualMachineService.getVms(server1).contains(newVm1)
-        virtualMachineService.getVms().contains(newVm1)
+        1 * serverRepository.contains(server)
     }
 }

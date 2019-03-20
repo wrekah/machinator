@@ -20,4 +20,8 @@ class ServerRepository {
     void remove(Server server) {
         serverObservableList.remove(server);
     }
+
+    boolean contains(Server server) {
+        return serverObservableList.contains(server);
+    }
 }

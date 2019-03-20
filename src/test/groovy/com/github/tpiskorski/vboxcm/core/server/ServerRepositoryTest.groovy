@@ -56,4 +56,24 @@ class ServerRepositoryTest extends Specification {
         then:
         repository.getServersList().empty
     }
+
+    def 'should not find any elements if not present'() {
+        given:
+        def server1 = new Server('localhost:8888')
+        def server2 = new Server('localhost:8889')
+
+        when:
+        repository.add(server1)
+
+        then:
+        !repository.contains(server2)
+        repository.contains(server1)
+
+        when:
+        repository.remove(server1)
+
+        then:
+        !repository.contains(server2)
+        !repository.contains(server1)
+    }
 }
