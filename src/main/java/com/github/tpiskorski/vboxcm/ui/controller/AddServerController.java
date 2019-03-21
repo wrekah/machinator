@@ -9,9 +9,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -26,6 +24,10 @@ public class AddServerController {
     private final CheckConnectivityTaskFactory checkConnectivityTaskFactory;
     private final WorkbenchController workbenchController;
 
+    @FXML private RadioButton remoteRadioButton;
+    @FXML private RadioButton localhostRadioButton;
+    @FXML private ToggleGroup serversToggleGroup;
+
     private CheckConnectivityTask task;
 
     @FXML private StackPane addServerStackPane;
@@ -39,6 +41,9 @@ public class AddServerController {
     @FXML private TextField address;
     @FXML private TextField port;
 
+    private String savedAddress;
+    private String savedPort;
+
     @Autowired
     public AddServerController(ServerService serverService, CheckConnectivityTaskFactory checkConnectivityTaskFactory, WorkbenchController workbenchController) {
         this.serverService = serverService;
@@ -48,6 +53,9 @@ public class AddServerController {
 
     @FXML
     public void initialize() {
+        address.disableProperty().bind(localhostRadioButton.selectedProperty());
+        port.disableProperty().bind(localhostRadioButton.selectedProperty());
+
         BooleanBinding nonBlankAddress = Bindings.createBooleanBinding(() ->
                 address.getText().trim().isEmpty(),
             address.textProperty()
@@ -58,7 +66,22 @@ public class AddServerController {
             port.textProperty()
         );
 
-        addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort));
+        addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort).and(localhostRadioButton.selectedProperty().not()));
+
+        serversToggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle previousToggle, Toggle nextToggle) {
+                if (nextToggle == localhostRadioButton) {
+                    savedAddress = address.getText();
+                    address.setText("localhost");
+                    savedPort = port.getText();
+                    port.clear();
+                } else {
+                    address.setText(savedAddress);
+                    port.setText(savedPort);
+                }
+            }
+        });
     }
 
     @FXML
@@ -101,6 +124,7 @@ public class AddServerController {
 
         address.clear();
         port.clear();
+        remoteRadioButton.setSelected(true);
 
         stage.close();
     }

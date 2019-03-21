@@ -9,13 +9,14 @@ import java.util.Objects;
 public class Server implements Comparable<Server> {
 
     private static final String LOCALHOST = "localhost";
+
     private StringProperty address = new SimpleStringProperty();
     private BooleanProperty reachable = new SimpleBooleanProperty();
     private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
 
     public Server(String address) {
         setAddress(address);
-        if (address.equals(LOCALHOST)) {
+        if (address.startsWith(LOCALHOST)) {
             setServerState(ServerState.LOCALHOST);
         } else {
             setServerState(ServerState.UNKNOWN);
