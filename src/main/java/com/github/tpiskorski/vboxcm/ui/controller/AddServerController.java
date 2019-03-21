@@ -6,7 +6,10 @@ import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTask;
 import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTaskFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -28,6 +31,7 @@ public class AddServerController {
     @FXML private StackPane addServerStackPane;
     @FXML private GridPane addServerGridPane;
     @FXML private VBox progressLayer;
+    @FXML private Alert serverExistsAlert;
 
     @FXML private Button addButton;
     @FXML private Button closeButton;
@@ -70,6 +74,12 @@ public class AddServerController {
         addServerStackPane.getChildren().add(progressLayer);
 
         Server server = new Server(address.getText() + ":" + port.getText());
+
+        if (serverService.contains(server)) {
+            serverExistsAlert.showAndWait();
+            closeWindow();
+            return;
+        }
 
         task = checkConnectivityTaskFactory.taskFor(server);
         task.setOnCancelled(workerStateEvent -> closeWindow());

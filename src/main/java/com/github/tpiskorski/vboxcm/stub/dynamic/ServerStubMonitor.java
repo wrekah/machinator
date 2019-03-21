@@ -2,6 +2,7 @@ package com.github.tpiskorski.vboxcm.stub.dynamic;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
+import com.github.tpiskorski.vboxcm.core.server.ServerState;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.stub.net.SshException;
 import com.github.tpiskorski.vboxcm.stub.net.StubSshClient;
@@ -25,16 +26,15 @@ public class ServerStubMonitor {
 
     private final ServerService serverService;
     private final StubSshClient stubSshClient;
-
-    public AtomicBoolean getIsFreezed() {
-        return isFreezed;
-    }
-
     private AtomicBoolean isFreezed = new AtomicBoolean(false);
 
     @Autowired public ServerStubMonitor(ServerService serverService, StubSshClient stubSshClient) {
         this.serverService = serverService;
         this.stubSshClient = stubSshClient;
+    }
+
+    public AtomicBoolean getIsFreezed() {
+        return isFreezed;
     }
 
     @Scheduled(fixedRate = 10000L)
@@ -48,6 +48,10 @@ public class ServerStubMonitor {
         }
 
         for (Server server : servers) {
+            if (server.getServerState() == ServerState.LOCALHOST) {
+                return;
+            }
+
             try {
                 List<VirtualMachine> vms = stubSshClient.getVms(server);
                 Platform.runLater(() -> serverService.updateReachable(server, vms));

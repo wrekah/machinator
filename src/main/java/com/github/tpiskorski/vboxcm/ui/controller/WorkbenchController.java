@@ -15,6 +15,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -118,7 +119,7 @@ public class WorkbenchController {
             });
         });
 
-        serverList.setItems(filterableServers);
+        serverList.setItems(new SortedList<>(filterableServers, Server::compareTo));
         virtualMachines.setItems(filterableVirtualMachines);
 
         virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {
@@ -191,7 +192,7 @@ public class WorkbenchController {
         if (jobsStage.isShowing()) {
             jobsStage.hide();
         } else {
-            Stage currentStage= (Stage)((Node) event.getSource()).getScene().getWindow();
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
             jobsStage.setX(currentStage.getX() + currentStage.getWidth());
             jobsStage.setY(currentStage.getY());

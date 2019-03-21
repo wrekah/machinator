@@ -1,4 +1,4 @@
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
@@ -7,9 +7,14 @@
 >
 
     <fx:define>
+
         <VBox alignment="CENTER" fx:id="progressLayer">
             <ProgressIndicator/>
         </VBox>
+
+        <Alert fx:id="serverExistsAlert" contentText="Server already added!" headerText="" alertType="WARNING"
+               title="Adding server..."/>
+
     </fx:define>
 
 

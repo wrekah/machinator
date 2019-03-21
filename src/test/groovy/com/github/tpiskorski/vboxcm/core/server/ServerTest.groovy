@@ -50,4 +50,13 @@ class ServerTest extends Specification {
         and:
         server != something
     }
+
+    def 'should create localhost server'() {
+        given:
+        def server = new Server('localhost')
+
+        expect:
+        server.address == 'localhost'
+        server.serverState == ServerState.LOCALHOST
+    }
 }
