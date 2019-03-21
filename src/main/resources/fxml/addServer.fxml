@@ -12,7 +12,13 @@
             <ProgressIndicator/>
         </VBox>
 
-        <Alert fx:id="serverExistsAlert" contentText="Server already added!" headerText="" alertType="WARNING"
+        <Alert fx:id="serverExistsAlert" contentText="Server already present!" headerText="" alertType="WARNING"
+               title="Adding server..."/>
+
+        <Alert fx:id="noConnectivityServerAlert" contentText="Cannot connect to the server!" headerText="" alertType="ERROR"
+               title="Adding server..."/>
+
+        <Alert fx:id="cancelledServerAlert" contentText="Adding server has been cancelled!" headerText="" alertType="ERROR"
                title="Adding server..."/>
 
         <ToggleGroup fx:id="serversToggleGroup"/>

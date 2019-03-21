@@ -2,12 +2,9 @@ package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
-import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTask;
-import com.github.tpiskorski.vboxcm.stub.dynamic.CheckConnectivityTaskFactory;
+import com.github.tpiskorski.vboxcm.vm.ConnectivityService;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -21,19 +18,19 @@ import org.springframework.stereotype.Controller;
 public class AddServerController {
 
     private final ServerService serverService;
-    private final CheckConnectivityTaskFactory checkConnectivityTaskFactory;
     private final WorkbenchController workbenchController;
+
+    @FXML private Alert serverExistsAlert;
+    @FXML private Alert noConnectivityServerAlert;
+    @FXML private Alert cancelledServerAlert;
 
     @FXML private RadioButton remoteRadioButton;
     @FXML private RadioButton localhostRadioButton;
     @FXML private ToggleGroup serversToggleGroup;
 
-    private CheckConnectivityTask task;
-
     @FXML private StackPane addServerStackPane;
     @FXML private GridPane addServerGridPane;
     @FXML private VBox progressLayer;
-    @FXML private Alert serverExistsAlert;
 
     @FXML private Button addButton;
     @FXML private Button closeButton;
@@ -44,10 +41,11 @@ public class AddServerController {
     private String savedAddress;
     private String savedPort;
 
+    private ConnectivityService connectivityService = new ConnectivityService();
+
     @Autowired
-    public AddServerController(ServerService serverService, CheckConnectivityTaskFactory checkConnectivityTaskFactory, WorkbenchController workbenchController) {
+    public AddServerController(ServerService serverService, WorkbenchController workbenchController) {
         this.serverService = serverService;
-        this.checkConnectivityTaskFactory = checkConnectivityTaskFactory;
         this.workbenchController = workbenchController;
     }
 
@@ -68,18 +66,15 @@ public class AddServerController {
 
         addButton.disableProperty().bind(nonBlankAddress.or(nonBlankPort).and(localhostRadioButton.selectedProperty().not()));
 
-        serversToggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle previousToggle, Toggle nextToggle) {
-                if (nextToggle == localhostRadioButton) {
-                    savedAddress = address.getText();
-                    address.setText("localhost");
-                    savedPort = port.getText();
-                    port.clear();
-                } else {
-                    address.setText(savedAddress);
-                    port.setText(savedPort);
-                }
+        serversToggleGroup.selectedToggleProperty().addListener((observable, previousToggle, nextToggle) -> {
+            if (nextToggle == localhostRadioButton) {
+                savedAddress = address.getText();
+                address.setText("localhost");
+                savedPort = port.getText();
+                port.clear();
+            } else {
+                address.setText(savedAddress);
+                port.setText(savedPort);
             }
         });
     }
@@ -87,8 +82,8 @@ public class AddServerController {
     @FXML
     public void saveConfig() {
         addServerGridPane.getScene().getWindow().setOnHiding(event -> {
-            if (task != null) {
-                task.cancel();
+            if (connectivityService.isRunning()) {
+                connectivityService.cancel();
             }
         });
 
@@ -104,15 +99,22 @@ public class AddServerController {
             return;
         }
 
-        task = checkConnectivityTaskFactory.taskFor(server);
-        task.setOnCancelled(workerStateEvent -> closeWindow());
-        task.setOnFailed(workerStateEvent -> closeWindow());
-        task.setOnSucceeded(workerStateEvent -> {
+        connectivityService.setOnCancelled(workerStateEvent -> {
+            cancelledServerAlert.showAndWait();
+            closeWindow();
+        });
+
+        connectivityService.setOnFailed(workerStateEvent -> {
+            noConnectivityServerAlert.showAndWait();
+            closeWindow();
+        });
+
+        connectivityService.setOnSucceeded(workerStateEvent -> {
             serverService.add(server);
             closeWindow();
         });
 
-        new Thread(task).start();
+        connectivityService.start();
     }
 
     private void closeWindow() {
@@ -120,13 +122,14 @@ public class AddServerController {
 
         addServerGridPane.setDisable(false);
         workbenchController.enableMainWindow();
-        Stage stage = (Stage) addButton.getScene().getWindow();
 
         address.clear();
         port.clear();
         remoteRadioButton.setSelected(true);
 
-        stage.close();
+        connectivityService.reset();
+
+        ((Stage) addButton.getScene().getWindow()).close();
     }
 
     @FXML
