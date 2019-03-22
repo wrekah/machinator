@@ -20,6 +20,10 @@ public class VirtualMachineService {
         virtualMachineRepository.add(vm);
     }
 
+    public void upsert(VirtualMachine vm){
+        virtualMachineRepository.upsert(vm);
+    }
+
     public ObservableList<VirtualMachine> getVms() {
         return virtualMachineRepository.getVms();
     }
@@ -49,5 +53,9 @@ public class VirtualMachineService {
     public void replace(Server server, List<VirtualMachine> vms) {
         virtualMachineRepository.removeByServer(server);
         add(vms);
+    }
+
+    public void upsert(List<VirtualMachine> vms) {
+        vms.forEach(this::upsert);
     }
 }

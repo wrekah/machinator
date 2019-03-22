@@ -15,6 +15,7 @@ public class VmGenerator {
         return IntStream.rangeClosed(1, virtualMachinesNumber)
             .mapToObj(i -> {
                 VirtualMachine vm = new VirtualMachine();
+                vm.setId("generated");
                 vm.setCpuCores(cpuCores());
                 vm.setServer(server.getAddress());
                 vm.setVmName(vmName(i));

@@ -31,4 +31,19 @@ public class VirtualMachineRepository {
     void removeByServer(Server serverToRemove) {
         vmObservableList.removeIf(virtualMachine -> virtualMachine.getServer().equals(serverToRemove.getAddress()));
     }
+
+    public void upsert(VirtualMachine vm) {
+        if(!vmObservableList.contains(vm)){
+            add(vm);
+        }else{
+            VirtualMachine virtualMachine1 = vmObservableList.stream()
+                .filter(virtualMachine -> virtualMachine.getId().equals(vm.getId()))
+                .findFirst().get();
+
+            virtualMachine1.setState(vm.getState());
+            virtualMachine1.setCpuCores(vm.getCpuCores());
+            virtualMachine1.setRamMemory(vm.getRamMemory());
+            virtualMachine1.setVmName(vm.getVmName());
+        }
+    }
 }
