@@ -11,9 +11,9 @@ class VirtualMachineRepositoryTest extends Specification {
 
     def 'should add vms'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server2', 'vm1')
-        def vm3 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server2', 'id1')
+        def vm3 = new VirtualMachine('server1', 'id2')
 
         when:
         repository.add(vm1)
@@ -26,7 +26,7 @@ class VirtualMachineRepositoryTest extends Specification {
 
     def 'should remove vm'() {
         given:
-        def vm = new VirtualMachine('server1', 'vm1')
+        def vm = new VirtualMachine('server1', 'id1')
 
         when:
         repository.add(vm)
@@ -38,9 +38,9 @@ class VirtualMachineRepositoryTest extends Specification {
 
     def 'should add and remove vms'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server2', 'vm1')
-        def vm3 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server2', 'id1')
+        def vm3 = new VirtualMachine('server1', 'id2')
 
         when:
         repository.add(vm1)
@@ -72,9 +72,9 @@ class VirtualMachineRepositoryTest extends Specification {
     @Unroll
     def 'should get vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server2', 'vm1')
-        def vm3 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server2', 'id1')
+        def vm3 = new VirtualMachine('server1', 'id2')
 
         and:
         repository.add(vm1)
@@ -94,9 +94,9 @@ class VirtualMachineRepositoryTest extends Specification {
     @Unroll
     def 'should remove vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server2', 'vm1')
-        def vm3 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server2', 'id1')
+        def vm3 = new VirtualMachine('server1', 'id2')
 
         and:
         repository.add(vm1)

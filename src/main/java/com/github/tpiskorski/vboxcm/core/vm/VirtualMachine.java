@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class VirtualMachine {
 
+    private StringProperty id = new SimpleStringProperty();
     private StringProperty vmName = new SimpleStringProperty();
     private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
     private StringProperty server = new SimpleStringProperty();
@@ -17,14 +18,26 @@ public class VirtualMachine {
     public VirtualMachine() {
     }
 
-    public VirtualMachine(String server, String vmName) {
-        this.server.set(server);
-        this.vmName.set(vmName);
+    public VirtualMachine(String server, String id) {
+        setServer(server);
+        setId(id);
         setState(VirtualMachineState.UNREACHABLE);
     }
 
     static Callback<VirtualMachine, Observable[]> extractor() {
-        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+        return (VirtualMachine vm) -> new Observable[]{vm.idProperty(), vm.vmNameProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+    }
+
+    public String getId() {
+        return id.get();
+    }
+
+    public void setId(String id) {
+        this.id.set(id);
+    }
+
+    public StringProperty idProperty() {
+        return id;
     }
 
     public VirtualMachineState getState() {
@@ -98,7 +111,7 @@ public class VirtualMachine {
         VirtualMachine that = (VirtualMachine) obj;
 
         return Objects.equals(this.getServer(), that.getServer())
-            && Objects.equals(this.getVmName(), that.getVmName());
+            && Objects.equals(this.getId(), that.getId());
     }
 
     @Override

@@ -18,8 +18,8 @@ class VirtualMachineServiceModuleTest extends Specification {
 
     def 'should get vms that were added'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server1', 'id2')
 
         when:
         service.add(vm1)
@@ -31,9 +31,9 @@ class VirtualMachineServiceModuleTest extends Specification {
 
     def 'should properly remove vms'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server1', 'vm2')
-        def vm3 = new VirtualMachine('server2', 'vm1')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server1', 'id2')
+        def vm3 = new VirtualMachine('server2', 'id1')
 
         when:
         service.add(vm1)
@@ -64,8 +64,8 @@ class VirtualMachineServiceModuleTest extends Specification {
 
     def 'should not remove the vm that is not present'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server1', 'vm2')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server1', 'id2')
 
         when:
         service.add(vm1)
@@ -83,9 +83,9 @@ class VirtualMachineServiceModuleTest extends Specification {
     @Unroll
     def 'should get vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm1')
-        def vm2 = new VirtualMachine('server1', 'vm2')
-        def vm3 = new VirtualMachine('server2', 'vm1')
+        def vm1 = new VirtualMachine('server1', 'id1')
+        def vm2 = new VirtualMachine('server1', 'id2')
+        def vm3 = new VirtualMachine('server2', 'id1')
 
         and:
         service.add(vm1)

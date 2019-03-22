@@ -7,20 +7,20 @@ class VirtualMachineTest extends Specification {
     def 'should create vm with unreachable state by default'() {
         given:
         def server = 'server'
-        def vmName = 'some vm name'
+        def id = 'id'
 
-        def vm = new VirtualMachine(server, vmName)
+        def vm = new VirtualMachine(server, id)
 
         expect:
         vm.server == server
-        vm.vmName == vmName
+        vm.id == id
         vm.state == VirtualMachineState.UNREACHABLE
     }
 
-    def 'should properly compare not equal vms by vm'() {
+    def 'should properly compare not equal vms by id'() {
         given:
-        def vm1 = new VirtualMachine('server', 'vm1')
-        def vm2 = new VirtualMachine('server', 'vm2')
+        def vm1 = new VirtualMachine('server', 'id1')
+        def vm2 = new VirtualMachine('server', 'id2')
 
         expect:
         vm1 != vm2
@@ -31,8 +31,8 @@ class VirtualMachineTest extends Specification {
 
     def 'should properly compare not equal vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'vm')
-        def vm2 = new VirtualMachine('server2', 'vm')
+        def vm1 = new VirtualMachine('server1', 'id')
+        def vm2 = new VirtualMachine('server2', 'id')
 
         expect:
         vm1 != vm2
@@ -43,8 +43,8 @@ class VirtualMachineTest extends Specification {
 
     def 'should properly compare equal vms'() {
         given:
-        def vm1 = new VirtualMachine('server', 'vm')
-        def vm2 = new VirtualMachine('server', 'vm')
+        def vm1 = new VirtualMachine('server', 'id')
+        def vm2 = new VirtualMachine('server', 'id')
 
         expect:
         vm1 == vm2
@@ -57,7 +57,7 @@ class VirtualMachineTest extends Specification {
     def 'should properly compare not server'() {
         given:
         def something = new Object()
-        def vm = new VirtualMachine('server', 'vm')
+        def vm = new VirtualMachine('server', 'id')
 
         expect:
         something != vm
