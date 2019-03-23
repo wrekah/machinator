@@ -21,14 +21,15 @@ public class ServerMonitoringService implements DisposableBean, Runnable {
     private final VirtualMachineService virtualMachineService;
 
     private volatile boolean shouldBeWorking = true;
+    private Thread thread;
     private LocalhostVmLister localhostVmLister = new LocalhostVmLister();
 
     @Autowired ServerMonitoringService(VirtualMachineService virtualMachineService) {
         this.virtualMachineService = virtualMachineService;
 
-        Thread thread = new Thread(this);
+          thread = new Thread(this);
         thread.setName(getClass().getSimpleName());
-        thread.start();
+      thread.start();
     }
 
     @Override
@@ -51,6 +52,7 @@ public class ServerMonitoringService implements DisposableBean, Runnable {
     @Override
     public void destroy() {
         shouldBeWorking = false;
+        thread.interrupt();
     }
 
     public void scheduleScan(Server server) {

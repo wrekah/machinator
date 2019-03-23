@@ -30,15 +30,14 @@ public class ServerListStubGenerator implements InitializingBean {
     void generateServers(int numberOfServers) {
         IntStream.range(0, numberOfServers).forEach(num -> {
             String address = generateRandomAddress();
-            serverService.add(new Server(address));
+            String randomPort = generateRandomPort();
+
+            serverService.add(new Server(address, randomPort));
         });
     }
 
     private String generateRandomAddress() {
-        String randomIp = generateRandomIp();
-        int randomPort = generateRandomPort();
-
-        return randomIp + ":" + randomPort;
+        return generateRandomIp();
     }
 
     private String generateRandomIp() {
@@ -49,7 +48,7 @@ public class ServerListStubGenerator implements InitializingBean {
         return ThreadLocalRandom.current().nextInt(256);
     }
 
-    private int generateRandomPort() {
-        return ThreadLocalRandom.current().nextInt(1, 1024);
+    private String generateRandomPort() {
+        return "" + ThreadLocalRandom.current().nextInt(1, 1024);
     }
 }

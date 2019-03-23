@@ -3,6 +3,7 @@ package com.github.tpiskorski.vboxcm.stub.dynamic;
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.server.ServerState;
+import com.github.tpiskorski.vboxcm.core.server.ServerType;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.stub.net.SshException;
 import com.github.tpiskorski.vboxcm.stub.net.StubSshClient;
@@ -48,7 +49,7 @@ public class ServerStubMonitor {
         }
 
         for (Server server : servers) {
-            if (server.getServerState() == ServerState.LOCALHOST) {
+            if (server.getServerType() == ServerType.LOCAL) {
                 return;
             }
 

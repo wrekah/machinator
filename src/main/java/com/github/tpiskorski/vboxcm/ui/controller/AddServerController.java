@@ -4,7 +4,6 @@ import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.vm.ConnectivityService;
 import com.github.tpiskorski.vboxcm.vm.ServerMonitoringService;
-import com.github.tpiskorski.vboxcm.vm.MonitorJob;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -73,7 +72,7 @@ public class AddServerController {
         serversToggleGroup.selectedToggleProperty().addListener((observable, previousToggle, nextToggle) -> {
             if (nextToggle == localhostRadioButton) {
                 savedAddress = address.getText();
-                address.setText("localhost");
+                address.setText("Local Machine");
                 savedPort = port.getText();
                 port.clear();
             } else {
@@ -95,7 +94,7 @@ public class AddServerController {
         workbenchController.disableMainWindow();
         addServerStackPane.getChildren().add(progressLayer);
 
-        Server server = new Server(address.getText() + ":" + port.getText());
+        Server server = new Server(address.getText(), port.getText());
 
         if (serverService.contains(server)) {
             serverExistsAlert.showAndWait();

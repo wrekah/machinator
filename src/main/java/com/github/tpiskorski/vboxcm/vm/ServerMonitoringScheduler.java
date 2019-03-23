@@ -3,6 +3,7 @@ package com.github.tpiskorski.vboxcm.vm;
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.core.server.ServerState;
+import com.github.tpiskorski.vboxcm.core.server.ServerType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class ServerMonitoringScheduler {
         ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
         for (Server server : serversView) {
-            if (server.getServerState() == ServerState.LOCALHOST) {
+            if (server.getServerType() == ServerType.LOCAL) {
                 LOGGER.info("Scheduled localhost scan...");
                 serverMonitoringService.scheduleScan(server);
             }

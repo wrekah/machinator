@@ -82,7 +82,7 @@ class VirtualMachineRepositoryTest extends Specification {
         repository.add(vm3)
 
         expect:
-        repository.getVms(new Server(serverAddress)).size() == expectedSize
+        repository.getVms(new Server(serverAddress, '')).size() == expectedSize
 
         where:
         serverAddress  || expectedSize

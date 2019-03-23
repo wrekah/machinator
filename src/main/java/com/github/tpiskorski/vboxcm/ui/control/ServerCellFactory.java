@@ -47,7 +47,6 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                     ImageView imageView = new ImageView();
 
                     switch (server.getServerState()) {
-                        case LOCALHOST:
                         case REACHABLE:
                             imageView.setImage(OK);
                             break;
@@ -60,7 +59,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                     }
 
                     setGraphic(imageView);
-                    setText(server.getAddress());
+                    setText(server.getSimpleAddress());
                 }
             }
         };

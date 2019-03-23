@@ -6,18 +6,32 @@ class ServerTest extends Specification {
 
     def 'should create server with unknown state server by default'() {
         given:
-        def address = 'some:server'
-        def server = new Server(address)
+        def address = 'some'
+        def port = '123'
+        def server = new Server(address, port)
 
         expect:
         server.address == address
+        server.port == port
         server.serverState == ServerState.UNKNOWN
     }
 
-    def 'should properly compare not equal servers'() {
+    def 'should properly compare not equal servers by port'() {
         given:
-        def server1 = new Server('some:server')
-        def server2 = new Server('some:other_server')
+        def server1 = new Server('some', '123')
+        def server2 = new Server('some', '321')
+
+        expect:
+        server1 != server2
+
+        and:
+        server2 != server1
+    }
+
+    def 'should properly compare not equal servers by address'() {
+        given:
+        def server1 = new Server('some1', '123')
+        def server2 = new Server('some2', '123')
 
         expect:
         server1 != server2
@@ -28,8 +42,8 @@ class ServerTest extends Specification {
 
     def 'should properly equal servers'() {
         given:
-        def server1 = new Server('some:server')
-        def server2 = new Server('some:server')
+        def server1 = new Server('some', '123')
+        def server2 = new Server('some', '123')
 
         expect:
         server1 == server2
@@ -42,7 +56,7 @@ class ServerTest extends Specification {
     def 'should properly compare not server'() {
         given:
         def something = new Object()
-        def server = new Server('some:server')
+        def server = new Server('some', '123')
 
         expect:
         something != server
@@ -53,10 +67,10 @@ class ServerTest extends Specification {
 
     def 'should create localhost server'() {
         given:
-        def server = new Server('localhost')
+        def server = new Server('Local Machine', '')
 
         expect:
         server.address == 'localhost'
-        server.serverState == ServerState.LOCALHOST
+        server.serverType == ServerType.LOCAL
     }
 }

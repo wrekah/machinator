@@ -93,7 +93,7 @@ class VirtualMachineServiceModuleTest extends Specification {
         service.add(vm3)
 
         expect:
-        service.getVms(new Server(serverToFilter)).size() == expectedSize
+        service.getVms(new Server(serverToFilter,'')).size() == expectedSize
 
         where:
         serverToFilter || expectedSize

@@ -9,8 +9,8 @@ class ServerRepositoryTest extends Specification {
 
     def 'should add server'() {
         given:
-        def server1 = new Server('localhost:2000')
-        def server2 = new Server('localhost:1000')
+        def server1 = new Server('localhost','2000')
+        def server2 = new Server('localhost','1000')
 
         when:
         repository.add(server1)
@@ -22,7 +22,7 @@ class ServerRepositoryTest extends Specification {
 
     def 'should remove server'() {
         given:
-        def server1 = new Server('localhost:8888')
+        def server1 = new Server('localhost','8888')
 
         when:
         repository.add(server1)
@@ -34,8 +34,8 @@ class ServerRepositoryTest extends Specification {
 
     def 'should add and remove servers'() {
         given:
-        def server1 = new Server('localhost:8888')
-        def server2 = new Server('localhost:8889')
+        def server1 = new Server('localhost','8888')
+        def server2 = new Server('localhost','8889')
 
         when:
         repository.add(server1)
@@ -59,8 +59,8 @@ class ServerRepositoryTest extends Specification {
 
     def 'should not find any elements if not present'() {
         given:
-        def server1 = new Server('localhost:8888')
-        def server2 = new Server('localhost:8889')
+        def server1 = new Server('localhost','8888')
+        def server2 = new Server('localhost','8889')
 
         when:
         repository.add(server1)
