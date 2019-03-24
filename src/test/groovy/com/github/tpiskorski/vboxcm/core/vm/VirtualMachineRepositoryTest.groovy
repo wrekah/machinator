@@ -1,6 +1,7 @@
 package com.github.tpiskorski.vboxcm.core.vm
 
 import com.github.tpiskorski.vboxcm.core.server.Server
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -9,12 +10,26 @@ class VirtualMachineRepositoryTest extends Specification {
 
     @Subject repository = new VirtualMachineRepository()
 
-    def 'should add vms'() {
-        given:
-        def vm1 = new VirtualMachine('server1', 'id1')
-        def vm2 = new VirtualMachine('server2', 'id1')
-        def vm3 = new VirtualMachine('server1', 'id2')
+    @Shared server1, server2, non_existent_server
+    @Shared vm1, vm2, vm3
 
+    def setup() {
+        server1 = new Server('some', '123')
+        server2 = new Server('other', '321')
+
+        non_existent_server = new Server('not', 'existent')
+
+        vm1 = new VirtualMachine(server1, 'id1')
+        vm2 = new VirtualMachine(server2, 'id1')
+        vm3 = new VirtualMachine(server1, 'id2')
+    }
+
+    def 'should get no vms if nothing was added'() {
+        expect:
+        repository.getVms().empty
+    }
+
+    def 'should add vms'() {
         when:
         repository.add(vm1)
         repository.add(vm2)
@@ -25,23 +40,15 @@ class VirtualMachineRepositoryTest extends Specification {
     }
 
     def 'should remove vm'() {
-        given:
-        def vm = new VirtualMachine('server1', 'id1')
-
         when:
-        repository.add(vm)
-        repository.remove(vm)
+        repository.add(vm1)
+        repository.remove(vm1)
 
         then:
         repository.getVms().empty
     }
 
     def 'should add and remove vms'() {
-        given:
-        def vm1 = new VirtualMachine('server1', 'id1')
-        def vm2 = new VirtualMachine('server2', 'id1')
-        def vm3 = new VirtualMachine('server1', 'id2')
-
         when:
         repository.add(vm1)
         repository.add(vm2)
@@ -72,51 +79,43 @@ class VirtualMachineRepositoryTest extends Specification {
     @Unroll
     def 'should get vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'id1')
-        def vm2 = new VirtualMachine('server2', 'id1')
-        def vm3 = new VirtualMachine('server1', 'id2')
-
-        and:
         repository.add(vm1)
         repository.add(vm2)
         repository.add(vm3)
 
         expect:
-        repository.getVms(new Server(serverAddress, '')).size() == expectedSize
+        repository.getVms(serverAddress).size() == expectedSize
 
         where:
-        serverAddress  || expectedSize
-        'server1'      || 2
-        'server2'      || 1
-        'non existent' || 0
+        serverAddress       || expectedSize
+        server1             || 2
+        server2             || 1
+        non_existent_server || 0
     }
 
     @Unroll
     def 'should remove vms by server'() {
         given:
-        def vm1 = new VirtualMachine('server1', 'id1')
-        def vm2 = new VirtualMachine('server2', 'id1')
-        def vm3 = new VirtualMachine('server1', 'id2')
+        def vm1 = new VirtualMachine(server1, 'id1')
+        def vm2 = new VirtualMachine(server2, 'id1')
+        def vm3 = new VirtualMachine(server1, 'id2')
 
         and:
         repository.add(vm1)
         repository.add(vm2)
         repository.add(vm3)
 
-        and:
-        def server = new Server(serverAddress)
-
         when:
-        repository.removeByServer(server)
+        repository.removeByServer(targetServer)
 
         then:
-        repository.getVms(server).size() == 0
+        repository.getVms(targetServer).size() == 0
         repository.getVms().size() == expectedSize
 
         where:
-        serverAddress  || expectedSize
-        'server1'      || 1
-        'server2'      || 2
-        'non existent' || 3
+        targetServer        || expectedSize
+        server1             || 1
+        server2             || 2
+        non_existent_server || 3
     }
 }

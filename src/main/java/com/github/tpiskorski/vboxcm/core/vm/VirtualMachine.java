@@ -1,5 +1,6 @@
 package com.github.tpiskorski.vboxcm.core.vm;
 
+import com.github.tpiskorski.vboxcm.core.server.Server;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.util.Callback;
@@ -8,36 +9,45 @@ import java.util.Objects;
 
 public class VirtualMachine {
 
-    private StringProperty id = new SimpleStringProperty();
+    private String id;
+    private Server server;
+
     private StringProperty vmName = new SimpleStringProperty();
-    private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
-    private StringProperty server = new SimpleStringProperty();
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
+    private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
 
     public VirtualMachine() {
     }
 
-    public VirtualMachine(String server, String id) {
+    public VirtualMachine(Server server, String id) {
         setServer(server);
         setId(id);
         setState(VirtualMachineState.UNREACHABLE);
     }
 
     static Callback<VirtualMachine, Observable[]> extractor() {
-        return (VirtualMachine vm) -> new Observable[]{vm.idProperty(), vm.vmNameProperty(), vm.serverProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+    }
+
+    public String getServerAddress() {
+        return server.getSimpleAddress();
     }
 
     public String getId() {
-        return id.get();
+        return id;
     }
 
     public void setId(String id) {
-        this.id.set(id);
+        this.id = id;
     }
 
-    public StringProperty idProperty() {
-        return id;
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     public VirtualMachineState getState() {
@@ -62,18 +72,6 @@ public class VirtualMachine {
 
     public StringProperty vmNameProperty() {
         return vmName;
-    }
-
-    public String getServer() {
-        return server.get();
-    }
-
-    public void setServer(String server) {
-        this.server.set(server);
-    }
-
-    public StringProperty serverProperty() {
-        return server;
     }
 
     public int getCpuCores() {
@@ -101,7 +99,7 @@ public class VirtualMachine {
     }
 
     @Override public int hashCode() {
-        return Objects.hash(getServer(), getVmName());
+        return Objects.hash(getServer(), getId());
     }
 
     @Override public boolean equals(Object obj) {
@@ -116,12 +114,6 @@ public class VirtualMachine {
 
     @Override
     public String toString() {
-        return "VirtualMachine{" +
-            "vmName=" + vmName +
-            ", state=" + state +
-            ", server=" + server +
-            ", cpuCores=" + cpuCores +
-            ", ramMemory=" + ramMemory +
-            '}';
+        return getVmName();
     }
 }

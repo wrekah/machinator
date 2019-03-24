@@ -17,7 +17,7 @@ public class VmGenerator {
                 VirtualMachine vm = new VirtualMachine();
                 vm.setId("generated");
                 vm.setCpuCores(cpuCores());
-                vm.setServer(server.getAddress());
+                vm.setServer(server);
                 vm.setVmName(vmName(i));
                 vm.setRamMemory(ram());
                 vm.setState(state());

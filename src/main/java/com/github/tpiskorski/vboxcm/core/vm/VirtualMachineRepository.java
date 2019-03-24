@@ -24,18 +24,18 @@ public class VirtualMachineRepository {
 
     ObservableList<VirtualMachine> getVms(Server server) {
         return vmObservableList.filtered(
-            virtualMachine -> virtualMachine.getServer().equals(server.getAddress())
+            virtualMachine -> virtualMachine.getServer().equals(server)
         );
     }
 
     void removeByServer(Server serverToRemove) {
-        vmObservableList.removeIf(virtualMachine -> virtualMachine.getServer().equals(serverToRemove.getAddress()));
+        vmObservableList.removeIf(virtualMachine -> virtualMachine.getServer().equals(serverToRemove));
     }
 
     public void upsert(VirtualMachine vm) {
-        if(!vmObservableList.contains(vm)){
+        if (!vmObservableList.contains(vm)) {
             add(vm);
-        }else{
+        } else {
             VirtualMachine virtualMachine1 = vmObservableList.stream()
                 .filter(virtualMachine -> virtualMachine.getId().equals(vm.getId()))
                 .findFirst().get();
