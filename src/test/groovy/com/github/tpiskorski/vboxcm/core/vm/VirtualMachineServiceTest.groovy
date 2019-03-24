@@ -106,10 +106,10 @@ class VirtualMachineServiceTest extends Specification {
         def vms = [Mock(VirtualMachine), Mock(VirtualMachine), Mock(VirtualMachine)]
 
         when:
-        service.update(vms)
+        service.upsert(vms)
 
         then:
-        vms.size() * virtualMachineRepository.find(vm) >> Optional.empty()
+        vms.size() * virtualMachineRepository.find(_) >> Optional.empty()
     }
 
     def 'should add instead of update if no vm is present'() {
@@ -117,7 +117,7 @@ class VirtualMachineServiceTest extends Specification {
         def vm = Mock(VirtualMachine)
 
         when:
-        service.update(vm)
+        service.upsert(vm)
 
         then:
         1 * virtualMachineRepository.find(vm) >> Optional.empty()
@@ -130,7 +130,7 @@ class VirtualMachineServiceTest extends Specification {
         def existingVm = Mock(VirtualMachine)
 
         when:
-        service.update(vm)
+        service.upsert(vm)
 
         then:
         1 * virtualMachineRepository.find(vm) >> Optional.of(existingVm)

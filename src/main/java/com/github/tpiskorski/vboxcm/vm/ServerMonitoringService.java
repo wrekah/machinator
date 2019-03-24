@@ -16,10 +16,16 @@ public class ServerMonitoringService {
 
     public List<VirtualMachine> monitor(Server server) throws IOException, InterruptedException {
         if (server.getServerType() == ServerType.LOCAL) {
-            CommandResult commandResult = localMachineVmLister.list();
-            return simpleVmParser.parse(server, commandResult);
+            return monitorLocalMachine(server);
         } else {
             throw new UnsupportedOperationException("TODO: implement remote");
         }
+    }
+
+    private List<VirtualMachine> monitorLocalMachine(Server server) throws InterruptedException, IOException {
+        CommandResult commandResult = localMachineVmLister.list();
+        List<VirtualMachine> vms = simpleVmParser.parse(commandResult);
+        vms.forEach(virtualMachine -> virtualMachine.setServer(server));
+        return vms;
     }
 }

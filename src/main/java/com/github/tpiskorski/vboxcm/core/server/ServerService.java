@@ -47,7 +47,7 @@ public class ServerService {
         return serverRepository.contains(server);
     }
 
-    public void update(List<VirtualMachine> vms) {
-        virtualMachineService.update(vms);
+    public void upsert(List<VirtualMachine> vms) {
+        virtualMachineService.upsert(vms);
     }
 }

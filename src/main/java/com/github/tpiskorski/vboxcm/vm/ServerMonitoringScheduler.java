@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +27,19 @@ public class ServerMonitoringScheduler {
     }
 
     @Scheduled(fixedRate = 10000L)
-    public void monitor() {
+    public void scheduleRegularScans() {
         ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
         for (Server server : serversView) {
             if (server.getServerType() == ServerType.LOCAL) {
-                LOGGER.info("Scheduled localhost scan...");
                 serverMonitoringDaemon.scheduleScan(server);
+                LOGGER.info("Scheduled localhost scan...");
             }
         }
     }
 
     public void scheduleScan(Server server) {
         serverMonitoringDaemon.scheduleScan(server);
+        LOGGER.info("Scheduled server scan {}", server);
     }
 }

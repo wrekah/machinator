@@ -48,7 +48,7 @@ public class ServerMonitoringDaemon implements DisposableBean, Runnable {
                     return;
                 }
                 List<VirtualMachine> vms = serverMonitoringService.monitor(server);
-                Platform.runLater(() -> serverService.update(vms));
+                Platform.runLater(() -> serverService.upsert(vms));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (IOException e) {

@@ -21,7 +21,7 @@ public class VirtualMachineService {
         virtualMachineRepository.add(vm);
     }
 
-    public void update(VirtualMachine vm) {
+    public void upsert(VirtualMachine vm) {
         Optional<VirtualMachine> optional = virtualMachineRepository.find(vm);
         if (optional.isEmpty()) {
             add(vm);
@@ -66,7 +66,7 @@ public class VirtualMachineService {
         add(vms);
     }
 
-    public void update(List<VirtualMachine> vms) {
-        vms.forEach(this::update);
+    public void upsert(List<VirtualMachine> vms) {
+        vms.forEach(this::upsert);
     }
 }

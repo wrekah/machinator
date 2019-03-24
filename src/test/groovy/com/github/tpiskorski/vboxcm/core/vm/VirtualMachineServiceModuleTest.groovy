@@ -104,7 +104,7 @@ class VirtualMachineServiceModuleTest extends Specification {
         service.add(vm1)
 
         when:
-        service.update(vm2)
+        service.upsert(vm2)
 
         then:
         service.getVms() == [vm1, vm2]
@@ -128,7 +128,7 @@ class VirtualMachineServiceModuleTest extends Specification {
         service.add(vm1)
 
         and:
-        service.update(vmUpdate)
+        service.upsert(vmUpdate)
 
         then:
         service.getVms().first() == vm1
