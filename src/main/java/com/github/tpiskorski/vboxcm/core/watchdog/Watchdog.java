@@ -1,59 +1,38 @@
 package com.github.tpiskorski.vboxcm.core.watchdog;
 
-import javafx.beans.Observable;
+import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.util.Callback;
 
 import java.util.Objects;
 
 public class Watchdog {
-    private StringProperty server = new SimpleStringProperty();
-    private StringProperty vmName = new SimpleStringProperty();
-    private StringProperty watchdogServer = new SimpleStringProperty();
 
-    static Callback<Watchdog, Observable[]> extractor() {
-        return (Watchdog watchdog) -> new Observable[]{watchdog.serverProperty(), watchdog.vmNameProperty(), watchdog.watchdogServerProperty()};
+    private VirtualMachine virtualMachine;
+    private Server watchdogServer;
+
+    public VirtualMachine getVirtualMachine() {
+        return virtualMachine;
     }
 
-    public String getServer() {
-        return server.get();
+    public void setVirtualMachine(VirtualMachine virtualMachine) {
+        this.virtualMachine = virtualMachine;
     }
 
-    public void setServer(String server) {
-        this.server.set(server);
+    public SimpleStringProperty x() {
+        return new SimpleStringProperty(getVirtualMachine().getServerAddress());
     }
 
-    public StringProperty serverProperty() {
-        return server;
-    }
-
-    public String getVmName() {
-        return vmName.get();
-    }
-
-    public void setVmName(String vmName) {
-        this.vmName.set(vmName);
-    }
-
-    public StringProperty vmNameProperty() {
-        return vmName;
-    }
-
-    public String getWatchdogServer() {
-        return watchdogServer.get();
-    }
-
-    public void setWatchdogServer(String watchdogServer) {
-        this.watchdogServer.set(watchdogServer);
-    }
-
-    public StringProperty watchdogServerProperty() {
+    public Server getWatchdogServer() {
         return watchdogServer;
     }
 
+    public void setWatchdogServer(Server watchdogServer) {
+        this.watchdogServer = watchdogServer;
+    }
+
     @Override public int hashCode() {
-        return Objects.hash(getServer(), getVmName(), getWatchdogServer());
+        return Objects.hash(getVirtualMachine(), getWatchdogServer());
     }
 
     @Override public boolean equals(Object obj) {
@@ -62,8 +41,7 @@ public class Watchdog {
         }
         Watchdog that = (Watchdog) obj;
 
-        return Objects.equals(this.getServer(), that.getServer())
-            && Objects.equals(this.getVmName(), that.getVmName())
+        return Objects.equals(this.getVirtualMachine(), that.getVirtualMachine())
             && Objects.equals(this.getWatchdogServer(), that.getWatchdogServer());
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddVmWatchdogController {
 
+    private final WatchdogService watchdogService;
+
     @FXML private ComboBox<Server> serverComboBox;
     @FXML private ComboBox<VirtualMachine> vmComboBox;
     @FXML private ComboBox<Server> backupServerComboBox;
@@ -21,18 +23,19 @@ public class AddVmWatchdogController {
     @FXML private Button addButton;
     @FXML private Button cancelButton;
 
-    @Autowired private WatchdogService watchdogService;
+    @Autowired public AddVmWatchdogController(WatchdogService watchdogService) {
+        this.watchdogService = watchdogService;
+    }
 
     @FXML
     public void add() {
-        Server server = serverComboBox.getSelectionModel().getSelectedItem();
         VirtualMachine vm = vmComboBox.getSelectionModel().getSelectedItem();
         Server backupServer = backupServerComboBox.getSelectionModel().getSelectedItem();
 
         Watchdog watchdog = new Watchdog();
-        watchdog.setServer(server.getAddress());
-        watchdog.setVmName(vm.getVmName());
-        watchdog.setWatchdogServer(backupServer.getAddress());
+
+        watchdog.setVirtualMachine(vm);
+        watchdog.setWatchdogServer(backupServer);
 
         watchdogService.add(watchdog);
 
@@ -43,8 +46,8 @@ public class AddVmWatchdogController {
     @FXML
     public void close() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
-        clear();
         stage.close();
+        clear();
     }
 
     private void clear() {

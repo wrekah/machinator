@@ -34,6 +34,7 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 @Controller
 public class WorkbenchController {
@@ -113,13 +114,14 @@ public class WorkbenchController {
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 // Filter matches last name.
-                if (person.getServer().toLowerCase().contains(lowerCaseFilter)) {
+                if (person.getServer().getSimpleAddress().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
-                } else return person.getServer().toLowerCase().contains(lowerCaseFilter);
+                } else return person.getServer().getSimpleAddress().contains(lowerCaseFilter);
             });
         });
 
-        serverList.setItems(new SortedList<>(filterableServers, Server::compareTo));
+
+        serverList.setItems(new SortedList<>(filterableServers, Comparator.comparing(Server::getServerType)));
         virtualMachines.setItems(filterableVirtualMachines);
 
         virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {

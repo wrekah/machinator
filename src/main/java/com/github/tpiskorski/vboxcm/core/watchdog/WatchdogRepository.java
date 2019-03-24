@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class WatchdogRepository {
 
-    private ObservableList<Watchdog> watchdogs = FXCollections.observableArrayList(Watchdog.extractor());
+    private ObservableList<Watchdog> watchdogs = FXCollections.observableArrayList();
 
     void add(Watchdog watchdog) {
         watchdogs.add(watchdog);

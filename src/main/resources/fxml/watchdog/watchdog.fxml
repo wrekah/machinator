@@ -12,14 +12,10 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
-                <TableColumn text="Server">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="server"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <TableColumn fx:id="serverTableColumn" text="Server"/>
                 <TableColumn text="VM">
                     <cellValueFactory>
-                        <PropertyValueFactory property="vmName"/>
+                        <PropertyValueFactory property="virtualMachine"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Backed up by server">
@@ -33,7 +29,6 @@
     </center>
 
     <bottom>
-
 
         <HBox alignment="CENTER">
             <Button text="Watch vm" onAction="#watchVm"/>

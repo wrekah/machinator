@@ -48,14 +48,13 @@ public class WatchdogStubGenerator implements InitializingBean {
     private Watchdog createBackupForVm(ObservableList<Server> servers, VirtualMachine virtualMachine) {
         Watchdog watchdog = new Watchdog();
 
-        watchdog.setVmName(virtualMachine.getVmName());
-        watchdog.setServer(virtualMachine.getServer());
+        watchdog.setVirtualMachine(virtualMachine);
 
         Optional<Server> otherServer = servers.stream()
-            .filter(server -> server.getAddress() != virtualMachine.getServer())
+            .filter(server -> server.getSimpleAddress() != virtualMachine.getServer().getSimpleAddress())
             .findAny();
 
-        watchdog.setWatchdogServer(otherServer.get().getAddress());
+        watchdog.setWatchdogServer(otherServer.get());
 
         return watchdog;
     }

@@ -21,7 +21,7 @@ public class WatchdogService {
         return watchdogRepository.getWatchdogs();
     }
 
-    public void remove(Watchdog watchdogToRemove) {
-        watchdogRepository.remove(watchdogToRemove);
+    public void remove(Watchdog watchdog) {
+        watchdogRepository.remove(watchdog);
     }
 }
