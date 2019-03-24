@@ -2,6 +2,7 @@ package com.github.tpiskorski.vboxcm.stub.generator
 
 import com.github.tpiskorski.vboxcm.core.backup.Backup
 import com.github.tpiskorski.vboxcm.core.backup.BackupService
+import com.github.tpiskorski.vboxcm.core.server.Server
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService
 import com.github.tpiskorski.vboxcm.stub.generator.BackupStubGenerator
@@ -21,20 +22,15 @@ class BackupStubGeneratorTest extends Specification {
 
     def 'should create backup for vm'() {
         given:
-        def server = 'localhost:10'
-        def vmName = 'vm1'
-
-        def vm = new VirtualMachine(
-                server: server,
-                vmName: vmName
-        )
+        def server = new Server('localhost', '10')
+        def vm = new VirtualMachine(server, 'id1')
 
         when:
         def backup = generator.createBackupForVm(vm)
 
         then:
         backup.server == server
-        backup.vm == vmName
+        backup.vm == vm
         backup.currentFiles <= backup.fileLimit
     }
 

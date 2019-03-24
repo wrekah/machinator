@@ -110,8 +110,8 @@ public class AddVmBackupController {
         int fileLimit = Integer.parseInt(this.fileLimit.getText());
 
         Backup backup = new Backup();
-        backup.setServer(server.getAddress());
-        backup.setVm(vm.getVmName());
+        backup.setServer(server );
+        backup.setVm(vm );
         backup.setFirstBackupDay(backupDay);
         backup.setFrequency(every);
         backup.setBackupTime(backupTime);

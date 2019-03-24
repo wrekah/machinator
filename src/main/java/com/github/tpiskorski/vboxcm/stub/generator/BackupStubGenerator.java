@@ -56,9 +56,9 @@ public class BackupStubGenerator implements InitializingBean {
         Backup backup = new Backup();
 
         backup.setServer(virtualMachine.getServer());
-        backup.setVm(virtualMachine.getVmName());
+        backup.setVm(virtualMachine);
         backup.setFileLimit(3);
-        backup.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backup.getFileLimit()+1));
+        backup.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backup.getFileLimit() + 1));
         backup.setFrequency(10);
         backup.setBackupTime(LocalTime.of(12, 0));
         backup.setFirstBackupDay(LocalDate.of(2019, 1, 1));

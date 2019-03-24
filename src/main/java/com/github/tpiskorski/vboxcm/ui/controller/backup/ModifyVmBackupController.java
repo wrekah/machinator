@@ -27,6 +27,8 @@ public class ModifyVmBackupController {
     @FXML private TextField vmComboBox;
     @FXML private TextField serverComboBox;
 
+    private Backup savedBackup;
+
     @Autowired public ModifyVmBackupController(BackupService backupService) {
         this.backupService = backupService;
     }
@@ -34,8 +36,9 @@ public class ModifyVmBackupController {
     @FXML
     public void modify() {
         Backup backup = new Backup();
-        backup.setServer(serverComboBox.getText());
-        backup.setVm(vmComboBox.getText());
+
+        backup.setServer(savedBackup.getServer());
+        backup.setVm(savedBackup.getVm());
         backup.setFirstBackupDay(LocalDate.parse(firstBackup.getEditor().getText()));
         backup.setFrequency(Integer.parseInt(frequency.getText()));
         backup.setBackupTime(LocalTime.parse(backupTime.getText()));
@@ -62,8 +65,10 @@ public class ModifyVmBackupController {
     }
 
     void prepareFor(Backup backup) {
-        serverComboBox.setText(backup.getServer());
-        vmComboBox.setText(backup.getVm());
+        savedBackup = backup;
+
+        serverComboBox.setText(backup.getServer().toString());
+        vmComboBox.setText(backup.getVm().toString());
         firstBackup.getEditor().setText(backup.getFirstBackupDay().toString());
         frequency.setText("" + backup.getFrequency());
         backupTime.setText(backup.getBackupTime().toString());

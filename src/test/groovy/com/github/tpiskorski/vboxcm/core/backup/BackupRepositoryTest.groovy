@@ -1,5 +1,7 @@
 package com.github.tpiskorski.vboxcm.core.backup
 
+import com.github.tpiskorski.vboxcm.core.server.Server
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -7,10 +9,16 @@ class BackupRepositoryTest extends Specification {
 
     @Subject repository = new BackupRepository()
 
+    def server1 = new Server('some', '123')
+    def server2 = new Server('other', '321')
+
+    def vm1 = new VirtualMachine(server1, 'id1')
+    def vm2 = new VirtualMachine(server2, 'id1')
+
     def 'should add backups'() {
         given:
-        def backup1 = new Backup(server: 'server1', vm: 'vm1')
-        def backup2 = new Backup(server: 'server2', vm: 'vm1')
+        def backup1 = new Backup(server: server1, vm: vm1)
+        def backup2 = new Backup(server: server2, vm: vm1)
 
         when:
         repository.add(backup1)
@@ -22,7 +30,7 @@ class BackupRepositoryTest extends Specification {
 
     def 'should remove backup'() {
         given:
-        def backup1 = new Backup(server: 'server1', vm: 'vm1')
+        def backup1 = new Backup(server: server1, vm: vm1)
 
         when:
         repository.add(backup1)
@@ -34,9 +42,9 @@ class BackupRepositoryTest extends Specification {
 
     def 'should add and remove backups'() {
         given:
-        def backup1 = new Backup(server: 'server1', vm: 'vm1')
-        def backup2 = new Backup(server: 'server2', vm: 'vm1')
-        def backup3 = new Backup(server: 'server1', vm: 'vm2')
+        def backup1 = new Backup(server: server1, vm: vm1)
+        def backup2 = new Backup(server: server2, vm: vm1)
+        def backup3 = new Backup(server: server1, vm: vm2)
 
         when:
         repository.add(backup1)

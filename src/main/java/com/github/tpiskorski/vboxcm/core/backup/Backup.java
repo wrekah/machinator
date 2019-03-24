@@ -1,7 +1,12 @@
 package com.github.tpiskorski.vboxcm.core.backup;
 
+import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import javafx.beans.Observable;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Callback;
 
 import java.time.LocalDate;
@@ -10,8 +15,9 @@ import java.util.Objects;
 
 public class Backup {
 
-    private StringProperty server = new SimpleStringProperty();
-    private StringProperty vm = new SimpleStringProperty();
+    private Server server;
+    private VirtualMachine vm;
+
     private ObjectProperty<LocalDate> firstBackupDay = new SimpleObjectProperty<>();
     private IntegerProperty frequency = new SimpleIntegerProperty();
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
@@ -20,9 +26,25 @@ public class Backup {
 
     static Callback<Backup, Observable[]> extractor() {
         return (Backup backup) -> new Observable[]{
-            backup.serverProperty(), backup.vmProperty(), backup.firstBackupDayProperty(),
-            backup.frequencyProperty(), backup.backupTimeProperty(), backup.fileLimitProperty()
+            backup.firstBackupDayProperty(), backup.frequencyProperty(),
+            backup.backupTimeProperty(), backup.fileLimitProperty()
         };
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    public VirtualMachine getVm() {
+        return vm;
+    }
+
+    public void setVm(VirtualMachine vm) {
+        this.vm = vm;
     }
 
     public int getCurrentFiles() {
@@ -48,30 +70,6 @@ public class Backup {
         Backup that = (Backup) obj;
 
         return Objects.equals(this.getServer(), that.getServer()) && Objects.equals(this.getVm(), that.getVm());
-    }
-
-    public String getServer() {
-        return server.get();
-    }
-
-    public void setServer(String server) {
-        this.server.set(server);
-    }
-
-    public StringProperty serverProperty() {
-        return server;
-    }
-
-    public String getVm() {
-        return vm.get();
-    }
-
-    public void setVm(String vm) {
-        this.vm.set(vm);
-    }
-
-    public StringProperty vmProperty() {
-        return vm;
     }
 
     public LocalDate getFirstBackupDay() {
