@@ -100,4 +100,43 @@ class VirtualMachineServiceTest extends Specification {
         1 * virtualMachineRepository.removeByServer(server)
         2 * virtualMachineRepository.add(_ as VirtualMachine)
     }
+
+    def 'should invoke update for the number of vms'() {
+        given:
+        def vms = [Mock(VirtualMachine), Mock(VirtualMachine), Mock(VirtualMachine)]
+
+        when:
+        service.update(vms)
+
+        then:
+        vms.size() * virtualMachineRepository.find(vm) >> Optional.empty()
+    }
+
+    def 'should add instead of update if no vm is present'() {
+        given:
+        def vm = Mock(VirtualMachine)
+
+        when:
+        service.update(vm)
+
+        then:
+        1 * virtualMachineRepository.find(vm) >> Optional.empty()
+        1 * virtualMachineRepository.add(vm)
+    }
+
+    def 'should update existing vm'() {
+        given:
+        def vm = Mock(VirtualMachine)
+        def existingVm = Mock(VirtualMachine)
+
+        when:
+        service.update(vm)
+
+        then:
+        1 * virtualMachineRepository.find(vm) >> Optional.of(existingVm)
+        1 * existingVm.setState(_)
+        1 * existingVm.setCpuCores(_)
+        1 * existingVm.setRamMemory(_)
+        1 * existingVm.setVmName(_)
+    }
 }

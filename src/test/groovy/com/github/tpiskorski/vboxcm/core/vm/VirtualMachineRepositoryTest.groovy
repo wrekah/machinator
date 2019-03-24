@@ -10,8 +10,8 @@ class VirtualMachineRepositoryTest extends Specification {
 
     @Subject repository = new VirtualMachineRepository()
 
-    @Shared server1, server2, non_existent_server
-    @Shared vm1, vm2, vm3
+    @Shared Server server1, server2, non_existent_server
+    @Shared VirtualMachine vm1, vm2, vm3
 
     def setup() {
         server1 = new Server('some', '123')
@@ -117,5 +117,28 @@ class VirtualMachineRepositoryTest extends Specification {
         server1             || 1
         server2             || 2
         non_existent_server || 3
+    }
+
+    def 'should find virtual machine that is present'() {
+        given:
+        repository.add(vm1)
+
+        when:
+        def result = repository.find(vm1)
+
+        then:
+        result.isPresent()
+        result.get() == vm1
+    }
+
+    def 'should not find if no virtual machine is not present'() {
+        given:
+        repository.add(vm1)
+
+        when:
+        def result = repository.find(vm2)
+
+        then:
+        result.isEmpty()
     }
 }

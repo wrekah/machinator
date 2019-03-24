@@ -2,13 +2,14 @@ package com.github.tpiskorski.vboxcm.vm;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
-import com.github.tpiskorski.vboxcm.core.server.ServerState;
 import com.github.tpiskorski.vboxcm.core.server.ServerType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +19,12 @@ public class ServerMonitoringScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerMonitoringScheduler.class);
 
     private final ServerService serverService;
-    private final ServerMonitoringService serverMonitoringService;
-
-    private LocalhostConnectivityChecker localhostConnectivityChecker = new LocalhostConnectivityChecker();
+    private final ServerMonitoringDaemon serverMonitoringDaemon;
 
     @Autowired
-    public ServerMonitoringScheduler(ServerService serverService, ServerMonitoringService serverMonitoringService) {
+    public ServerMonitoringScheduler(@Lazy ServerService serverService, ServerMonitoringDaemon serverMonitoringDaemon) {
         this.serverService = serverService;
-        this.serverMonitoringService = serverMonitoringService;
+        this.serverMonitoringDaemon = serverMonitoringDaemon;
     }
 
     @Scheduled(fixedRate = 10000L)
@@ -35,8 +34,12 @@ public class ServerMonitoringScheduler {
         for (Server server : serversView) {
             if (server.getServerType() == ServerType.LOCAL) {
                 LOGGER.info("Scheduled localhost scan...");
-                serverMonitoringService.scheduleScan(server);
+                serverMonitoringDaemon.scheduleScan(server);
             }
         }
+    }
+
+    public void scheduleScan(Server server) {
+        serverMonitoringDaemon.scheduleScan(server);
     }
 }

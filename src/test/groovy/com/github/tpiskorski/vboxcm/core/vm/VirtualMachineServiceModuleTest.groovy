@@ -12,8 +12,8 @@ class VirtualMachineServiceModuleTest extends Specification {
 
     @Subject service = new VirtualMachineService(virtualMachineRepository)
 
-    @Shared server1, server2, non_existent_server
-    @Shared vm1, vm2, vm3
+    @Shared Server server1, server2, non_existent_server
+    @Shared VirtualMachine vm1, vm2, vm3
 
     def setup() {
         server1 = new Server('some', '123')
@@ -97,6 +97,45 @@ class VirtualMachineServiceModuleTest extends Specification {
         server1             || 2
         server2             || 1
         non_existent_server || 0
+    }
+
+    def 'should add vm when updating if no such a vm is present '() {
+        given:
+        service.add(vm1)
+
+        when:
+        service.update(vm2)
+
+        then:
+        service.getVms() == [vm1, vm2]
+    }
+
+    def 'should update vm'() {
+        given:
+        vm1.cpuCores = 1
+        vm1.ramMemory = 1024
+        vm1.state = VirtualMachineState.OFF
+        vm1.vmName = 'vm1'
+
+        and:
+        def vmUpdate = new VirtualMachine(vm1.server, vm1.id)
+        vmUpdate.cpuCores = 4
+        vmUpdate.ramMemory = 2048
+        vmUpdate.state = VirtualMachineState.ON
+        vmUpdate.vmName = 'vm2'
+
+        when:
+        service.add(vm1)
+
+        and:
+        service.update(vmUpdate)
+
+        then:
+        service.getVms().first() == vm1
+        vm1.cpuCores == 4
+        vm1.ramMemory == 2048
+        vm1.state == VirtualMachineState.ON
+        vm1.vmName == 'vm2'
     }
 }
 

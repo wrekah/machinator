@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VirtualMachineService {
@@ -20,8 +21,18 @@ public class VirtualMachineService {
         virtualMachineRepository.add(vm);
     }
 
-    public void upsert(VirtualMachine vm){
-        virtualMachineRepository.upsert(vm);
+    public void update(VirtualMachine vm) {
+        Optional<VirtualMachine> optional = virtualMachineRepository.find(vm);
+        if (optional.isEmpty()) {
+            add(vm);
+        } else {
+            VirtualMachine virtualMachine = optional.get();
+
+            virtualMachine.setState(vm.getState());
+            virtualMachine.setCpuCores(vm.getCpuCores());
+            virtualMachine.setRamMemory(vm.getRamMemory());
+            virtualMachine.setVmName(vm.getVmName());
+        }
     }
 
     public ObservableList<VirtualMachine> getVms() {
@@ -55,7 +66,7 @@ public class VirtualMachineService {
         add(vms);
     }
 
-    public void upsert(List<VirtualMachine> vms) {
-        vms.forEach(this::upsert);
+    public void update(List<VirtualMachine> vms) {
+        vms.forEach(this::update);
     }
 }

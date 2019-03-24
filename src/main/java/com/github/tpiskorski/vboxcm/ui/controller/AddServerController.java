@@ -1,9 +1,10 @@
 package com.github.tpiskorski.vboxcm.ui.controller;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.server.ServerCoordinatingService;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;
 import com.github.tpiskorski.vboxcm.vm.ConnectivityService;
-import com.github.tpiskorski.vboxcm.vm.ServerMonitoringService;
+import com.github.tpiskorski.vboxcm.vm.ServerMonitoringDaemon;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Controller;
 public class AddServerController {
 
     private final ServerService serverService;
+    private final ServerCoordinatingService serverCoordinatingService;
     private final WorkbenchController workbenchController;
-    private final ServerMonitoringService serverMonitoringService;
 
     @FXML private Alert serverExistsAlert;
     @FXML private Alert noConnectivityServerAlert;
@@ -46,10 +47,10 @@ public class AddServerController {
     private ConnectivityService connectivityService = new ConnectivityService();
 
     @Autowired
-    public AddServerController(ServerService serverService, WorkbenchController workbenchController, ServerMonitoringService serverMonitoringService) {
+    public AddServerController(ServerService serverService, WorkbenchController workbenchController, ServerMonitoringDaemon serverMonitoringDaemon, ServerCoordinatingService serverCoordinatingService) {
         this.serverService = serverService;
         this.workbenchController = workbenchController;
-        this.serverMonitoringService = serverMonitoringService;
+        this.serverCoordinatingService = serverCoordinatingService;
     }
 
     @FXML
@@ -113,8 +114,7 @@ public class AddServerController {
         });
 
         connectivityService.setOnSucceeded(workerStateEvent -> {
-            serverService.add(server);
-            serverMonitoringService.scheduleScan(server);
+            serverCoordinatingService.add(server);
             closeWindow();
         });
 

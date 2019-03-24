@@ -14,7 +14,8 @@ public class ServerService {
     private final ServerRepository serverRepository;
     private final VirtualMachineService virtualMachineService;
 
-    @Autowired public ServerService(ServerRepository serverRepository, VirtualMachineService virtualMachineService) {
+    @Autowired
+    public ServerService(ServerRepository serverRepository, VirtualMachineService virtualMachineService) {
         this.serverRepository = serverRepository;
         this.virtualMachineService = virtualMachineService;
     }
@@ -44,5 +45,9 @@ public class ServerService {
 
     public boolean contains(Server server) {
         return serverRepository.contains(server);
+    }
+
+    public void update(List<VirtualMachine> vms) {
+        virtualMachineService.update(vms);
     }
 }

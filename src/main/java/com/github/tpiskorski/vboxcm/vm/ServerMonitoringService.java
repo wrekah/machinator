@@ -1,61 +1,25 @@
 package com.github.tpiskorski.vboxcm.vm;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
+import com.github.tpiskorski.vboxcm.core.server.ServerType;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
-import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineService;
-import javafx.application.Platform;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
-@Component
-public class ServerMonitoringService implements DisposableBean, Runnable {
+@Service
+public class ServerMonitoringService {
 
-    private final BlockingQueue<MonitorJob> queue = new LinkedBlockingQueue<>();
-    private final VirtualMachineService virtualMachineService;
+    private LocalMachineVmLister localMachineVmLister = new LocalMachineVmLister();
+    private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
-    private volatile boolean shouldBeWorking = true;
-    private Thread thread;
-    private LocalhostVmLister localhostVmLister = new LocalhostVmLister();
-
-    @Autowired ServerMonitoringService(VirtualMachineService virtualMachineService) {
-        this.virtualMachineService = virtualMachineService;
-
-          thread = new Thread(this);
-        thread.setName(getClass().getSimpleName());
-      thread.start();
-    }
-
-    @Override
-    public void run() {
-        while (shouldBeWorking) {
-            MonitorJob take = null;
-            try {
-                take = queue.take();
-                List<VirtualMachine> check = localhostVmLister.list();
-                Platform.runLater(() -> virtualMachineService.upsert(check));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (IOException e) {
-                MonitorJob finalTake = take;
-                Platform.runLater(() -> virtualMachineService.updateNotReachableBy(finalTake.getServer()));
-            }
+    public List<VirtualMachine> monitor(Server server) throws IOException, InterruptedException {
+        if (server.getServerType() == ServerType.LOCAL) {
+            CommandResult commandResult = localMachineVmLister.list();
+            return simpleVmParser.parse(server, commandResult);
+        } else {
+            throw new UnsupportedOperationException("TODO: implement remote");
         }
-    }
-
-    @Override
-    public void destroy() {
-        shouldBeWorking = false;
-        thread.interrupt();
-    }
-
-    public void scheduleScan(Server server) {
-        queue.add(new MonitorJob(server));
     }
 }
