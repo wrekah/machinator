@@ -15,16 +15,15 @@ class ServerServiceModuleTest extends Specification {
 
     @Subject service = new ServerService(serverRepository, virtualMachineService)
 
+    def server1 = new Server('some', '123')
+    def server2 = new Server('some', '321')
+
     def 'should get no servers if nothing was added'() {
         expect:
         service.getServers().empty
     }
 
     def 'should get servers that were added'() {
-        given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
-
         when:
         service.add(server1)
         service.add(server2)
@@ -34,10 +33,6 @@ class ServerServiceModuleTest extends Specification {
     }
 
     def 'should properly remove servers'() {
-        given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
-
         when:
         service.add(server1)
         service.add(server2)
@@ -59,10 +54,6 @@ class ServerServiceModuleTest extends Specification {
     }
 
     def 'should not remove the server that is not present'() {
-        given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
-
         when:
         service.add(server1)
 
@@ -78,12 +69,9 @@ class ServerServiceModuleTest extends Specification {
 
     def 'should update not_reachable state to the server and vms'() {
         given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
-
-        def vm1 = new VirtualMachine('some:address', 'vm1')
-        def vm2 = new VirtualMachine('some:address', 'vm2')
-        def vm3 = new VirtualMachine('some:otheraddress', 'v1')
+        def vm1 = new VirtualMachine(server1, 'vm1')
+        def vm2 = new VirtualMachine(server1, 'vm2')
+        def vm3 = new VirtualMachine(server2, 'v1')
 
         and:
         service.add(server1)
@@ -105,12 +93,9 @@ class ServerServiceModuleTest extends Specification {
 
     def 'should update reachable state to the server and vms'() {
         given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
-
-        def vm1 = new VirtualMachine('some:address', 'vm1')
-        def vm2 = new VirtualMachine('some:address', 'vm2')
-        def vm3 = new VirtualMachine('some:otheraddress', 'v1')
+        def vm1 = new VirtualMachine(server1, 'vm1')
+        def vm2 = new VirtualMachine(server1, 'vm2')
+        def vm3 = new VirtualMachine(server2, 'v1')
 
         and:
         service.add(server1)
@@ -122,7 +107,7 @@ class ServerServiceModuleTest extends Specification {
         virtualMachineService.add(vm3)
 
         and:
-        def newVm1 = new VirtualMachine('some:address', 'some new vm')
+        def newVm1 = new VirtualMachine(server1, 'some new vm')
 
         when:
         service.updateReachable(server1, [newVm1])
@@ -137,8 +122,6 @@ class ServerServiceModuleTest extends Specification {
 
     def 'should check if contains server'() {
         given:
-        def server1 = new Server('some','123')
-        def server2 = new Server('some','321')
 
         when:
         service.add(server1)

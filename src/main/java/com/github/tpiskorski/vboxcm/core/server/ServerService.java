@@ -19,9 +19,9 @@ public class ServerService {
         this.virtualMachineService = virtualMachineService;
     }
 
-    public void remove(Server serverToRemove) {
-        serverRepository.remove(serverToRemove);
-        virtualMachineService.removeByServer(serverToRemove);
+    public void remove(Server server) {
+        serverRepository.remove(server);
+        virtualMachineService.removeByServer(server);
     }
 
     public ObservableList<Server> getServers() {

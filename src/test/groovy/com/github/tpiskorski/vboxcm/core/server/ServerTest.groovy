@@ -70,7 +70,7 @@ class ServerTest extends Specification {
         def server = new Server('Local Machine', '')
 
         expect:
-        server.address == 'localhost'
+        server.address == 'Local Machine'
         server.serverType == ServerType.LOCAL
     }
 }
