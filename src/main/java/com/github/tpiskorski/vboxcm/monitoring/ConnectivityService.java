@@ -15,8 +15,6 @@ public class ConnectivityService extends Service<Void> {
             @Override protected Void call() throws Exception {
                 CommandResult result = localhostConnectivityChecker.check();
                 if (result.isFailed()) {
-                    this.failed();
-                    ConnectivityService.this.failed();
                     throw new RuntimeException("Failing the task");
                 } else {
                     this.succeeded();
