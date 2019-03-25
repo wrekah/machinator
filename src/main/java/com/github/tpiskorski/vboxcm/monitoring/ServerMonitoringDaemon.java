@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.monitoring;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerService;

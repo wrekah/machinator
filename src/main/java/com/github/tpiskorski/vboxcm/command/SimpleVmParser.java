@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.command;
 
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachineState;
@@ -11,7 +11,7 @@ public class SimpleVmParser {
 
     private static final String NEW_LINE = "\n";
 
-    List<VirtualMachine> parse(CommandResult commandResult) {
+    public List<VirtualMachine> parse(CommandResult commandResult) {
         String std = commandResult.getStd();
         return Pattern.compile(NEW_LINE).splitAsStream(std)
             .map(this::mapToVm)

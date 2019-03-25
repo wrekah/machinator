@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ public class LocalMachineVmLister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalMachineVmLister.class);
 
-    CommandResult list() throws InterruptedException, IOException {
+    public CommandResult list() throws InterruptedException, IOException {
         LOGGER.info("Checking localhost vms...");
         ProcessBuilder builder = new ProcessBuilder();
         builder.directory(new File(System.getProperty("user.home")));

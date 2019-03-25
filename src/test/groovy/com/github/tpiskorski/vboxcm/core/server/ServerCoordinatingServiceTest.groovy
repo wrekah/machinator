@@ -1,6 +1,6 @@
 package com.github.tpiskorski.vboxcm.core.server
 
-import com.github.tpiskorski.vboxcm.vm.ServerMonitoringScheduler
+import com.github.tpiskorski.vboxcm.monitoring.ServerMonitoringScheduler
 import spock.lang.Specification
 import spock.lang.Subject
 

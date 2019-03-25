@@ -1,6 +1,6 @@
 package com.github.tpiskorski.vboxcm.core.server;
 
-import com.github.tpiskorski.vboxcm.vm.ServerMonitoringScheduler;
+import com.github.tpiskorski.vboxcm.monitoring.ServerMonitoringScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

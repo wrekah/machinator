@@ -1,5 +1,7 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.monitoring;
 
+import com.github.tpiskorski.vboxcm.command.CommandResult;
+import com.github.tpiskorski.vboxcm.command.LocalhostConnectivityChecker;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 

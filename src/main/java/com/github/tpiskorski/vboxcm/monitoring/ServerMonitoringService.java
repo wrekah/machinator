@@ -1,8 +1,11 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.monitoring;
 
 import com.github.tpiskorski.vboxcm.core.server.Server;
 import com.github.tpiskorski.vboxcm.core.server.ServerType;
 import com.github.tpiskorski.vboxcm.core.vm.VirtualMachine;
+import com.github.tpiskorski.vboxcm.command.CommandResult;
+import com.github.tpiskorski.vboxcm.command.LocalMachineVmLister;
+import com.github.tpiskorski.vboxcm.command.SimpleVmParser;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

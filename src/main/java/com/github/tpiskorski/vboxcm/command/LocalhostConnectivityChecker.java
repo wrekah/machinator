@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,11 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-class LocalhostConnectivityChecker {
+public class LocalhostConnectivityChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalhostConnectivityChecker.class);
 
-    CommandResult check() throws InterruptedException, IOException {
+    public CommandResult check() throws InterruptedException, IOException {
         LOGGER.info("Checking localhost connection...");
         ProcessBuilder builder = new ProcessBuilder();
         builder.directory(new File(System.getProperty("user.home")));

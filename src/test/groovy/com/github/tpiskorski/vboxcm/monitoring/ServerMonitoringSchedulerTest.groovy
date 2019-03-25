@@ -1,8 +1,10 @@
-package com.github.tpiskorski.vboxcm.vm
+package com.github.tpiskorski.vboxcm.monitoring
 
 import com.github.tpiskorski.vboxcm.core.server.Server
 import com.github.tpiskorski.vboxcm.core.server.ServerService
 import com.github.tpiskorski.vboxcm.core.server.ServerType
+import com.github.tpiskorski.vboxcm.monitoring.ServerMonitoringDaemon
+import com.github.tpiskorski.vboxcm.monitoring.ServerMonitoringScheduler
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject

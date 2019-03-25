@@ -1,4 +1,4 @@
-package com.github.tpiskorski.vboxcm.vm;
+package com.github.tpiskorski.vboxcm.command;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
