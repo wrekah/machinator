@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.WorkbenchController" fx:id="workbenchPane">
+            fx:controller="tpiskorski.vboxcm.ui.controller.WorkbenchController" fx:id="workbenchPane">
     <top>
         <MenuBar>
             <fx:include source="menu/config/fileMenu.fxml"/>

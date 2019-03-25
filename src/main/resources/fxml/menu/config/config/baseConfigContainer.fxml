@@ -2,7 +2,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="settingsContainer"
-            fx:controller="com.github.tpiskorski.vboxcm.ui.controller.config.BaseConfigContainerController">
+            fx:controller="tpiskorski.vboxcm.ui.controller.config.BaseConfigContainerController">
 
     <fx:define>
         <fx:include fx:id="changeConfig" source="changeConfig.fxml"/>

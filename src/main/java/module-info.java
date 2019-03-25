@@ -12,5 +12,5 @@ open module vboxcm {
     requires java.sql;
     requires java.desktop;
 
-    exports com.github.tpiskorski.vboxcm;
+    exports tpiskorski.vboxcm;
 }
