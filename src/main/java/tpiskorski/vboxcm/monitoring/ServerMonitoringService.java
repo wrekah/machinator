@@ -2,8 +2,8 @@ package tpiskorski.vboxcm.monitoring;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tpiskorski.vboxcm.command.Command;
 import tpiskorski.vboxcm.command.CommandResult;
+import tpiskorski.vboxcm.command.Commands;
 import tpiskorski.vboxcm.command.LocalMachineCommandExecutor;
 import tpiskorski.vboxcm.command.SimpleVmParser;
 import tpiskorski.vboxcm.core.server.Server;
@@ -28,7 +28,7 @@ public class ServerMonitoringService {
     }
 
     private List<VirtualMachine> monitorLocalMachine(Server server) throws InterruptedException, IOException {
-        CommandResult commandResult = localMachineCommandExecutor.execute(Command.of("sh", "-c", "VBoxManage list vms"));
+        CommandResult commandResult = localMachineCommandExecutor.execute(Commands.LIST_ALL_VMS);
         List<VirtualMachine> vms = simpleVmParser.parse(commandResult);
         vms.forEach(virtualMachine -> virtualMachine.setServer(server));
         return vms;

@@ -20,4 +20,8 @@ public class LocalMachineCommandExecutor {
         LOGGER.info("Execution successful");
         return commandResultFactory.from(process);
     }
+
+    public CommandResult execute(Commands commands) throws IOException, InterruptedException {
+        return execute(commands.getCommand());
+    }
 }
