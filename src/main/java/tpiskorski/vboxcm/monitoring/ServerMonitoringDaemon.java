@@ -1,14 +1,14 @@
 package tpiskorski.vboxcm.monitoring;
 
-import tpiskorski.vboxcm.core.server.Server;
-import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.core.server.ServerType;
-import tpiskorski.vboxcm.core.vm.VirtualMachine;
 import javafx.application.Platform;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import tpiskorski.vboxcm.core.server.Server;
+import tpiskorski.vboxcm.core.server.ServerService;
+import tpiskorski.vboxcm.core.server.ServerType;
+import tpiskorski.vboxcm.core.vm.VirtualMachine;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class ServerMonitoringDaemon implements DisposableBean, Runnable {
                     return;
                 }
                 List<VirtualMachine> vms = serverMonitoringService.monitor(server);
-                Platform.runLater(() -> serverService.upsert(vms));
+                Platform.runLater(() -> serverService.upsert(server, vms));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (IOException e) {

@@ -44,7 +44,7 @@ public class AddServerController {
     private String savedAddress;
     private String savedPort;
 
-    private ConnectivityService connectivityService = new ConnectivityService();
+    @Autowired private ConnectivityService connectivityService;
 
     @Autowired
     public AddServerController(ServerService serverService, WorkbenchController workbenchController, ServerMonitoringDaemon serverMonitoringDaemon, ServerCoordinatingService serverCoordinatingService) {
