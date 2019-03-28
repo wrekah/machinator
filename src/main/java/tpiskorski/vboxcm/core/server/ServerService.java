@@ -1,10 +1,10 @@
 package tpiskorski.vboxcm.core.server;
 
-import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.vboxcm.core.vm.VirtualMachine;
+import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 
 import java.util.List;
 
@@ -47,7 +47,8 @@ public class ServerService {
         return serverRepository.contains(server);
     }
 
-    public void upsert(List<VirtualMachine> vms) {
+    public void upsert(Server server, List<VirtualMachine> vms) {
+        server.setServerState(ServerState.REACHABLE);
         virtualMachineService.upsert(vms);
     }
 }
