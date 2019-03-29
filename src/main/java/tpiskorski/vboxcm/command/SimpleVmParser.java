@@ -4,16 +4,19 @@ import tpiskorski.vboxcm.core.vm.VirtualMachine;
 import tpiskorski.vboxcm.core.vm.VirtualMachineState;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SimpleVmParser {
 
     private static final String NEW_LINE = "\n";
+    private static final Pattern SPLIT_PATTERN = Pattern.compile(NEW_LINE);
 
     public List<VirtualMachine> parse(CommandResult commandResult) {
         String std = commandResult.getStd();
-        return Pattern.compile(NEW_LINE).splitAsStream(std)
+        return SPLIT_PATTERN.splitAsStream(std)
+            .filter(Predicate.not(String::isEmpty))
             .map(this::mapToVm)
             .collect(Collectors.toList());
     }
@@ -24,9 +27,7 @@ public class SimpleVmParser {
 
         VirtualMachine vm = new VirtualMachine();
         vm.setId(vmId);
-        vm.setCpuCores(1);
         vm.setVmName(vmName);
-        vm.setRamMemory(1024);
         vm.setState(VirtualMachineState.ON);
 
         return vm;
