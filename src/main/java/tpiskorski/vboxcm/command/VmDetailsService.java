@@ -29,6 +29,7 @@ public class VmDetailsService {
 
             vm.setCpuCores(update.getCpus());
             vm.setRamMemory(update.getMemory());
+            vm.setState(update.getState());
         }
     }
 }

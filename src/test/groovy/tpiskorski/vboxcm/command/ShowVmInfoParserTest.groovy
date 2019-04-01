@@ -2,6 +2,7 @@ package tpiskorski.vboxcm.command
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.vboxcm.core.vm.VirtualMachineState
 
 class ShowVmInfoParserTest extends Specification {
 
@@ -13,6 +14,7 @@ class ShowVmInfoParserTest extends Specification {
         commandResult.getStd() >> '''
 vram=16
 cpuexecutioncap=100
+VMState="poweroff"
 hpet="off"
 cpu-profile="host"
 chipset="piix3"
@@ -29,5 +31,6 @@ longmode="on"
         then:
         result.cpus == 1
         result.memory == 1024
+        result.state == VirtualMachineState.OFF
     }
 }

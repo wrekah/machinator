@@ -1,5 +1,7 @@
 package tpiskorski.vboxcm.command;
 
+import tpiskorski.vboxcm.core.vm.VirtualMachineState;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
@@ -14,10 +16,12 @@ public class ShowVmInfoParser {
 
         int cpus = Integer.parseInt(properties.getProperty("cpus"));
         int memory = Integer.parseInt(properties.getProperty("memory"));
+        VirtualMachineState state = VirtualMachineState.parse(properties.getProperty("VMState"));
 
         ShowVmInfoUpdate showVmInfoUpdate = new ShowVmInfoUpdate();
         showVmInfoUpdate.setCpus(cpus);
         showVmInfoUpdate.setMemory(memory);
+        showVmInfoUpdate.setState(state);
 
         return showVmInfoUpdate;
     }

@@ -1,9 +1,12 @@
 package tpiskorski.vboxcm.command;
 
+import tpiskorski.vboxcm.core.vm.VirtualMachineState;
+
 public class ShowVmInfoUpdate {
 
     private int cpus;
     private int memory;
+    private VirtualMachineState state;
 
     public int getCpus() {
         return cpus;
@@ -19,5 +22,13 @@ public class ShowVmInfoUpdate {
 
     public void setMemory(int memory) {
         this.memory = memory;
+    }
+
+    public VirtualMachineState getState() {
+        return state;
+    }
+
+    public void setState(VirtualMachineState state) {
+        this.state = state;
     }
 }
