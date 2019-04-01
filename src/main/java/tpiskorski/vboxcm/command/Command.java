@@ -1,15 +1,14 @@
 package tpiskorski.vboxcm.command;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Command {
 
     private List<String> parts;
 
-    public static Command of(String... parts) {
+    public static Command of(List<String> parts) {
         Command command = new Command();
-        command.setParts(Arrays.asList(parts));
+        command.setParts(parts);
         return command;
     }
 
