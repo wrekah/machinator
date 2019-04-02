@@ -1,0 +1,19 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.vboxcm.ui.controller.ServerController">
+    <HBox alignment="CENTER" spacing="5.0">
+        <Label text="Search:">
+            <padding>
+                <Insets left="5"/>
+            </padding>
+        </Label>
+        <TextField fx:id="filterField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <ListView VBox.vgrow="ALWAYS" fx:id="serverList"/>
+    <HBox alignment="CENTER" spacing="5.0">
+        <Button text="Add server" onAction="#addServer"/>
+        <Button text="Remove server" fx:id="removeServerButton" onAction="#removeServer"/>
+        <Button text="Jobs" onAction="#showJobs"/>
+    </HBox>
+</VBox>
