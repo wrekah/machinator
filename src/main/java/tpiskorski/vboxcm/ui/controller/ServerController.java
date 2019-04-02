@@ -54,37 +54,37 @@ public class ServerController {
         jobsStage.setTitle("Jobs");
         FilteredList<Server> filterableServers = new FilteredList<>(serverService.getServers(), p -> true);
 
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterableServers.setPredicate(person -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
+        filterField.textProperty().addListener((observable, previousSearchString, nextSearchString) -> {
+            filterableServers.setPredicate(server -> {
+                if (nextSearchString == null || nextSearchString.isEmpty()) {
                     return true;
                 }
 
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
+                String lowerCaseFilter = nextSearchString.toLowerCase();
+                String lowerCaseAddress = server.getAddress().toLowerCase();
 
-                // Filter matches last name.
-                if (person.getAddress().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                } else return person.getAddress().toLowerCase().contains(lowerCaseFilter);
+                if (lowerCaseAddress.contains(lowerCaseFilter)) {
+                    return true;
+                } else {
+                    return lowerCaseAddress.contains(lowerCaseFilter);
+                }
             });
         });
 
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            vmController.getFilterableVirtualMachines().setPredicate(person -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
+        filterField.textProperty().addListener((observable, previousSearchString, nextSearchString) -> {
+            vmController.getFilterableVirtualMachines().setPredicate(vm -> {
+                if (nextSearchString == null || nextSearchString.isEmpty()) {
                     return true;
                 }
 
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
+                String lowerCaseFilter = nextSearchString.toLowerCase();
+                String lowerCaseAddress = vm.getServer().getSimpleAddress().toLowerCase();
 
-                // Filter matches last name.
-                if (person.getServer().getSimpleAddress().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                } else return person.getServer().getSimpleAddress().contains(lowerCaseFilter);
+                if (lowerCaseAddress.contains(lowerCaseFilter)) {
+                    return true;
+                } else {
+                    return lowerCaseAddress.contains(lowerCaseFilter);
+                }
             });
         });
 
