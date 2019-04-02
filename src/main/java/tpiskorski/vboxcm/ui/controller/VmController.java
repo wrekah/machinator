@@ -6,7 +6,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,11 +19,16 @@ import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import tpiskorski.vboxcm.core.vm.VirtualMachineState;
 import tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Controller
 public class VmController {
+
+    @FXML private Alert turnOnAlert;
+    @FXML private Alert turnOffAlert;
+    @FXML private Alert powerOffAlert;
+    @FXML private Alert resetAlert;
+    @FXML private Alert deleteAlert;
 
     @Autowired private JobService jobService;
     @Autowired private VirtualMachineService virtualMachineService;
@@ -35,16 +42,26 @@ public class VmController {
     @FXML private Button turnOffVmButton;
     @FXML private Button turnOnVmButton;
 
+    private FilteredList<VirtualMachine> filterableVirtualMachines;
+
     public FilteredList<VirtualMachine> getFilterableVirtualMachines() {
         return filterableVirtualMachines;
     }
 
-    private FilteredList<VirtualMachine> filterableVirtualMachines;
-
     @FXML
-    public void initialize()     {
+    public void initialize() {
         virtualMachines.setRowFactory(virtualMachineRowFactory);
+        setupDisableBindings();
 
+        filterableVirtualMachines = new FilteredList<>(virtualMachineService.getVms(), p -> true);
+        virtualMachines.setItems(filterableVirtualMachines);
+
+        virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {
+            virtualMachines.getSelectionModel().clearSelection();
+        });
+    }
+
+    private void setupDisableBindings() {
         ObservableList<VirtualMachine> selectedItems = virtualMachines.getSelectionModel().getSelectedItems();
         BooleanBinding selectedUnreachableVm = createUnreachableVmBinding();
 
@@ -53,17 +70,6 @@ public class VmController {
         powerOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
         turnOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
         turnOnVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-
-        filterableVirtualMachines = new FilteredList<>(virtualMachineService.getVms(), p -> true);
-
-
-
-
-        virtualMachines.setItems(filterableVirtualMachines);
-
-        virtualMachines.getItems().addListener((ListChangeListener<VirtualMachine>) change -> {
-            virtualMachines.getSelectionModel().clearSelection();
-        });
     }
 
     private BooleanBinding createUnreachableVmBinding() {
@@ -79,6 +85,12 @@ public class VmController {
 
     @FXML
     public void turnOnVm() {
+        turnOnAlert.showAndWait();
+
+        if (turnOnAlert.getResult() == ButtonType.NO) {
+            return;
+        }
+
         VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
         Job job = new Job();
         job.setJobName("Turn on vm: " + selectedItem.getVmName());
@@ -86,5 +98,43 @@ public class VmController {
         job.setStartTime(LocalDateTime.now());
         job.setStatus("In progress");
         jobService.add(job);
+    }
+
+    @FXML
+    public void turnOffVm() {
+
+        turnOffAlert.showAndWait();
+
+        if (turnOffAlert.getResult() == ButtonType.NO) {
+            return;
+        }
+    }
+
+    @FXML
+    public void powerOffVm() {
+
+        powerOffAlert.showAndWait();
+
+        if (powerOffAlert.getResult() == ButtonType.NO) {
+            return;
+        }
+    }
+
+    @FXML
+    public void resetVm() {
+        resetAlert.showAndWait();
+
+        if (resetAlert.getResult() == ButtonType.NO) {
+            return;
+        }
+    }
+
+    @FXML
+    public void deleteVm() {
+        deleteAlert.showAndWait();
+
+        if (deleteAlert.getResult() == ButtonType.NO) {
+            return;
+        }
     }
 }

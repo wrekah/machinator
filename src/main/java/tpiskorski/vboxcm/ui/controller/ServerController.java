@@ -42,17 +42,7 @@ public class ServerController {
 
     @FXML
     public void initialize() throws IOException {
-        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                serverList.getSelectionModel().clearSelection();
-            }
-        });
-
-        serverList.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                serverList.getSelectionModel().clearSelection();
-            }
-        });
+        setupInputBindings();
 
         serverList.setCellFactory(serverCellFactory);
         removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
@@ -99,6 +89,20 @@ public class ServerController {
         });
 
         serverList.setItems(new SortedList<>(filterableServers, Comparator.comparing(Server::getServerType)));
+    }
+
+    private void setupInputBindings() {
+        serverList.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                serverList.getSelectionModel().clearSelection();
+            }
+        });
+
+        serverList.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                serverList.getSelectionModel().clearSelection();
+            }
+        });
     }
 
     @FXML
