@@ -37,7 +37,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 
 @Controller
-public class WorkbenchController {
+public class MainController {
 
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
@@ -47,7 +47,7 @@ public class WorkbenchController {
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private JobService jobService;
 
-    @FXML private BorderPane workbenchPane;
+    @FXML private BorderPane mainPane;
     @FXML private Button removeServerButton;
     @FXML private Button removeVmButton;
     @FXML private Button resetVmButton;
@@ -62,11 +62,11 @@ public class WorkbenchController {
     private Stage jobsStage;
 
     public void disableMainWindow() {
-        workbenchPane.setDisable(true);
+        mainPane.setDisable(true);
     }
 
     public void enableMainWindow() {
-        workbenchPane.setDisable(false);
+        mainPane.setDisable(false);
     }
 
     @FXML

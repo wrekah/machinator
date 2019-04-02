@@ -21,7 +21,7 @@ public class AddServerController {
 
     private final ServerService serverService;
     private final ServerCoordinatingService serverCoordinatingService;
-    private final WorkbenchController workbenchController;
+    private final MainController mainController;
 
     @FXML private Alert serverExistsAlert;
     @FXML private Alert noConnectivityServerAlert;
@@ -47,9 +47,9 @@ public class AddServerController {
     @Autowired private ConnectivityService connectivityService;
 
     @Autowired
-    public AddServerController(ServerService serverService, WorkbenchController workbenchController, ServerMonitoringDaemon serverMonitoringDaemon, ServerCoordinatingService serverCoordinatingService) {
+    public AddServerController(ServerService serverService, MainController mainController, ServerMonitoringDaemon serverMonitoringDaemon, ServerCoordinatingService serverCoordinatingService) {
         this.serverService = serverService;
-        this.workbenchController = workbenchController;
+        this.mainController = mainController;
         this.serverCoordinatingService = serverCoordinatingService;
     }
 
@@ -92,7 +92,7 @@ public class AddServerController {
         });
 
         addServerGridPane.setDisable(true);
-        workbenchController.disableMainWindow();
+        mainController.disableMainWindow();
         addServerStackPane.getChildren().add(progressLayer);
 
         Server server = new Server(address.getText(), port.getText());
@@ -125,7 +125,7 @@ public class AddServerController {
         addServerStackPane.getChildren().remove(progressLayer);
 
         addServerGridPane.setDisable(false);
-        workbenchController.enableMainWindow();
+        mainController.enableMainWindow();
 
         address.clear();
         port.clear();

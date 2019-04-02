@@ -35,7 +35,7 @@ public class App extends javafx.application.Application {
         springContext = builder.headless(false).run();
 
         fxmlLoader = new FXMLLoader();
-        ClassPathResource mainFxml = new ClassPathResource("/fxml/workbench.fxml");
+        ClassPathResource mainFxml = new ClassPathResource("/fxml/main.fxml");
         fxmlLoader.setLocation(mainFxml.getURL());
         fxmlLoader.setControllerFactory(springContext::getBean);
     }

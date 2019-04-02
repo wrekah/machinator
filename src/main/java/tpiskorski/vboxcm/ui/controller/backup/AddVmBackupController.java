@@ -21,7 +21,7 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@DependsOn("workbenchController")
+@DependsOn("mainController")
 @Controller
 public class AddVmBackupController {
 
