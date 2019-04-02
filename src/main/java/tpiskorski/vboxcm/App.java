@@ -1,6 +1,5 @@
 package tpiskorski.vboxcm;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,6 +9,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import tpiskorski.vboxcm.persistance.ShutdownService;
 
 import java.io.IOException;
 
@@ -47,12 +47,16 @@ public class App extends javafx.application.Application {
         stage.setTitle("vboxcm");
         Scene scene = new Scene(rootNode);
 
-        stage.setOnHiding(event -> Platform.runLater(() -> {
-            springContext.close();
-            Platform.exit();
-        }));
+        setShutdownHooks(stage);
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void setShutdownHooks(Stage stage) {
+        ShutdownService shutdownService = springContext.getBean(ShutdownService.class);
+
+        stage.setOnHiding(event -> shutdownService.shutdown());
+        stage.setOnCloseRequest(event -> shutdownService.shutdown());
     }
 }

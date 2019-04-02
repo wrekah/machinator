@@ -1,9 +1,5 @@
 package tpiskorski.vboxcm.ui.controller;
 
-import tpiskorski.vboxcm.config.ConfigService;
-import tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
-import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
@@ -11,16 +7,20 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.config.ConfigService;
+import tpiskorski.vboxcm.persistance.ShutdownService;
+import tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
+import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
 
 @Controller
 public class FileMenuController {
 
+    final ShutdownService shutdownService;
     private final ContextAwareSceneLoader contextAwareSceneLoader;
     private final ConfigurableApplicationContext springContext;
     private final ConfigService configService;
-
     private final ServerStubMonitor serverStubMonitor;
 
     @FXML private MenuItem monitoringMenuItem;
@@ -31,11 +31,12 @@ public class FileMenuController {
     private Stage containerWindow;
 
     @Autowired
-    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext, ServerStubMonitor serverStubMonitor) {
+    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ConfigurableApplicationContext springContext, ServerStubMonitor serverStubMonitor, ShutdownService shutdownService) {
         this.configService = configService;
         this.contextAwareSceneLoader = contextAwareSceneLoader;
         this.springContext = springContext;
         this.serverStubMonitor = serverStubMonitor;
+        this.shutdownService = shutdownService;
     }
 
     @FXML
@@ -61,8 +62,7 @@ public class FileMenuController {
 
     @FXML
     public void exit() {
-        springContext.close();
-        Platform.exit();
+        shutdownService.shutdown();
     }
 
     @FXML
