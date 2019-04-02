@@ -12,6 +12,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.command.LocalVmStarter;
 import tpiskorski.vboxcm.core.job.Job;
 import tpiskorski.vboxcm.core.job.JobService;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
@@ -19,6 +20,7 @@ import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import tpiskorski.vboxcm.core.vm.VirtualMachineState;
 import tpiskorski.vboxcm.ui.control.VirtualMachineRowFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Controller
@@ -33,6 +35,7 @@ public class VmController {
     @Autowired private JobService jobService;
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
+    @Autowired private LocalVmStarter localVmStarter;
 
     @FXML private TableView<VirtualMachine> virtualMachines;
 
@@ -101,13 +104,16 @@ public class VmController {
     }
 
     @FXML
-    public void turnOffVm() {
+    public void turnOffVm() throws IOException, InterruptedException {
 
         turnOffAlert.showAndWait();
 
         if (turnOffAlert.getResult() == ButtonType.NO) {
             return;
         }
+        VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+
+        localVmStarter.startVm(selectedItem);
     }
 
     @FXML
