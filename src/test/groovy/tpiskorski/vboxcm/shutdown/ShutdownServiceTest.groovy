@@ -3,8 +3,7 @@ package tpiskorski.vboxcm.shutdown
 import org.springframework.context.ConfigurableApplicationContext
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.vboxcm.shutdown.AppStatePersister
-import tpiskorski.vboxcm.shutdown.ShutdownService
+import tpiskorski.vboxcm.shutdown.state.AppStatePersister
 
 class ShutdownServiceTest extends Specification {
 

@@ -2,6 +2,7 @@ package tpiskorski.vboxcm.shutdown
 
 import spock.lang.Specification
 import tpiskorski.vboxcm.core.server.Server
+import tpiskorski.vboxcm.shutdown.state.SerializableServer
 
 class SerializableServerTest extends Specification {
 
