@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.persistance;
+package tpiskorski.vboxcm.shutdown;
 
 import javafx.application.Platform;
 import org.slf4j.Logger;
@@ -13,13 +13,17 @@ public class ShutdownService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownService.class);
 
     private final ConfigurableApplicationContext springContext;
+    private final AppStatePersister appStatePersister;
 
-    @Autowired public ShutdownService(ConfigurableApplicationContext springContext) {
+    @Autowired
+    public ShutdownService(ConfigurableApplicationContext springContext, AppStatePersister appStatePersister) {
         this.springContext = springContext;
+        this.appStatePersister = appStatePersister;
     }
 
     public void shutdown() {
         LOGGER.info("Shutting down application...");
+        appStatePersister.persist();
         springContext.close();
         Platform.exit();
         LOGGER.info("Shutdown complete");
