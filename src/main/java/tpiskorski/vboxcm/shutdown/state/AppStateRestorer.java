@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +18,7 @@ public class AppStateRestorer implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppStateRestorer.class);
 
     private final ServerService serverService;
+    private ObjectRestorer objectRestorer = new ObjectRestorer();
 
     @Autowired public AppStateRestorer(ServerService serverService) {
         this.serverService = serverService;
@@ -34,18 +33,10 @@ public class AppStateRestorer implements InitializingBean {
     }
 
     private List<Server> deserializeServers() throws IOException, ClassNotFoundException {
-        List<SerializableServer> serializableServers = readSerializedServers();
+        List<SerializableServer> serializableServers = objectRestorer.restore(SerializableServer.class, "servers.dat");
 
         return serializableServers.stream()
             .map(SerializableServer::toServer)
             .collect(Collectors.toList());
-    }
-
-    private List<SerializableServer> readSerializedServers() throws IOException, ClassNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream("servers.dat");
-        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-        List<SerializableServer> serializableServers = (List<SerializableServer>) objectInputStream.readObject();
-        objectInputStream.close();
-        return serializableServers;
     }
 }

@@ -7,9 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import tpiskorski.vboxcm.core.server.ServerService;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +17,8 @@ public class AppStatePersister {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppStatePersister.class);
 
     private final ServerService serverService;
-
     private final Environment env;
+    private ObjectPersister objectPersister = new ObjectPersister();
 
     @Autowired public AppStatePersister(ServerService serverService, Environment env) {
         this.serverService = serverService;
@@ -32,7 +30,6 @@ public class AppStatePersister {
             LOGGER.info("Not persisting anything because spring dev profile is active");
             return;
         }
-
         try {
             LOGGER.info("Starting server persistance");
             serializeServers();
@@ -47,14 +44,6 @@ public class AppStatePersister {
             .map(SerializableServer::new)
             .collect(Collectors.toList());
 
-        writeSerializedServers(toSerialize);
-    }
-
-    private void writeSerializedServers(List<SerializableServer> toSerialize) throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("servers.dat");
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        objectOutputStream.writeObject(toSerialize);
-        objectOutputStream.flush();
-        objectOutputStream.close();
+        objectPersister.persist("servers.dat", toSerialize);
     }
 }
