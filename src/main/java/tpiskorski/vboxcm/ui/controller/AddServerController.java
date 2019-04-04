@@ -1,5 +1,6 @@
 package tpiskorski.vboxcm.ui.controller;
 
+import tpiskorski.vboxcm.command.CommandResult;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerCoordinatingService;
 import tpiskorski.vboxcm.core.server.ServerService;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.ui.control.ExceptionDialog;
 
 @Controller
 public class AddServerController {
@@ -110,6 +112,10 @@ public class AddServerController {
 
         connectivityService.setOnFailed(workerStateEvent -> {
             noConnectivityServerAlert.showAndWait();
+            CommandResult result = connectivityService.getResult();
+            System.out.println(result.getError());
+            ExceptionDialog exceptionDialog = new ExceptionDialog(result.getError());
+            exceptionDialog.showAndWait();
             closeWindow();
         });
 

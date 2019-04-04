@@ -11,11 +11,17 @@ public class ConnectivityService extends Service<Void> {
     @Autowired private LocalMachineCommandExecutor localMachineCommandExecutor;
     @Autowired private CommandFactory commandFactory;
 
+    public CommandResult getResult() {
+        return result;
+    }
+
+    private CommandResult result;
+
     @Override protected Task<Void> createTask() {
         return new Task<>() {
             @Override protected Void call() throws Exception {
                 Command command = commandFactory.make(BaseCommand.IS_VBOX_INSTALLED);
-                CommandResult result = localMachineCommandExecutor.execute(command);
+                result = localMachineCommandExecutor.execute(command);
                 if (result.isFailed()) {
                     throw new RuntimeException("Failing the task");
                 } else {
