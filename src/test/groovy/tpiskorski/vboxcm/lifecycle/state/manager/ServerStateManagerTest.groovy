@@ -43,7 +43,7 @@ class ServerStateManagerTest extends Specification {
         persister.restore()
 
         then:
-        1 * objectRestorer.restore(_, _) >> servers
+        1 * objectRestorer.restore(_) >> servers
         3 * serverService.add(_)
     }
 

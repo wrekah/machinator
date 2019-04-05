@@ -46,7 +46,7 @@ public class ServerStateManager extends StateManager {
         LOGGER.info("Starting restoring servers state");
 
         try {
-            List<SerializableServer> restoredServers = objectRestorer.restore(SerializableServer.class, getPersistResourceFileName());
+            List<SerializableServer> restoredServers = objectRestorer.restore(getPersistResourceFileName());
 
             LOGGER.info("Restoring {} servers", restoredServers.size());
 

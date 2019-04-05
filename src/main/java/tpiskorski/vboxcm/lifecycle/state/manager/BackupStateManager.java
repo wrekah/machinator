@@ -46,7 +46,7 @@ public class BackupStateManager extends StateManager {
         LOGGER.info("Starting restoring backups state");
 
         try {
-            List<SerializableBackup> restoredBackups = objectRestorer.restore(SerializableBackup.class, getPersistResourceFileName());
+            List<SerializableBackup> restoredBackups = objectRestorer.restore(getPersistResourceFileName());
 
             LOGGER.info("Restoring {} backups", restoredBackups.size());
 

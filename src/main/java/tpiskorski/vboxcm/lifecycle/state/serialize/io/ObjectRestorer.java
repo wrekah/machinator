@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class ObjectRestorer {
 
-    public <E> List<E> restore(Class<E> clazz, String fileName) throws IOException, ClassNotFoundException {
+    public <E> List<E> restore(String fileName) throws IOException, ClassNotFoundException {
         Path filePath = Paths.get(fileName);
         if (!Files.exists(filePath)) {
             return List.of();

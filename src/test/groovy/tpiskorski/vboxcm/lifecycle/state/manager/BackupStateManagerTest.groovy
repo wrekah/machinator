@@ -45,7 +45,7 @@ class BackupStateManagerTest extends Specification {
         persister.restore()
 
         then:
-        1 * objectRestorer.restore(_, _) >> watchdogs
+        1 * objectRestorer.restore(_) >> watchdogs
         3 * backupService.add(_)
     }
 

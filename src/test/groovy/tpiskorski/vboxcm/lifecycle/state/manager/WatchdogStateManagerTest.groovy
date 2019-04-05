@@ -45,7 +45,7 @@ class WatchdogStateManagerTest extends Specification {
         persister.restore()
 
         then:
-        1 * objectRestorer.restore(_, _) >> watchdogs
+        1 * objectRestorer.restore(_) >> watchdogs
         3 * watchdogService.add(_)
     }
 
