@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-class ObjectRestorer {
+public class ObjectRestorer {
 
-    <E> List<E> restore(Class<E> clazz, String fileName) throws IOException, ClassNotFoundException {
+    public <E> List<E> restore(Class<E> clazz, String fileName) throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream(fileName);
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         List<E> cast = (List<E>) (objectInputStream.readObject());

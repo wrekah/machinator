@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
 
 import java.io.IOException;
@@ -12,10 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ServerPersister extends Persister  {
+public class ServerPersister extends Persister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerPersister.class);
-
 
     private final ServerService serverService;
 
@@ -24,7 +22,11 @@ public class ServerPersister extends Persister  {
         this.serverService = serverService;
     }
 
-    @Override public void persist()   {
+    @Override public String getPersistResourceFileName() {
+        return "servers.dat";
+    }
+
+    @Override public void persist() {
         LOGGER.info("Starting servers persistence");
 
         List<SerializableServer> toSerialize = serverService.getServers().stream()
@@ -32,10 +34,25 @@ public class ServerPersister extends Persister  {
             .collect(Collectors.toList());
 
         try {
-            objectPersister.persist("servers.dat", toSerialize);
+            objectPersister.persist(getPersistResourceFileName(), toSerialize);
             LOGGER.info("Persisted servers!");
         } catch (IOException ex) {
             LOGGER.error("Could not persist servers", ex);
+        }
+    }
+
+    @Override public void restore() {
+        LOGGER.info("Starting restoring servers state");
+
+        try {
+            objectRestorer.restore(SerializableServer.class, getPersistResourceFileName()).stream()
+                .map(SerializableServer::toServer)
+                .collect(Collectors.toList())
+                .forEach(serverService::add);
+
+            LOGGER.info("Servers state restored");
+        } catch (IOException | ClassNotFoundException ex) {
+            LOGGER.error("Could not restore servers state", ex);
         }
     }
 }

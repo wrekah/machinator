@@ -7,16 +7,20 @@ import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 import tpiskorski.vboxcm.core.watchdog.Watchdog
 import tpiskorski.vboxcm.core.watchdog.WatchdogService
+import tpiskorski.vboxcm.shutdown.state.restore.ObjectRestorer
 
 class WatchdogPersisterTest extends Specification {
 
     def watchdogService = Mock(WatchdogService)
+
     def objectPersister = Mock(ObjectPersister)
+    def objectRestorer = Mock(ObjectRestorer)
 
     @Subject persister = new WatchdogPersister(watchdogService)
 
     def setup() {
         persister.objectPersister = objectPersister
+        persister.objectRestorer = objectRestorer
     }
 
     def 'should persist watchdogs state'() {
@@ -29,6 +33,18 @@ class WatchdogPersisterTest extends Specification {
         then:
         1 * watchdogService.getWatchdogs() >> watchdogs
         1 * objectPersister.persist(_, _)
+    }
+
+    def 'should restore watchdogs state'() {
+        given:
+        def watchdogs = createSerializableWatchdogs()
+
+        when:
+        persister.restore()
+
+        then:
+        1 * objectRestorer.restore(_, _) >> watchdogs
+        3 * watchdogService.add(_)
     }
 
     def createWatchdogs() {
@@ -44,5 +60,9 @@ class WatchdogPersisterTest extends Specification {
                 new Watchdog(vm2, server3),
                 new Watchdog(vm2, server1)
         ] as ObservableList
+    }
+
+    def createSerializableWatchdogs() {
+        createWatchdogs().collect { new SerializableWatchdog(it) }
     }
 }

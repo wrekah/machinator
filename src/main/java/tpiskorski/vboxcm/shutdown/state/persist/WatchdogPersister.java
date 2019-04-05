@@ -22,6 +22,10 @@ public class WatchdogPersister extends Persister {
         this.watchdogService = watchdogService;
     }
 
+    @Override public String getPersistResourceFileName() {
+        return "watchdogs.dat";
+    }
+
     @Override public void persist() {
         LOGGER.info("Starting servers persistence");
 
@@ -30,10 +34,25 @@ public class WatchdogPersister extends Persister {
             .collect(Collectors.toList());
 
         try {
-            objectPersister.persist("servers.dat", toSerialize);
+            objectPersister.persist(getPersistResourceFileName(), toSerialize);
             LOGGER.info("Persisted watchdogs!");
         } catch (IOException ex) {
             LOGGER.error("Could not persist watchdogs", ex);
+        }
+    }
+
+    @Override public void restore() {
+        LOGGER.info("Starting restoring watchdogs state");
+
+        try {
+            objectRestorer.restore(SerializableWatchdog.class, getPersistResourceFileName()).stream()
+                .map(SerializableWatchdog::toWatchdog)
+                .collect(Collectors.toList())
+                .forEach(watchdogService::add);
+
+            LOGGER.info("Watchdogs state restored");
+        } catch (IOException | ClassNotFoundException ex) {
+            LOGGER.error("Could not restore watchdogs state", ex);
         }
     }
 }

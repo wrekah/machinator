@@ -22,6 +22,10 @@ public class BackupPersister extends Persister {
         this.backupService = backupService;
     }
 
+    @Override public String getPersistResourceFileName() {
+        return "backups.dat";
+    }
+
     @Override public void persist() {
         LOGGER.info("Starting backups persistence");
 
@@ -30,10 +34,25 @@ public class BackupPersister extends Persister {
             .collect(Collectors.toList());
 
         try {
-            objectPersister.persist("servers.dat", toSerialize);
+            objectPersister.persist(getPersistResourceFileName(), toSerialize);
             LOGGER.info("Persisted backups!");
         } catch (IOException ex) {
             LOGGER.error("Could not persist backups", ex);
+        }
+    }
+
+    @Override public void restore() {
+        LOGGER.info("Starting restoring backups state");
+
+        try {
+            objectRestorer.restore(SerializableBackup.class, getPersistResourceFileName()).stream()
+                .map(SerializableBackup::toBackup)
+                .collect(Collectors.toList())
+                .forEach(backupService::add);
+
+            LOGGER.info("Backups state restored");
+        } catch (IOException | ClassNotFoundException ex) {
+            LOGGER.error("Could not restore backups state", ex);
         }
     }
 }

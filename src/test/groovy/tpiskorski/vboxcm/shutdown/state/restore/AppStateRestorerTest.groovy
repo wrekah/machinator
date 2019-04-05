@@ -2,28 +2,19 @@ package tpiskorski.vboxcm.shutdown.state.restore
 
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.vboxcm.core.server.ServerService
-import tpiskorski.vboxcm.shutdown.state.persist.SerializableServer
-import tpiskorski.vboxcm.shutdown.state.restore.AppStateRestorer
-import tpiskorski.vboxcm.shutdown.state.restore.ObjectRestorer
+import tpiskorski.vboxcm.shutdown.state.persist.Persister
 
 class AppStateRestorerTest extends Specification {
 
-    def serverService = Mock(ServerService)
-    def objectRestorer = Mock(ObjectRestorer)
+    def persisters = [Mock(Persister), Mock(Persister), Mock(Persister)]
 
-    @Subject restorer = new AppStateRestorer(serverService)
-
-    def setup() {
-        restorer.objectRestorer = objectRestorer
-    }
+    @Subject appStateRestorer = new AppStateRestorer(persisters)
 
     def 'should restore app state'() {
         when:
-        restorer.afterPropertiesSet()
+        appStateRestorer.afterPropertiesSet()
 
         then:
-        1 * objectRestorer.restore(_, _) >> [Mock(SerializableServer)]
-        1 * serverService.add(_)
+        3 * _.restore()
     }
 }
