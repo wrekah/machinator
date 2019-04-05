@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import tpiskorski.vboxcm.lifecycle.state.AppStatePersister;
-import tpiskorski.vboxcm.lifecycle.state.DefaultAppStatePersister;
 
 @Service
 public class ShutdownService {
@@ -18,7 +17,7 @@ public class ShutdownService {
     private final AppStatePersister appStatePersister;
 
     @Autowired
-    public ShutdownService(ConfigurableApplicationContext springContext, DefaultAppStatePersister appStatePersister) {
+    public ShutdownService(ConfigurableApplicationContext springContext, AppStatePersister appStatePersister) {
         this.springContext = springContext;
         this.appStatePersister = appStatePersister;
     }
