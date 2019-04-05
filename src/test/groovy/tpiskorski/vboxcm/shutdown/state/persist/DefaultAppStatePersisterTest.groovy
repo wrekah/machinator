@@ -17,22 +17,11 @@ class DefaultAppStatePersisterTest extends Specification {
         persister.objectPersister = objectPersister
     }
 
-    def 'should not persist app state when dev mode is set'() {
-
-        when:
-        persister.persist()
-
-        then:
-        1 * env.getActiveProfiles() >> ['dev']
-        0 * _
-    }
-
     def 'should persist app state'() {
         when:
         persister.persist()
 
         then:
-        1 * env.getActiveProfiles() >> []
         1 * serverService.getServers() >> ([Mock(Server)] as ObservableList)
         1 * objectPersister.persist(_, _)
     }
