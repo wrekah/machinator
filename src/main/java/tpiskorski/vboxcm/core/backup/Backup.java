@@ -23,8 +23,8 @@ public class Backup {
     private BooleanProperty active = new SimpleBooleanProperty();
 
     public Backup(Server server, VirtualMachine vm) {
-        setServer(server);
-        setVm(vm);
+        this.server = server;
+        this.vm = vm;
         setActive(false);
     }
 
@@ -52,16 +52,8 @@ public class Backup {
         return server;
     }
 
-    public void setServer(Server server) {
-        this.server = server;
-    }
-
     public VirtualMachine getVm() {
         return vm;
-    }
-
-    public void setVm(VirtualMachine vm) {
-        this.vm = vm;
     }
 
     public int getCurrentFiles() {

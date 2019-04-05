@@ -3,7 +3,6 @@ package tpiskorski.vboxcm.core.watchdog;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.util.Callback;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
@@ -14,11 +13,12 @@ public class Watchdog {
 
     private VirtualMachine virtualMachine;
     private Server watchdogServer;
+
     private BooleanProperty active = new SimpleBooleanProperty();
 
     public Watchdog(VirtualMachine virtualMachine, Server watchdogServer) {
-        setVirtualMachine(virtualMachine);
-        setWatchdogServer(watchdogServer);
+        this.virtualMachine = virtualMachine;
+        this.watchdogServer = watchdogServer;
         setActive(false);
     }
 
@@ -44,20 +44,8 @@ public class Watchdog {
         return virtualMachine;
     }
 
-    public void setVirtualMachine(VirtualMachine virtualMachine) {
-        this.virtualMachine = virtualMachine;
-    }
-
-    public SimpleStringProperty x() {
-        return new SimpleStringProperty(getVirtualMachine().getServerAddress());
-    }
-
     public Server getWatchdogServer() {
         return watchdogServer;
-    }
-
-    public void setWatchdogServer(Server watchdogServer) {
-        this.watchdogServer = watchdogServer;
     }
 
     @Override public int hashCode() {
