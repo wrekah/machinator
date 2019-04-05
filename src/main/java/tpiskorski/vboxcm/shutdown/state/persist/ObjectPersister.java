@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.shutdown.state;
+package tpiskorski.vboxcm.shutdown.state.persist;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

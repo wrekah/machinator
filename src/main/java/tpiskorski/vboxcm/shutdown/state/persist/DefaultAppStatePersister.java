@@ -1,35 +1,32 @@
-package tpiskorski.vboxcm.shutdown.state;
+package tpiskorski.vboxcm.shutdown.state.persist;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import tpiskorski.vboxcm.core.backup.BackupService;
 import tpiskorski.vboxcm.core.server.ServerService;
+import tpiskorski.vboxcm.core.watchdog.WatchdogService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class AppStatePersister {
+public class DefaultAppStatePersister implements AppStatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppStatePersister.class);
 
     private final ServerService serverService;
-    private final Environment env;
+
     private ObjectPersister objectPersister = new ObjectPersister();
 
-    @Autowired public AppStatePersister(ServerService serverService, Environment env) {
+    @Autowired
+    public DefaultAppStatePersister(ServerService serverService) {
         this.serverService = serverService;
-        this.env = env;
     }
 
     public void persist() {
-        if (List.of(env.getActiveProfiles()).contains("dev")) {
-            LOGGER.info("Not persisting anything because spring dev profile is active");
-            return;
-        }
         try {
             LOGGER.info("Starting server persistance");
             serializeServers();

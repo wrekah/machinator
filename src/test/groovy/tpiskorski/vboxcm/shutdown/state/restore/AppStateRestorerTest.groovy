@@ -1,8 +1,11 @@
-package tpiskorski.vboxcm.shutdown.state
+package tpiskorski.vboxcm.shutdown.state.restore
 
 import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.vboxcm.core.server.ServerService
+import tpiskorski.vboxcm.shutdown.state.persist.SerializableServer
+import tpiskorski.vboxcm.shutdown.state.restore.AppStateRestorer
+import tpiskorski.vboxcm.shutdown.state.restore.ObjectRestorer
 
 class AppStateRestorerTest extends Specification {
 

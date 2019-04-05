@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.shutdown.state;
+package tpiskorski.vboxcm.shutdown.state.persist;
 
 import tpiskorski.vboxcm.core.server.Server;
 

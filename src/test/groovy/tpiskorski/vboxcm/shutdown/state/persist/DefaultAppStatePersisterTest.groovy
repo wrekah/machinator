@@ -1,21 +1,19 @@
-package tpiskorski.vboxcm.shutdown.state
+package tpiskorski.vboxcm.shutdown.state.persist
 
 import javafx.collections.ObservableList
-import org.springframework.core.env.Environment
 import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.server.ServerService
 
-class AppStatePersisterTest extends Specification {
+class DefaultAppStatePersisterTest extends Specification {
 
     def serverService = Mock(ServerService)
-    def env = Mock(Environment)
     def objectPersister = Mock(ObjectPersister)
 
-    @Subject persister = new AppStatePersister(serverService, env)
+    @Subject persister = new DefaultAppStatePersister(serverService)
 
-    def setup(){
+    def setup() {
         persister.objectPersister = objectPersister
     }
 

@@ -3,12 +3,12 @@ package tpiskorski.vboxcm.shutdown
 import org.springframework.context.ConfigurableApplicationContext
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.vboxcm.shutdown.state.AppStatePersister
+import tpiskorski.vboxcm.shutdown.state.persist.DefaultAppStatePersister
 
 class ShutdownServiceTest extends Specification {
 
     def context = Mock(ConfigurableApplicationContext)
-    def appStatePersister = Mock(AppStatePersister)
+    def appStatePersister = Mock(DefaultAppStatePersister)
 
     @Subject service = new ShutdownService(context, appStatePersister)
 
