@@ -6,21 +6,7 @@ import tpiskorski.vboxcm.shutdown.state.persist.SerializableServer
 
 class SerializableServerTest extends Specification {
 
-    def 'should create serializable server from server'() {
-        given:
-        def address = 'localhost'
-        def port = '8889'
-        def server = new Server(address, port)
-
-        and:
-        def serializableServer = new SerializableServer(server)
-
-        expect:
-        serializableServer.address == address
-        serializableServer.port == port
-    }
-
-    def 'should convert serializable server back to server'(){
+    def 'should create serializable server from server and convert it back'() {
         given:
         def address = 'localhost'
         def port = '8889'
