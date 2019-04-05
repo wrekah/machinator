@@ -9,7 +9,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import tpiskorski.vboxcm.shutdown.ShutdownService;
+import tpiskorski.vboxcm.lifecycle.ShutdownService;
 
 import java.io.IOException;
 

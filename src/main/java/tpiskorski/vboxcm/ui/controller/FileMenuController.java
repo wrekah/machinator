@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 import tpiskorski.vboxcm.config.ConfigService;
-import tpiskorski.vboxcm.shutdown.ShutdownService;
+import tpiskorski.vboxcm.lifecycle.ShutdownService;
 import tpiskorski.vboxcm.stub.dynamic.ServerStubMonitor;
 import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 
