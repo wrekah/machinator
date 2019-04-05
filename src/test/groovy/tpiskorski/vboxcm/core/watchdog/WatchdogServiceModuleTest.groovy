@@ -1,8 +1,8 @@
 package tpiskorski.vboxcm.core.watchdog
 
-import tpiskorski.vboxcm.core.server.Server
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 
 class WatchdogServiceModuleTest extends Specification {
@@ -25,19 +25,9 @@ class WatchdogServiceModuleTest extends Specification {
 
     def 'should get watchdogs that were added'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server3
-        )
-        def watchdog3 = new Watchdog(
-                virtualMachine: vm2,
-                watchdogServer: server1
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
+        def watchdog3 = new Watchdog(vm2, server1)
 
         when:
         service.add(watchdog1)
@@ -50,22 +40,9 @@ class WatchdogServiceModuleTest extends Specification {
 
     def 'should properly remove watchdogs'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server3
-
-        )
-        def watchdog3 = new Watchdog(
-                virtualMachine: vm2,
-                watchdogServer: server1
-
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
+        def watchdog3 = new Watchdog(vm2, server1)
 
         when:
         service.add(watchdog1)
@@ -96,15 +73,8 @@ class WatchdogServiceModuleTest extends Specification {
 
     def 'should not remove the vm that is not present'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server3
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
 
         when:
         service.add(watchdog1)

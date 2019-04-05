@@ -1,7 +1,7 @@
 package tpiskorski.vboxcm.core.watchdog
 
-import tpiskorski.vboxcm.core.server.Server
 import spock.lang.Specification
+import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 
 class WatchdogTest extends Specification {
@@ -15,15 +15,8 @@ class WatchdogTest extends Specification {
 
     def 'should properly compare equal watchdogs'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server2)
 
         expect:
         watchdog1 == watchdog2
@@ -35,15 +28,8 @@ class WatchdogTest extends Specification {
 
     def 'should properly compare not equal watchdogs by backup server'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server3
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
 
         expect:
         watchdog1 != watchdog2
@@ -52,15 +38,8 @@ class WatchdogTest extends Specification {
 
     def 'should properly compare not equal watchdogs by server'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm2,
-                watchdogServer: server2
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm2, server2)
 
         expect:
         watchdog1 != watchdog2
@@ -69,15 +48,8 @@ class WatchdogTest extends Specification {
 
     def 'should properly compare not equal watchdogs by vm'() {
         given:
-        def watchdog1 = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
-
-        def watchdog2 = new Watchdog(
-                virtualMachine: vm2,
-                watchdogServer: server2
-        )
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm2, server2)
 
         expect:
         watchdog1 != watchdog2
@@ -87,10 +59,7 @@ class WatchdogTest extends Specification {
     def 'should properly compare not watchdog'() {
         given:
         def something = new Object()
-        def watchdog = new Watchdog(
-                virtualMachine: vm1,
-                watchdogServer: server2
-        )
+        def watchdog = new Watchdog(vm1, server2)
 
         expect:
         something != watchdog

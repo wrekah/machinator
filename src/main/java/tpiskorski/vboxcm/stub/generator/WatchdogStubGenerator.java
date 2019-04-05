@@ -1,17 +1,17 @@
 package tpiskorski.vboxcm.stub.generator;
 
-import tpiskorski.vboxcm.core.server.Server;
-import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import tpiskorski.vboxcm.core.vm.VirtualMachineService;
-import tpiskorski.vboxcm.core.watchdog.Watchdog;
-import tpiskorski.vboxcm.core.watchdog.WatchdogService;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import tpiskorski.vboxcm.core.server.Server;
+import tpiskorski.vboxcm.core.server.ServerService;
+import tpiskorski.vboxcm.core.vm.VirtualMachine;
+import tpiskorski.vboxcm.core.vm.VirtualMachineService;
+import tpiskorski.vboxcm.core.watchdog.Watchdog;
+import tpiskorski.vboxcm.core.watchdog.WatchdogService;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -46,16 +46,10 @@ public class WatchdogStubGenerator implements InitializingBean {
     }
 
     private Watchdog createBackupForVm(ObservableList<Server> servers, VirtualMachine virtualMachine) {
-        Watchdog watchdog = new Watchdog();
-
-        watchdog.setVirtualMachine(virtualMachine);
-
         Optional<Server> otherServer = servers.stream()
-            .filter(server -> server.getSimpleAddress() != virtualMachine.getServer().getSimpleAddress())
+            .filter(server -> !server.getSimpleAddress().equals(virtualMachine.getServer().getSimpleAddress()))
             .findAny();
 
-        watchdog.setWatchdogServer(otherServer.get());
-
-        return watchdog;
+        return new Watchdog(virtualMachine, otherServer.get());
     }
 }
