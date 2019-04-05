@@ -58,5 +58,7 @@ public class App extends javafx.application.Application {
 
         stage.setOnHiding(event -> shutdownService.shutdown());
         stage.setOnCloseRequest(event -> shutdownService.shutdown());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownService.shutdown()));
     }
 }

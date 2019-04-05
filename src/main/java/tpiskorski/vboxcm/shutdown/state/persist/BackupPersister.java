@@ -23,7 +23,7 @@ public class BackupPersister extends Persister {
     }
 
     @Override public String getPersistResourceFileName() {
-        return "backups.dat";
+        return "data/backups.dat";
     }
 
     @Override public void persist() {

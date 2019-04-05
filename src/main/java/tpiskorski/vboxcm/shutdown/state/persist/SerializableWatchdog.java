@@ -2,7 +2,9 @@ package tpiskorski.vboxcm.shutdown.state.persist;
 
 import tpiskorski.vboxcm.core.watchdog.Watchdog;
 
-public class SerializableWatchdog {
+import java.io.Serializable;
+
+public class SerializableWatchdog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

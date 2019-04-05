@@ -27,6 +27,13 @@
         </fileSet>
         <fileSet>
             <directory>.</directory>
+            <outputDirectory>data</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>.</directory>
             <outputDirectory>config</outputDirectory>
             <includes>
                 <include>config.yml</include>

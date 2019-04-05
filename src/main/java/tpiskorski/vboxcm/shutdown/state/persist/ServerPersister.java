@@ -23,7 +23,7 @@ public class ServerPersister extends Persister {
     }
 
     @Override public String getPersistResourceFileName() {
-        return "servers.dat";
+        return "./data/servers.dat";
     }
 
     @Override public void persist() {

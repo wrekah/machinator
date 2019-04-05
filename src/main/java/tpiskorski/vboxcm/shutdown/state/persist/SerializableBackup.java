@@ -2,7 +2,9 @@ package tpiskorski.vboxcm.shutdown.state.persist;
 
 import tpiskorski.vboxcm.core.backup.Backup;
 
-public class SerializableBackup {
+import java.io.Serializable;
+
+public class SerializableBackup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -23,7 +23,7 @@ public class WatchdogPersister extends Persister {
     }
 
     @Override public String getPersistResourceFileName() {
-        return "watchdogs.dat";
+        return "data/watchdogs.dat";
     }
 
     @Override public void persist() {
