@@ -1,11 +1,5 @@
 package tpiskorski.vboxcm.ui.controller.backup;
 
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
-import tpiskorski.vboxcm.core.server.Server;
-import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,6 +11,12 @@ import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.core.backup.Backup;
+import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.server.Server;
+import tpiskorski.vboxcm.core.server.ServerService;
+import tpiskorski.vboxcm.core.vm.VirtualMachine;
+import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -109,9 +109,8 @@ public class AddVmBackupController {
         LocalTime backupTime = LocalTime.parse(this.backupTime.getText());
         int fileLimit = Integer.parseInt(this.fileLimit.getText());
 
-        Backup backup = new Backup();
-        backup.setServer(server );
-        backup.setVm(vm );
+        Backup backup = new Backup(server, vm);
+
         backup.setFirstBackupDay(backupDay);
         backup.setFrequency(every);
         backup.setBackupTime(backupTime);

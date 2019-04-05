@@ -1,8 +1,8 @@
 package tpiskorski.vboxcm.core.backup
 
-import tpiskorski.vboxcm.core.server.Server
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 
 class BackupRepositoryTest extends Specification {
@@ -17,8 +17,8 @@ class BackupRepositoryTest extends Specification {
 
     def 'should add backups'() {
         given:
-        def backup1 = new Backup(server: server1, vm: vm1)
-        def backup2 = new Backup(server: server2, vm: vm1)
+        def backup1 = new Backup(server1, vm1)
+        def backup2 = new Backup(server2, vm1)
 
         when:
         repository.add(backup1)
@@ -30,7 +30,7 @@ class BackupRepositoryTest extends Specification {
 
     def 'should remove backup'() {
         given:
-        def backup1 = new Backup(server: server1, vm: vm1)
+        def backup1 = new Backup(server1, vm1)
 
         when:
         repository.add(backup1)
@@ -42,9 +42,9 @@ class BackupRepositoryTest extends Specification {
 
     def 'should add and remove backups'() {
         given:
-        def backup1 = new Backup(server: server1, vm: vm1)
-        def backup2 = new Backup(server: server2, vm: vm1)
-        def backup3 = new Backup(server: server1, vm: vm2)
+        def backup1 = new Backup(server1, vm1)
+        def backup2 = new Backup(server2, vm1)
+        def backup3 = new Backup(server1, vm2)
 
         when:
         repository.add(backup1)

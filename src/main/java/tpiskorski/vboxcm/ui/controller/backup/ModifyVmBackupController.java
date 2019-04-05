@@ -1,7 +1,5 @@
 package tpiskorski.vboxcm.ui.controller.backup;
 
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -9,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.core.backup.Backup;
+import tpiskorski.vboxcm.core.backup.BackupService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,10 +35,8 @@ public class ModifyVmBackupController {
 
     @FXML
     public void modify() {
-        Backup backup = new Backup();
+        Backup backup = new Backup(savedBackup.getServer(), savedBackup.getVm());
 
-        backup.setServer(savedBackup.getServer());
-        backup.setVm(savedBackup.getVm());
         backup.setFirstBackupDay(LocalDate.parse(firstBackup.getEditor().getText()));
         backup.setFrequency(Integer.parseInt(frequency.getText()));
         backup.setBackupTime(LocalTime.parse(backupTime.getText()));

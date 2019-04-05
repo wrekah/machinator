@@ -67,6 +67,14 @@ class WatchdogTest extends Specification {
         and:
         watchdog != something
     }
+
+    def 'should create not active watchdog by default'() {
+        given:
+        def watchdog = new Watchdog(vm1, server2)
+
+        expect:
+        !watchdog.isActive()
+    }
 }
 
 

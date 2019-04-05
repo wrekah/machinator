@@ -1,15 +1,15 @@
 package tpiskorski.vboxcm.stub.generator;
 
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
-import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import tpiskorski.vboxcm.core.backup.Backup;
+import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.vm.VirtualMachine;
+import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -53,10 +53,8 @@ public class BackupStubGenerator implements InitializingBean {
     }
 
     Backup createBackupForVm(VirtualMachine virtualMachine) {
-        Backup backup = new Backup();
+        Backup backup = new Backup(virtualMachine.getServer(), virtualMachine);
 
-        backup.setServer(virtualMachine.getServer());
-        backup.setVm(virtualMachine);
         backup.setFileLimit(3);
         backup.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backup.getFileLimit() + 1));
         backup.setFrequency(10);

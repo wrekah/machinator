@@ -1,7 +1,7 @@
 package tpiskorski.vboxcm.core.backup
 
-import tpiskorski.vboxcm.core.server.Server
 import spock.lang.Specification
+import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 
 class BackupTest extends Specification {
@@ -14,8 +14,8 @@ class BackupTest extends Specification {
 
     def 'should properly compare equal backups'() {
         given:
-        def backup1 = new Backup(server: server1, vm: vm1)
-        def backup2 = new Backup(server: server1, vm: vm1)
+        def backup1 = new Backup(server1, vm1)
+        def backup2 = new Backup(server1, vm1)
 
         expect:
         backup1 == backup2
@@ -27,9 +27,9 @@ class BackupTest extends Specification {
 
     def 'should properly compare not equal backups'() {
         given:
-        def backup1 = new Backup(server: server1, vm: vm1)
-        def backup2 = new Backup(server: server2, vm: vm1)
-        def backup3 = new Backup(server: server1, vm: vm2)
+        def backup1 = new Backup(server1, vm1)
+        def backup2 = new Backup(server2, vm1)
+        def backup3 = new Backup(server1, vm2)
 
         expect:
         backup1 != backup2
@@ -45,12 +45,20 @@ class BackupTest extends Specification {
     def 'should properly compare not backup'() {
         given:
         def something = new Object()
-        def backup = new Backup(server: server1, vm: vm1)
+        def backup = new Backup(server1, vm1)
 
         expect:
         something != backup
 
         and:
         backup != something
+    }
+
+    def 'should create not active backup by default'() {
+        given:
+        def backup = new Backup(server1, vm1)
+
+        expect:
+        !backup.isActive()
     }
 }

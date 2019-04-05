@@ -1,13 +1,10 @@
 package tpiskorski.vboxcm.core.backup;
 
+import javafx.beans.Observable;
+import javafx.beans.property.*;
+import javafx.util.Callback;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import javafx.beans.Observable;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.util.Callback;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,12 +20,32 @@ public class Backup {
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
     private IntegerProperty currentFiles = new SimpleIntegerProperty();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
+    private BooleanProperty active = new SimpleBooleanProperty();
+
+    public Backup(Server server, VirtualMachine vm) {
+        setServer(server);
+        setVm(vm);
+        setActive(false);
+    }
 
     static Callback<Backup, Observable[]> extractor() {
         return (Backup backup) -> new Observable[]{
             backup.firstBackupDayProperty(), backup.frequencyProperty(),
-            backup.backupTimeProperty(), backup.fileLimitProperty()
+            backup.backupTimeProperty(), backup.fileLimitProperty(),
+            backup.activeProperty()
         };
+    }
+
+    public boolean isActive() {
+        return active.get();
+    }
+
+    public void setActive(boolean active) {
+        this.active.set(active);
+    }
+
+    public BooleanProperty activeProperty() {
+        return active;
     }
 
     public Server getServer() {
