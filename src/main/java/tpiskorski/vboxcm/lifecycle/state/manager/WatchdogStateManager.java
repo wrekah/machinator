@@ -46,7 +46,12 @@ public class WatchdogStateManager extends StateManager {
         LOGGER.info("Starting restoring watchdogs state");
 
         try {
-            objectRestorer.restore(SerializableWatchdog.class, getPersistResourceFileName()).stream()
+            List<SerializableWatchdog> restoredWatchdogs = objectRestorer.restore(SerializableWatchdog.class, getPersistResourceFileName());
+
+            LOGGER.info("Restoring {} watchdogs", restoredWatchdogs.size());
+
+
+            restoredWatchdogs.stream()
                 .map(SerializableWatchdog::toWatchdog)
                 .collect(Collectors.toList())
                 .forEach(watchdogService::add);
