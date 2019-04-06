@@ -3,7 +3,10 @@ package tpiskorski.vboxcm.ui.controller.watchdog;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.vboxcm.core.watchdog.Watchdog;
 import tpiskorski.vboxcm.core.watchdog.WatchdogService;
+import tpiskorski.vboxcm.ui.control.ConfirmationAlertFactory;
 import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
@@ -40,10 +44,10 @@ public class WatchdogController {
             if (t.getButton() == MouseButton.SECONDARY) {
                 Watchdog selectedItem = watchdogTableView.getSelectionModel().getSelectedItem();
                 if (selectedItem.isActive()) {
-                    dynamicMenuItem.setText(  "Deactivate" );
+                    dynamicMenuItem.setText("Deactivate");
                     dynamicMenuItem.setOnAction(this::deactivate);
-                }else{
-                    dynamicMenuItem.setText(  "Activate" );
+                } else {
+                    dynamicMenuItem.setText("Activate");
                     dynamicMenuItem.setOnAction(this::activate);
                 }
 
@@ -69,36 +73,36 @@ public class WatchdogController {
 
     @FXML
     public void unwatchVm() {
-        Watchdog watchdogToRemove = watchdogTableView.getSelectionModel().getSelectedItem();
-        watchdogService.remove(watchdogToRemove);
+        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+            "Do you really want to unwatch this vm?",
+            "Watchdog"
+        );
+
+        if (confirmed) {
+            Watchdog watchdogToRemove = watchdogTableView.getSelectionModel().getSelectedItem();
+            watchdogService.remove(watchdogToRemove);
+        }
     }
 
     private void activate(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+        boolean confirmed = ConfirmationAlertFactory.createAndShow(
             "Do you really want to activate this watchdog?",
-            ButtonType.YES, ButtonType.NO
+            "Watchdog"
         );
 
-        alert.setTitle("Watchdog");
-        alert.showAndWait();
-
-        if (alert.getResult() == ButtonType.YES) {
+        if (confirmed) {
             Watchdog watchdogToActivate = watchdogTableView.getSelectionModel().getSelectedItem();
             watchdogService.activate(watchdogToActivate);
         }
     }
 
-
     private void deactivate(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+        boolean confirmed = ConfirmationAlertFactory.createAndShow(
             "Do you really want to deactivate this watchdog?",
-            ButtonType.YES, ButtonType.NO
+            "Watchdog"
         );
 
-        alert.setTitle("Watchdog");
-        alert.showAndWait();
-
-        if (alert.getResult() == ButtonType.YES) {
+        if (confirmed) {
             Watchdog watchdogToActivate = watchdogTableView.getSelectionModel().getSelectedItem();
             watchdogService.deactivate(watchdogToActivate);
         }

@@ -13,7 +13,7 @@
             <items>
                 <MenuItem fx:id="dynamicMenuItem"/>
                 <SeparatorMenuItem/>
-                <MenuItem text="Unwatch"/>
+                <MenuItem text="Unwatch" onAction="#unwatchVm"/>
             </items>
         </ContextMenu>
 
