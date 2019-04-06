@@ -3,7 +3,6 @@ package tpiskorski.vboxcm.ui.controller.backup;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
@@ -11,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.vboxcm.config.Config;
@@ -36,7 +34,6 @@ public class BackupController {
     @Autowired private ConfigService configService;
 
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
-    @FXML private TableColumn viewColumn;
     @Autowired private BackupDefinitionService backupDefinitionService;
 
     private Stage addServerStage;
@@ -79,37 +76,6 @@ public class BackupController {
         modifyVmStage = contextAwareSceneLoader.loadPopup("/fxml/backup/modifyVmBackup.fxml");
         modifyVmStage.setTitle("Modifying backup...");
 
-        Callback<TableColumn<BackupDefinition, Void>, TableCell<BackupDefinition, Void>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<BackupDefinition, Void> call(final TableColumn<BackupDefinition, Void> param) {
-                final TableCell<BackupDefinition, Void> cell = new TableCell<>() {
-
-                    private final Button btn = new Button("View");
-
-                    {
-                        btn.setOnAction((ActionEvent event) -> {
-                            BackupDefinition data = getTableView().getItems().get(getIndex());
-                            browseHomeDirectory();
-                            System.out.println("selectedData: " + data);
-                        });
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(btn);
-                            setAlignment(Pos.CENTER);
-                        }
-                    }
-                };
-                return cell;
-            }
-        };
-
-        viewColumn.setCellFactory(cellFactory);
         backupsTableView.setItems(backupDefinitionService.getBackups());
     }
 
@@ -137,7 +103,8 @@ public class BackupController {
         }
     }
 
-    private void browseHomeDirectory() {
+    @FXML
+    public void browseHomeDirectory() {
         try {
             Desktop.getDesktop().open(new File(System.getProperty("user.home")));
         } catch (IOException e) {

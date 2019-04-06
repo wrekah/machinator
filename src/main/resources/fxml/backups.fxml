@@ -12,8 +12,10 @@
             <items>
                 <MenuItem fx:id="dynamicMenuItem"/>
                 <SeparatorMenuItem/>
-                <MenuItem text="Remove" onAction="#removeVm"/>
+                <MenuItem text="Open directory" onAction="#browseHomeDirectory"/>
+                <SeparatorMenuItem/>
                 <MenuItem text="Modify" onAction="#modifyVm"/>
+                <MenuItem text="Remove" onAction="#removeVm"/>
             </items>
         </ContextMenu>
 
@@ -65,9 +67,6 @@
                     <cellValueFactory>
                         <PropertyValueFactory property="fileLimit"/>
                     </cellValueFactory>
-                </TableColumn>
-                <TableColumn fx:id="viewColumn">
-
                 </TableColumn>
             </columns>
 
