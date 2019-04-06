@@ -33,4 +33,14 @@ public class BackupDefinitionService {
         backupDefinitionToModify.setBackupTime(backupDefinition.getBackupTime());
         backupDefinitionToModify.setFrequency(backupDefinition.getFrequency());
     }
+
+    public void deactivate(BackupDefinition backupToDeactivate) {
+        backupToDeactivate.setActive(false);
+
+    }
+
+    public void activate(BackupDefinition backupToDeactivate) {
+        backupToDeactivate.setActive(true);
+
+    }
 }

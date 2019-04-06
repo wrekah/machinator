@@ -89,7 +89,7 @@ class WatchdogServiceModuleTest extends Specification {
         service.getWatchdogs() == [watchdog1]
     }
 
-    def 'should activate and deactivate watchdog'(){
+    def 'should activate and deactivate watchdog'() {
         given:
         def watchdog = new Watchdog(vm1, server2)
 
@@ -107,6 +107,5 @@ class WatchdogServiceModuleTest extends Specification {
 
         then:
         !watchdog.active
-
     }
 }

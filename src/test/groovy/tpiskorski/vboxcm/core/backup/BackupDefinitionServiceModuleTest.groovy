@@ -107,4 +107,24 @@ class BackupDefinitionServiceModuleTest extends Specification {
         service.getBackups() == [newBackup]
         service.getBackups().first().fileLimit == 10
     }
+
+    def 'should activate and deactivate watchdog'() {
+        given:
+        def backup = new BackupDefinition(server1, vm1)
+
+        expect:
+        !backup.active
+
+        when:
+        service.activate(backup)
+
+        then:
+        backup.active
+
+        when:
+        service.deactivate(backup)
+
+        then:
+        !backup.active
+    }
 }

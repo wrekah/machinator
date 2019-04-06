@@ -6,6 +6,20 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.vboxcm.ui.controller.backup.BackupController">
 
 
+    <fx:define>
+
+        <ContextMenu fx:id="contextMenu">
+            <items>
+                <MenuItem fx:id="dynamicMenuItem"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="Remove" onAction="#removeVm"/>
+                <MenuItem text="Modify" onAction="#modifyVm"/>
+            </items>
+        </ContextMenu>
+
+    </fx:define>
+
+
     <center>
         <TableView fx:id="backupsTableView">
             <columnResizePolicy>
@@ -69,7 +83,7 @@
             <HBox alignment="CENTER">
                 <Button text="Add virtual machine" onAction="#showAddVm"/>
                 <Button text="Remove virtual machine" fx:id="removeVmButton" onAction="#removeVm"/>
-                <Button text="Modify..." fx:id="modifyButton" onAction="#modify"/>
+                <Button text="Modify..." fx:id="modifyButton" onAction="#modifyVm"/>
             </HBox>
         </VBox>
 
