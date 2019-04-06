@@ -24,4 +24,12 @@ public class WatchdogService {
     public void remove(Watchdog watchdog) {
         watchdogRepository.remove(watchdog);
     }
+
+    public void activate(Watchdog watchdogToActivate) {
+        watchdogToActivate.setActive(true);
+    }
+
+    public void deactivate(Watchdog watchdogToActivate) {
+        watchdogToActivate.setActive(false);
+    }
 }

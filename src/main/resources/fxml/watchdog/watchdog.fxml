@@ -2,8 +2,22 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import tpiskorski.vboxcm.ui.control.WatchdogServerAddressServerCellValueFactory?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tpiskorski.vboxcm.ui.controller.watchdog.WatchdogController">
+
+
+    <fx:define>
+
+        <ContextMenu fx:id="contextMenu">
+            <items>
+                <MenuItem fx:id="dynamicMenuItem"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="Unwatch"/>
+            </items>
+        </ContextMenu>
+
+    </fx:define>
 
 
     <center>
@@ -12,7 +26,16 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
-                <TableColumn fx:id="serverTableColumn" text="Server"/>
+                <TableColumn text="Active">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="active"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Server">
+                    <cellValueFactory>
+                        <WatchdogServerAddressServerCellValueFactory/>
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn text="VM">
                     <cellValueFactory>
                         <PropertyValueFactory property="virtualMachine"/>

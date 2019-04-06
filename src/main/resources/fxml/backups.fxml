@@ -12,6 +12,11 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
+                <TableColumn text="Active">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="active"/>
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn text="Server">
                     <cellValueFactory>
                         <PropertyValueFactory property="server"/>

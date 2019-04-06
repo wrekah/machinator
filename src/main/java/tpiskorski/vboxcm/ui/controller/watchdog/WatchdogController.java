@@ -1,20 +1,17 @@
 package tpiskorski.vboxcm.ui.controller.watchdog;
 
-import tpiskorski.vboxcm.core.watchdog.Watchdog;
-import tpiskorski.vboxcm.core.watchdog.WatchdogService;
-import tpiskorski.vboxcm.ui.control.WatchdogServerCellValueFactory;
-import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.core.watchdog.Watchdog;
+import tpiskorski.vboxcm.core.watchdog.WatchdogService;
+import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
 
@@ -24,11 +21,12 @@ public class WatchdogController {
     private final WatchdogService watchdogService;
     private final ContextAwareSceneLoader contextAwareSceneLoader;
 
-    @FXML private TableColumn<Watchdog, String> serverTableColumn;
     @FXML private TableView<Watchdog> watchdogTableView;
     @FXML private Button unwatchVmButton;
 
     private Stage addVmWatchdogStage;
+    @FXML private ContextMenu contextMenu;
+    @FXML private MenuItem dynamicMenuItem;
 
     @Autowired
     public WatchdogController(ContextAwareSceneLoader contextAwareSceneLoader, WatchdogService watchdogService) {
@@ -38,11 +36,20 @@ public class WatchdogController {
 
     @FXML
     public void initialize() throws IOException {
-        serverTableColumn.setCellValueFactory(new WatchdogServerCellValueFactory());
+        watchdogTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
+            if (t.getButton() == MouseButton.SECONDARY) {
+                Watchdog selectedItem = watchdogTableView.getSelectionModel().getSelectedItem();
+                if (selectedItem.isActive()) {
+                    dynamicMenuItem.setText(  "Deactivate" );
+                    dynamicMenuItem.setOnAction(this::deactivate);
+                }else{
+                    dynamicMenuItem.setText(  "Activate" );
+                    dynamicMenuItem.setOnAction(this::activate);
+                }
 
-        Callback<TableColumn.CellDataFeatures<Watchdog, String>, ObservableValue<String>> cellDataFeaturesObservableValueCallback = p -> new SimpleStringProperty(p.getValue().getVirtualMachine().getServerAddress());
-
-        serverTableColumn.setCellValueFactory(cellDataFeaturesObservableValueCallback);
+                contextMenu.show(watchdogTableView, t.getScreenX(), t.getScreenY());
+            }
+        });
 
         addVmWatchdogStage = contextAwareSceneLoader.loadPopup("/fxml/watchdog/addVmWatchdog.fxml");
         addVmWatchdogStage.setTitle("Adding vm watchdog...");
@@ -64,5 +71,36 @@ public class WatchdogController {
     public void unwatchVm() {
         Watchdog watchdogToRemove = watchdogTableView.getSelectionModel().getSelectedItem();
         watchdogService.remove(watchdogToRemove);
+    }
+
+    private void activate(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            "Do you really want to activate this watchdog?",
+            ButtonType.YES, ButtonType.NO
+        );
+
+        alert.setTitle("Watchdog");
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            Watchdog watchdogToActivate = watchdogTableView.getSelectionModel().getSelectedItem();
+            watchdogService.activate(watchdogToActivate);
+        }
+    }
+
+
+    private void deactivate(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            "Do you really want to deactivate this watchdog?",
+            ButtonType.YES, ButtonType.NO
+        );
+
+        alert.setTitle("Watchdog");
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            Watchdog watchdogToActivate = watchdogTableView.getSelectionModel().getSelectedItem();
+            watchdogService.deactivate(watchdogToActivate);
+        }
     }
 }
