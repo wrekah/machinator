@@ -7,8 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.backup.BackupDefinition;
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,7 +16,7 @@ import java.time.LocalTime;
 @Controller
 public class ModifyVmBackupController {
 
-    private final BackupService backupService;
+    private final BackupDefinitionService backupDefinitionService;
 
     @FXML private Button modifyButton;
     @FXML private Button cancelButton;
@@ -27,22 +27,22 @@ public class ModifyVmBackupController {
     @FXML private TextField vmComboBox;
     @FXML private TextField serverComboBox;
 
-    private Backup savedBackup;
+    private BackupDefinition savedBackupDefinition;
 
-    @Autowired public ModifyVmBackupController(BackupService backupService) {
-        this.backupService = backupService;
+    @Autowired public ModifyVmBackupController(BackupDefinitionService backupDefinitionService) {
+        this.backupDefinitionService = backupDefinitionService;
     }
 
     @FXML
     public void modify() {
-        Backup backup = new Backup(savedBackup.getServer(), savedBackup.getVm());
+        BackupDefinition backupDefinition = new BackupDefinition(savedBackupDefinition.getServer(), savedBackupDefinition.getVm());
 
-        backup.setFirstBackupDay(LocalDate.parse(firstBackup.getEditor().getText()));
-        backup.setFrequency(Integer.parseInt(frequency.getText()));
-        backup.setBackupTime(LocalTime.parse(backupTime.getText()));
-        backup.setFileLimit(Integer.parseInt(fileLimit.getText()));
+        backupDefinition.setFirstBackupDay(LocalDate.parse(firstBackup.getEditor().getText()));
+        backupDefinition.setFrequency(Integer.parseInt(frequency.getText()));
+        backupDefinition.setBackupTime(LocalTime.parse(backupTime.getText()));
+        backupDefinition.setFileLimit(Integer.parseInt(fileLimit.getText()));
 
-        backupService.update(backup);
+        backupDefinitionService.update(backupDefinition);
 
         ((Stage) modifyButton.getScene().getWindow()).close();
     }
@@ -62,14 +62,14 @@ public class ModifyVmBackupController {
         fileLimit.clear();
     }
 
-    void prepareFor(Backup backup) {
-        savedBackup = backup;
+    void prepareFor(BackupDefinition backupDefinition) {
+        savedBackupDefinition = backupDefinition;
 
-        serverComboBox.setText(backup.getServer().toString());
-        vmComboBox.setText(backup.getVm().toString());
-        firstBackup.getEditor().setText(backup.getFirstBackupDay().toString());
-        frequency.setText("" + backup.getFrequency());
-        backupTime.setText(backup.getBackupTime().toString());
-        fileLimit.setText("" + backup.getFileLimit());
+        serverComboBox.setText(backupDefinition.getServer().toString());
+        vmComboBox.setText(backupDefinition.getVm().toString());
+        firstBackup.getEditor().setText(backupDefinition.getFirstBackupDay().toString());
+        frequency.setText("" + backupDefinition.getFrequency());
+        backupTime.setText(backupDefinition.getBackupTime().toString());
+        fileLimit.setText("" + backupDefinition.getFileLimit());
     }
 }

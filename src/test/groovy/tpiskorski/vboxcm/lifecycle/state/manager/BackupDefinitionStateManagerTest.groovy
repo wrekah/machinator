@@ -3,17 +3,17 @@ package tpiskorski.vboxcm.lifecycle.state.manager
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.vboxcm.core.backup.Backup
-import tpiskorski.vboxcm.core.backup.BackupService
+import tpiskorski.vboxcm.core.backup.BackupDefinition
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService
 import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 import tpiskorski.vboxcm.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.vboxcm.lifecycle.state.serialize.io.ObjectRestorer
-import tpiskorski.vboxcm.lifecycle.state.serialize.model.SerializableBackup
+import tpiskorski.vboxcm.lifecycle.state.serialize.model.SerializableBackupDefinition
 
-class BackupStateManagerTest extends Specification {
+class BackupDefinitionStateManagerTest extends Specification {
 
-    def backupService = Mock(BackupService)
+    def backupService = Mock(BackupDefinitionService)
 
     def objectPersister = Mock(ObjectPersister)
     def objectRestorer = Mock(ObjectRestorer)
@@ -57,13 +57,13 @@ class BackupStateManagerTest extends Specification {
         def vm2 = new VirtualMachine(server2, 'id1')
 
         [
-                new Backup(server1, vm1),
-                new Backup(server2, vm1),
-                new Backup(server1, vm2)
+                new BackupDefinition(server1, vm1),
+                new BackupDefinition(server2, vm1),
+                new BackupDefinition(server1, vm2)
         ] as ObservableList
     }
 
     def createSerializableBackups() {
-        createBackups().collect { new SerializableBackup(it) }
+        createBackups().collect { new SerializableBackupDefinition(it) }
     }
 }

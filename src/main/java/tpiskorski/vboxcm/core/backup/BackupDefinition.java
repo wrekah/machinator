@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class Backup {
+public class BackupDefinition {
 
     private Server server;
     private VirtualMachine vm;
@@ -22,17 +22,17 @@ public class Backup {
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
     private BooleanProperty active = new SimpleBooleanProperty();
 
-    public Backup(Server server, VirtualMachine vm) {
+    public BackupDefinition(Server server, VirtualMachine vm) {
         this.server = server;
         this.vm = vm;
         setActive(false);
     }
 
-    static Callback<Backup, Observable[]> extractor() {
-        return (Backup backup) -> new Observable[]{
-            backup.firstBackupDayProperty(), backup.frequencyProperty(),
-            backup.backupTimeProperty(), backup.fileLimitProperty(),
-            backup.activeProperty()
+    static Callback<BackupDefinition, Observable[]> extractor() {
+        return (BackupDefinition backupDefinition) -> new Observable[]{
+            backupDefinition.firstBackupDayProperty(), backupDefinition.frequencyProperty(),
+            backupDefinition.backupTimeProperty(), backupDefinition.fileLimitProperty(),
+            backupDefinition.activeProperty()
         };
     }
 
@@ -73,10 +73,10 @@ public class Backup {
     }
 
     @Override public boolean equals(Object obj) {
-        if (!(obj instanceof Backup)) {
+        if (!(obj instanceof BackupDefinition)) {
             return false;
         }
-        Backup that = (Backup) obj;
+        BackupDefinition that = (BackupDefinition) obj;
 
         return Objects.equals(this.getServer(), that.getServer()) && Objects.equals(this.getVm(), that.getVm());
     }

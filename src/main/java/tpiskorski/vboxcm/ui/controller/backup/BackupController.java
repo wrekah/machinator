@@ -2,8 +2,8 @@ package tpiskorski.vboxcm.ui.controller.backup;
 
 import tpiskorski.vboxcm.config.Config;
 import tpiskorski.vboxcm.config.ConfigService;
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.backup.BackupDefinition;
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService;
 import tpiskorski.vboxcm.ui.core.ContextAwareSceneLoader;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -24,7 +24,7 @@ import java.io.IOException;
 @Controller
 public class BackupController {
 
-    public TableView<Backup> backupsTableView;
+    public TableView<BackupDefinition> backupsTableView;
     public Button removeVmButton;
     public Button modifyButton;
 
@@ -33,7 +33,7 @@ public class BackupController {
 
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @FXML private TableColumn viewColumn;
-    @Autowired private BackupService backupService;
+    @Autowired private BackupDefinitionService backupDefinitionService;
 
     private Stage addServerStage;
     private Stage modifyVmStage;
@@ -57,16 +57,16 @@ public class BackupController {
         modifyVmStage = contextAwareSceneLoader.loadPopup("/fxml/backup/modifyVmBackup.fxml");
         modifyVmStage.setTitle("Modifying backup...");
 
-        Callback<TableColumn<Backup, Void>, TableCell<Backup, Void>> cellFactory = new Callback<>() {
+        Callback<TableColumn<BackupDefinition, Void>, TableCell<BackupDefinition, Void>> cellFactory = new Callback<>() {
             @Override
-            public TableCell<Backup, Void> call(final TableColumn<Backup, Void> param) {
-                final TableCell<Backup, Void> cell = new TableCell<>() {
+            public TableCell<BackupDefinition, Void> call(final TableColumn<BackupDefinition, Void> param) {
+                final TableCell<BackupDefinition, Void> cell = new TableCell<>() {
 
                     private final Button btn = new Button("View");
 
                     {
                         btn.setOnAction((ActionEvent event) -> {
-                            Backup data = getTableView().getItems().get(getIndex());
+                            BackupDefinition data = getTableView().getItems().get(getIndex());
                             browseHomeDirectory();
                             System.out.println("selectedData: " + data);
                         });
@@ -88,7 +88,7 @@ public class BackupController {
         };
 
         viewColumn.setCellFactory(cellFactory);
-        backupsTableView.setItems(backupService.getBackups());
+        backupsTableView.setItems(backupDefinitionService.getBackups());
     }
 
     private void browseHomeDirectory() {
@@ -109,8 +109,8 @@ public class BackupController {
 
     @FXML
     public void removeVm() {
-        Backup backupToRemove = backupsTableView.getSelectionModel().getSelectedItem();
-        backupService.remove(backupToRemove);
+        BackupDefinition backupDefinitionToRemove = backupsTableView.getSelectionModel().getSelectedItem();
+        backupDefinitionService.remove(backupDefinitionToRemove);
     }
 
     @FXML
@@ -119,9 +119,9 @@ public class BackupController {
             modifyVmBackupController.clear();
             modifyVmStage.hide();
         } else {
-            Backup backup = backupsTableView.getSelectionModel().getSelectedItem();
+            BackupDefinition backupDefinition = backupsTableView.getSelectionModel().getSelectedItem();
 
-            modifyVmBackupController.prepareFor(backup);
+            modifyVmBackupController.prepareFor(backupDefinition);
             modifyVmStage.show();
         }
     }

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.vboxcm.core.backup.BackupService;
-import tpiskorski.vboxcm.lifecycle.state.serialize.model.SerializableBackup;
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService;
+import tpiskorski.vboxcm.lifecycle.state.serialize.model.SerializableBackupDefinition;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,11 +16,11 @@ public class BackupStateManager extends StateManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupStateManager.class);
 
-    private final BackupService backupService;
+    private final BackupDefinitionService backupDefinitionService;
 
     @Autowired
-    public BackupStateManager(BackupService backupService) {
-        this.backupService = backupService;
+    public BackupStateManager(BackupDefinitionService backupDefinitionService) {
+        this.backupDefinitionService = backupDefinitionService;
     }
 
     @Override public String getPersistResourceFileName() {
@@ -30,8 +30,8 @@ public class BackupStateManager extends StateManager {
     @Override public void persist() {
         LOGGER.info("Starting backups persistence");
 
-        List<SerializableBackup> toSerialize = backupService.getBackups().stream()
-            .map(SerializableBackup::new)
+        List<SerializableBackupDefinition> toSerialize = backupDefinitionService.getBackups().stream()
+            .map(SerializableBackupDefinition::new)
             .collect(Collectors.toList());
 
         try {
@@ -46,14 +46,14 @@ public class BackupStateManager extends StateManager {
         LOGGER.info("Starting restoring backups state");
 
         try {
-            List<SerializableBackup> restoredBackups = objectRestorer.restore(getPersistResourceFileName());
+            List<SerializableBackupDefinition> restoredBackups = objectRestorer.restore(getPersistResourceFileName());
 
             LOGGER.info("Restoring {} backups", restoredBackups.size());
 
             restoredBackups.stream()
-                .map(SerializableBackup::toBackup)
+                .map(SerializableBackupDefinition::toBackup)
                 .collect(Collectors.toList())
-                .forEach(backupService::add);
+                .forEach(backupDefinitionService::add);
 
             LOGGER.info("Backups state restored");
         } catch (IOException | ClassNotFoundException ex) {

@@ -11,8 +11,8 @@ import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Controller;
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.backup.BackupDefinition;
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
@@ -34,7 +34,7 @@ public class AddVmBackupController {
 
     @Autowired private ServerService serverService;
     @Autowired private VirtualMachineService virtualMachineService;
-    @Autowired private BackupService backupService;
+    @Autowired private BackupDefinitionService backupDefinitionService;
 
     @FXML private ComboBox<Server> serverComboBox;
     @FXML private ComboBox<VirtualMachine> vmComboBox;
@@ -109,14 +109,14 @@ public class AddVmBackupController {
         LocalTime backupTime = LocalTime.parse(this.backupTime.getText());
         int fileLimit = Integer.parseInt(this.fileLimit.getText());
 
-        Backup backup = new Backup(server, vm);
+        BackupDefinition backupDefinition = new BackupDefinition(server, vm);
 
-        backup.setFirstBackupDay(backupDay);
-        backup.setFrequency(every);
-        backup.setBackupTime(backupTime);
-        backup.setFileLimit(fileLimit);
+        backupDefinition.setFirstBackupDay(backupDay);
+        backupDefinition.setFrequency(every);
+        backupDefinition.setBackupTime(backupTime);
+        backupDefinition.setFileLimit(fileLimit);
 
-        backupService.add(backup);
+        backupDefinitionService.add(backupDefinition);
         ((Stage) addButton.getScene().getWindow()).close();
         clear();
     }

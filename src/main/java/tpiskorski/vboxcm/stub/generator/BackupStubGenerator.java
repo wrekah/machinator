@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import tpiskorski.vboxcm.core.backup.Backup;
-import tpiskorski.vboxcm.core.backup.BackupService;
+import tpiskorski.vboxcm.core.backup.BackupDefinition;
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
 import tpiskorski.vboxcm.core.vm.VirtualMachineService;
 
@@ -22,12 +22,12 @@ import java.util.stream.IntStream;
 @Component
 public class BackupStubGenerator implements InitializingBean {
 
-    private final BackupService backupService;
+    private final BackupDefinitionService backupDefinitionService;
 
     private final VirtualMachineService virtualMachineService;
 
-    @Autowired public BackupStubGenerator(BackupService backupService, VirtualMachineService virtualMachineService) {
-        this.backupService = backupService;
+    @Autowired public BackupStubGenerator(BackupDefinitionService backupDefinitionService, VirtualMachineService virtualMachineService) {
+        this.backupDefinitionService = backupDefinitionService;
         this.virtualMachineService = virtualMachineService;
     }
 
@@ -39,7 +39,7 @@ public class BackupStubGenerator implements InitializingBean {
             .filter(halfWithAtLeastOne(size))
             .mapToObj(vms::get)
             .map(this::createBackupForVm)
-            .forEach(backupService::add);
+            .forEach(backupDefinitionService::add);
     }
 
     private IntPredicate halfWithAtLeastOne(int size) {
@@ -52,15 +52,15 @@ public class BackupStubGenerator implements InitializingBean {
         };
     }
 
-    Backup createBackupForVm(VirtualMachine virtualMachine) {
-        Backup backup = new Backup(virtualMachine.getServer(), virtualMachine);
+    BackupDefinition createBackupForVm(VirtualMachine virtualMachine) {
+        BackupDefinition backupDefinition = new BackupDefinition(virtualMachine.getServer(), virtualMachine);
 
-        backup.setFileLimit(3);
-        backup.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backup.getFileLimit() + 1));
-        backup.setFrequency(10);
-        backup.setBackupTime(LocalTime.of(12, 0));
-        backup.setFirstBackupDay(LocalDate.of(2019, 1, 1));
+        backupDefinition.setFileLimit(3);
+        backupDefinition.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backupDefinition.getFileLimit() + 1));
+        backupDefinition.setFrequency(10);
+        backupDefinition.setBackupTime(LocalTime.of(12, 0));
+        backupDefinition.setFirstBackupDay(LocalDate.of(2019, 1, 1));
 
-        return backup;
+        return backupDefinition;
     }
 }

@@ -3,11 +3,11 @@ package tpiskorski.vboxcm.core.backup
 import spock.lang.Specification
 import spock.lang.Subject
 
-class BackupServiceTest extends Specification {
+class BackupDefinitionServiceTest extends Specification {
 
-    def backupRepository = Mock(BackupRepository)
+    def backupRepository = Mock(BackupDefinitionRepository)
 
-    @Subject service = new BackupService(backupRepository)
+    @Subject service = new BackupDefinitionService(backupRepository)
 
     def 'should get backups'() {
         when:
@@ -19,7 +19,7 @@ class BackupServiceTest extends Specification {
 
     def 'should add backup'() {
         given:
-        def backup = Mock(Backup)
+        def backup = Mock(BackupDefinition)
 
         when:
         service.add(backup)
@@ -30,7 +30,7 @@ class BackupServiceTest extends Specification {
 
     def 'should remove backup'() {
         given:
-        def backup = Mock(Backup)
+        def backup = Mock(BackupDefinition)
 
         when:
         service.remove(backup)
@@ -41,8 +41,8 @@ class BackupServiceTest extends Specification {
 
     def 'should update backup'() {
         given:
-        def updatedBackup = Mock(Backup)
-        def oldBackup = Mock(Backup)
+        def updatedBackup = Mock(BackupDefinition)
+        def oldBackup = Mock(BackupDefinition)
 
         when:
         service.update(updatedBackup)

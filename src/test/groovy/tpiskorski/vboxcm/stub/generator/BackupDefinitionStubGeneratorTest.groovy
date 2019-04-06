@@ -1,7 +1,7 @@
 package tpiskorski.vboxcm.stub.generator
 
-import tpiskorski.vboxcm.core.backup.Backup
-import tpiskorski.vboxcm.core.backup.BackupService
+import tpiskorski.vboxcm.core.backup.BackupDefinition
+import tpiskorski.vboxcm.core.backup.BackupDefinitionService
 import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.vm.VirtualMachine
 import tpiskorski.vboxcm.core.vm.VirtualMachineService
@@ -10,9 +10,9 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class BackupStubGeneratorTest extends Specification {
+class BackupDefinitionStubGeneratorTest extends Specification {
 
-    def backupService = Mock(BackupService)
+    def backupService = Mock(BackupDefinitionService)
     def virtualMachineService = Mock(VirtualMachineService)
 
     @Subject generator = new BackupStubGenerator(
@@ -43,7 +43,7 @@ class BackupStubGeneratorTest extends Specification {
 
         then:
         1 * virtualMachineService.getVms() >> vms
-        expectedBackups * backupService.add(_ as Backup)
+        expectedBackups * backupService.add(_ as BackupDefinition)
 
         where:
         vmNumber || expectedBackups
