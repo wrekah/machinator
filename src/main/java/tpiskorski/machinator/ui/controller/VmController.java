@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.command.LocalVmStarter;
 import tpiskorski.machinator.core.job.Job;
 import tpiskorski.machinator.core.job.JobService;
+import tpiskorski.machinator.core.job.JobStatus;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
@@ -90,9 +91,8 @@ public class VmController {
             VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
             Job job = new Job("1");
             job.setDescription("Turn on vm: " + selectedItem.getVmName());
-            job.setProgress(0.0);
             job.setStartTime(LocalDateTime.now());
-            job.setStatus("In progress");
+            job.setStatus(JobStatus.IN_PROGRESS);
             jobService.add(job);
         }
     }

@@ -1,7 +1,10 @@
 package tpiskorski.machinator.core.job;
 
 import javafx.beans.Observable;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.util.Callback;
 
 import java.time.LocalDateTime;
@@ -12,21 +15,32 @@ public class Job {
     private String id;
 
     private StringProperty description = new SimpleStringProperty("");
-    private StringProperty status = new SimpleStringProperty("");
-    private DoubleProperty progress = new SimpleDoubleProperty();
+    private ObjectProperty<JobStatus> status = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<>();
 
     public Job(String id) {
         this.id = id;
+        setStatus(JobStatus.INITIALIZED);
     }
 
     static Callback<Job, Observable[]> extractor() {
         return (Job job) -> new Observable[]{
             job.descriptionProperty(), job.statusProperty(),
-            job.progressProperty(), job.startTimeProperty(),
-            job.endTimeProperty()
+            job.startTimeProperty(), job.endTimeProperty()
         };
+    }
+
+    public JobStatus getStatus() {
+        return status.get();
+    }
+
+    public void setStatus(JobStatus status) {
+        this.status.set(status);
+    }
+
+    public ObjectProperty<JobStatus> statusProperty() {
+        return status;
     }
 
     public String getDescription() {
@@ -43,30 +57,6 @@ public class Job {
 
     public String getId() {
         return id;
-    }
-
-    public String getStatus() {
-        return status.get();
-    }
-
-    public void setStatus(String status) {
-        this.status.set(status);
-    }
-
-    public StringProperty statusProperty() {
-        return status;
-    }
-
-    public double getProgress() {
-        return progress.get();
-    }
-
-    public void setProgress(double progress) {
-        this.progress.set(progress);
-    }
-
-    public DoubleProperty progressProperty() {
-        return progress;
     }
 
     public LocalDateTime getStartTime() {
@@ -91,10 +81,6 @@ public class Job {
 
     public ObjectProperty<LocalDateTime> endTimeProperty() {
         return endTime;
-    }
-
-    public boolean isStopped() {
-        return status.get().equals("STOPPED") && progress.get() == 100.0;
     }
 
     @Override public int hashCode() {

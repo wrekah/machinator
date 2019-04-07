@@ -16,8 +16,7 @@ public class JobService {
     }
 
     public void stopJob(Job job) {
-        job.setStatus("STOPPED");
-        job.setProgress(100.0);
+        job.setStatus(JobStatus.STOPPED);
     }
 
     public void stopAllJobs() {
@@ -36,5 +35,10 @@ public class JobService {
 
     public void remove(Job job) {
         jobRepository.remove(job);
+    }
+
+    public Job get(String id) {
+        Optional<Job> job = jobRepository.get(id);
+        return job.get();
     }
 }

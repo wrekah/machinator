@@ -22,4 +22,10 @@ class JobRepository {
     void remove(Job job) {
         jobObservableList.remove(job);
     }
+
+    public Optional<Job> get(String id) {
+        return jobObservableList.stream()
+            .filter(job -> job.getId().equals(id))
+            .findFirst();
+    }
 }

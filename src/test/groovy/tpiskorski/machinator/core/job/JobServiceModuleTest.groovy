@@ -83,8 +83,8 @@ class JobServiceModuleTest extends Specification {
         service.stopJob(job1)
 
         then:
-        job1.isStopped()
-        !job2.isStopped()
+        job1.status == JobStatus.STOPPED
+        job2.status != JobStatus.STOPPED
     }
 
     def 'should stop all jobs'() {
@@ -100,7 +100,7 @@ class JobServiceModuleTest extends Specification {
         service.stopAllJobs()
 
         then:
-        job1.isStopped()
-        job2.isStopped()
+        job1.status == JobStatus.STOPPED
+        job2.status == JobStatus.STOPPED
     }
 }

@@ -47,4 +47,9 @@ class JobTest extends Specification {
         and:
         job != something
     }
+
+    def 'should create initialized job by default'() {
+        expect:
+        (new Job('job')).status == JobStatus.INITIALIZED
+    }
 }

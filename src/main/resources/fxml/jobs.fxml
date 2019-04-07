@@ -2,6 +2,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import tpiskorski.machinator.ui.control.JobProgressBarTableCell?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tpiskorski.machinator.ui.controller.JobsController">
 
@@ -18,9 +19,9 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
-                <TableColumn text="Job" fx:id="jobColumn">
+                <TableColumn text="Description">
                     <cellValueFactory>
-                        <PropertyValueFactory property="jobName"/>
+                        <PropertyValueFactory property="description"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Status">
@@ -29,8 +30,11 @@
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Progress" fx:id="progressColumn">
+                    <cellFactory>
+                        <JobProgressBarTableCell/>
+                    </cellFactory>
                     <cellValueFactory>
-                        <PropertyValueFactory property="progress"/>
+                        <PropertyValueFactory property="status"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="Start time">
@@ -38,7 +42,11 @@
                         <PropertyValueFactory property="startTime"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="End time"/>
+                <TableColumn text="End time">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="endTime"/>
+                    </cellValueFactory>
+                </TableColumn>
             </columns>
         </TableView>
 
