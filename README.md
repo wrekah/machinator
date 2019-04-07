@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/tpiskorski/vboxcm.svg?branch=master)](https://travis-ci.com/tpiskorski/machinator)
-[![codecov](https://codecov.io/gh/tpiskorski/vboxcm/branch/master/graph/badge.svg)](https://codecov.io/gh/tpiskorski/machinator)
+[![Build Status](https://travis-ci.com/tpiskorski/machinator.svg?branch=master)](https://travis-ci.com/tpiskorski/machinator)
+[![codecov](https://codecov.io/gh/tpiskorski/machinator/branch/master/graph/badge.svg)](https://codecov.io/gh/tpiskorski/machinator)
 # Machinator
 Machinator aims at virtualbox cluster orchestration and management.
 
