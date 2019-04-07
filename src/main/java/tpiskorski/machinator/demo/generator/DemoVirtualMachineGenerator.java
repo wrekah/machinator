@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Profile("demo")
-@DependsOn("serverListStubGenerator")
+@DependsOn("demoServerGenerator")
 @Component
 public class DemoVirtualMachineGenerator implements InitializingBean {
 

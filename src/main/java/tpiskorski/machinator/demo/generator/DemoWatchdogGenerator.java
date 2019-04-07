@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Profile("demo")
-@DependsOn("virtualMachineStubGenerator")
+@DependsOn("demoVirtualMachineGenerator")
 @Component
 public class DemoWatchdogGenerator implements InitializingBean {
 

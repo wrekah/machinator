@@ -18,7 +18,7 @@ import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 @Profile("demo")
-@DependsOn("virtualMachineStubGenerator")
+@DependsOn("demoVirtualMachineGenerator")
 @Component
 public class DemoBackupGenerator implements InitializingBean {
 
