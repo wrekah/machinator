@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator;
+package tpiskorski.vboxcm.demo.generator;
 
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,16 +17,16 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
-@Profile("stub")
+@Profile("demo")
 @DependsOn("virtualMachineStubGenerator")
 @Component
-public class BackupStubGenerator implements InitializingBean {
+public class DemoBackupGenerator implements InitializingBean {
 
     private final BackupDefinitionService backupDefinitionService;
 
     private final VirtualMachineService virtualMachineService;
 
-    @Autowired public BackupStubGenerator(BackupDefinitionService backupDefinitionService, VirtualMachineService virtualMachineService) {
+    @Autowired public DemoBackupGenerator(BackupDefinitionService backupDefinitionService, VirtualMachineService virtualMachineService) {
         this.backupDefinitionService = backupDefinitionService;
         this.virtualMachineService = virtualMachineService;
     }

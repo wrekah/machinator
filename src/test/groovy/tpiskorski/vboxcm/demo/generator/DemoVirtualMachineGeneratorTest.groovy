@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator
+package tpiskorski.vboxcm.demo.generator
 
 import tpiskorski.vboxcm.core.server.Server
 import tpiskorski.vboxcm.core.server.ServerService
@@ -7,12 +7,12 @@ import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
 
-class VirtualMachineStubGeneratorTest extends Specification {
+class DemoVirtualMachineGeneratorTest extends Specification {
 
     def serverService = Mock(ServerService)
     def virtualMachineService = Mock(VirtualMachineService)
 
-    @Subject generator = new VirtualMachineStubGenerator(
+    @Subject generator = new DemoVirtualMachineGenerator(
             serverService, virtualMachineService
     )
 

@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator;
+package tpiskorski.vboxcm.demo.generator;
 
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,10 +16,10 @@ import tpiskorski.vboxcm.core.watchdog.WatchdogService;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-@Profile("stub")
+@Profile("demo")
 @DependsOn("virtualMachineStubGenerator")
 @Component
-public class WatchdogStubGenerator implements InitializingBean {
+public class DemoWatchdogGenerator implements InitializingBean {
 
     private final WatchdogService watchdogService;
 
@@ -27,7 +27,7 @@ public class WatchdogStubGenerator implements InitializingBean {
     private final VirtualMachineService virtualMachineService;
 
     @Autowired
-    public WatchdogStubGenerator(WatchdogService watchdogService, ServerService serverService, VirtualMachineService virtualMachineService) {
+    public DemoWatchdogGenerator(WatchdogService watchdogService, ServerService serverService, VirtualMachineService virtualMachineService) {
         this.watchdogService = watchdogService;
         this.serverService = serverService;
         this.virtualMachineService = virtualMachineService;

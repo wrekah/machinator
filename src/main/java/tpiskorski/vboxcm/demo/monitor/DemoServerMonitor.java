@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.quartz.monitor;
+package tpiskorski.vboxcm.demo.monitor;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -12,8 +12,7 @@ import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
 import tpiskorski.vboxcm.core.server.ServerType;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
-import tpiskorski.vboxcm.stub.net.SshException;
-import tpiskorski.vboxcm.stub.net.StubSshClient;
+import tpiskorski.vboxcm.quartz.monitor.ServerMonitor;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,17 +24,17 @@ public class DemoServerMonitor implements ServerMonitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoServerMonitor.class);
 
     private final ServerService serverService;
-    private final StubSshClient stubSshClient;
+    private final StubSshClient stubSshClient = new StubSshClient();
+
     private AtomicBoolean isFreezed = new AtomicBoolean(false);
 
-    @Autowired public DemoServerMonitor(ServerService serverService, StubSshClient stubSshClient) {
+    @Autowired public DemoServerMonitor(ServerService serverService) {
         this.serverService = serverService;
-        this.stubSshClient = stubSshClient;
     }
 
     @Scheduled(fixedRate = 10000L)
     public void monitor() {
-        LOGGER.info("About to monitor...");
+        LOGGER.info("Servers scan started...");
         ObservableList<Server> servers = serverService.getServers();
 
         if (servers.isEmpty() || isFreezed.get()) {
@@ -56,7 +55,7 @@ public class DemoServerMonitor implements ServerMonitor {
             }
         }
 
-        LOGGER.info("Finished monitor cycle");
+        LOGGER.info("Servers scan finished...");
     }
 
     @Override public void pause() {

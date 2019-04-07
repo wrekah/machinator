@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator;
+package tpiskorski.vboxcm.demo.generator;
 
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Profile("stub")
+@Profile("demo")
 @DependsOn("serverListStubGenerator")
 @Component
-public class VirtualMachineStubGenerator implements InitializingBean {
+public class DemoVirtualMachineGenerator implements InitializingBean {
 
     private final ServerService serverService;
     private final VirtualMachineService virtualMachineService;
@@ -24,7 +24,7 @@ public class VirtualMachineStubGenerator implements InitializingBean {
     private VmGenerator vmGenerator = new VmGenerator();
 
     @Autowired
-    public VirtualMachineStubGenerator(ServerService serverService, VirtualMachineService virtualMachineService) {
+    public DemoVirtualMachineGenerator(ServerService serverService, VirtualMachineService virtualMachineService) {
         this.serverService = serverService;
         this.virtualMachineService = virtualMachineService;
     }

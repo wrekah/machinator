@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator
+package tpiskorski.vboxcm.demo.generator
 
 import tpiskorski.vboxcm.core.backup.BackupDefinition
 import tpiskorski.vboxcm.core.backup.BackupDefinitionService
@@ -15,7 +15,7 @@ class BackupDefinitionStubGeneratorTest extends Specification {
     def backupService = Mock(BackupDefinitionService)
     def virtualMachineService = Mock(VirtualMachineService)
 
-    @Subject generator = new BackupStubGenerator(
+    @Subject generator = new DemoBackupGenerator(
             backupService, virtualMachineService
     )
 

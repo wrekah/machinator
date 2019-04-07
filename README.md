@@ -23,6 +23,5 @@ Use `mvn clean spring-boot:run`, ensure u have *JAVA_PATH* defined as env variab
 #### Spring profiles
 You can run vboxcm with following profiles
 * **dev** - vboxcm restricts itself to use just in memory config and console logging
-* **stub** - autogenerates content for demo and development purposes
-* **stub_dynamic** - simulates dynamic behaviour i.e. monitoring of servers, changing state and such
+* **demo** - autogenerates content for demo and development purposes, simulates dynamic behaviour
 

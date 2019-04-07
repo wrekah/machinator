@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.stub.generator;
+package tpiskorski.vboxcm.demo.generator;
 
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
