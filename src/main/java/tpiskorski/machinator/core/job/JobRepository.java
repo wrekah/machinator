@@ -28,4 +28,11 @@ class JobRepository {
             .filter(job -> job.getId().equals(id))
             .findFirst();
     }
+
+    public Job getLastByDescription(String description) {
+        return jobObservableList.stream()
+            .filter(job -> job.getDescription().equals(description))
+            .filter(job -> job.getStatus() == JobStatus.IN_PROGRESS)
+            .findFirst().get();
+    }
 }

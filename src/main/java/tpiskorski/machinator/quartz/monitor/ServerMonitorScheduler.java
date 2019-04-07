@@ -8,14 +8,17 @@ import org.springframework.stereotype.Controller;
 
 @Profile("!demo")
 @Controller
-public class DefaultServerMonitor implements InitializingBean, ServerMonitor {
+public class ServerMonitorScheduler implements InitializingBean, ServerMonitor {
 
-    private static final String REGULAR_SERVER_SCAN = "regularServerScan";
+    static final String REGULAR_SERVER_SCAN = "regularServerScan";
 
     private final Scheduler scheduler;
 
-    @Autowired public DefaultServerMonitor(Scheduler scheduler) {
+    private final ServerMonitorListener serverMonitorListener;
+
+    @Autowired public ServerMonitorScheduler(Scheduler scheduler, ServerMonitorListener serverMonitorListener) {
         this.scheduler = scheduler;
+        this.serverMonitorListener = serverMonitorListener;
     }
 
     public void scheduleRegularScans() throws SchedulerException {
@@ -34,6 +37,7 @@ public class DefaultServerMonitor implements InitializingBean, ServerMonitor {
     }
 
     @Override public void afterPropertiesSet() throws Exception {
+        scheduler.getListenerManager().addJobListener(serverMonitorListener);
         scheduleRegularScans();
     }
 

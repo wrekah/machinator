@@ -3,6 +3,7 @@ package tpiskorski.machinator.quartz.monitor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import tpiskorski.machinator.core.vm.VirtualMachine;
 
 import java.util.List;
 
+@DisallowConcurrentExecution
 @Component
 public class ServerRefreshJob extends QuartzJobBean {
 
