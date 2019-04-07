@@ -128,4 +128,8 @@ public class BackupDefinition {
     public IntegerProperty fileLimitProperty() {
         return fileLimit;
     }
+
+    public String id() {
+        return server.getAddress() + "-" + vm.getId();
+    }
 }

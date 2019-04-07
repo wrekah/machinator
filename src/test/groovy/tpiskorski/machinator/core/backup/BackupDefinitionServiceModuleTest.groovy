@@ -9,7 +9,7 @@ class BackupDefinitionServiceModuleTest extends Specification {
 
     def backupRepository = new BackupDefinitionRepository()
 
-    @Subject service = new BackupDefinitionService(backupRepository)
+    @Subject service = new BackupDefinitionService(backupRepository, backupService)
 
     def server1 = new Server('some', '123')
     def server2 = new Server('other', '321')

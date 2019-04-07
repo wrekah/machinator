@@ -7,7 +7,7 @@ class BackupDefinitionServiceTest extends Specification {
 
     def backupRepository = Mock(BackupDefinitionRepository)
 
-    @Subject service = new BackupDefinitionService(backupRepository)
+    @Subject service = new BackupDefinitionService(backupRepository, backupService)
 
     def 'should get backups'() {
         when:
