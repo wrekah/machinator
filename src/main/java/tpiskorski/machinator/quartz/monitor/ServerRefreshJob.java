@@ -14,7 +14,6 @@ import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerService;
 import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.quartz.ServerMonitoringService;
 
 import java.util.List;
 

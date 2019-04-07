@@ -80,7 +80,7 @@ public class BackupController {
     }
 
     private void deactivate(ActionEvent actionEvent) {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to deactivate this backup?",
             "Watchdog"
         );
@@ -92,7 +92,7 @@ public class BackupController {
     }
 
     private void activate(ActionEvent actionEvent) {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to activate this backup?",
             "Watchdog"
         );
@@ -122,7 +122,7 @@ public class BackupController {
 
     @FXML
     public void removeVm() {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to remove this backup?",
             "Watchdog"
         );

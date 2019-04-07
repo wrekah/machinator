@@ -5,7 +5,7 @@ import javafx.scene.control.ButtonType;
 
 public class ConfirmationAlertFactory {
 
-    public static boolean createAndShow(String msg, String title) {
+    public static boolean createAndAsk(String msg, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
             msg,
             ButtonType.YES, ButtonType.NO

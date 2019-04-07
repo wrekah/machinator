@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 public class DefaultServerMonitor implements InitializingBean, ServerMonitor {
 
     private static final String REGULAR_SERVER_SCAN = "regularServerScan";
+
     private final Scheduler scheduler;
 
     @Autowired public DefaultServerMonitor(Scheduler scheduler) {

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerService;
+import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.ServerCellFactory;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
@@ -107,8 +108,15 @@ public class ServerController {
 
     @FXML
     public void removeServer() {
-        Server serverToRemove = serverList.getSelectionModel().getSelectedItem();
-        serverService.remove(serverToRemove);
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to remove this server?",
+            "Server"
+        );
+
+        if (confirmed) {
+            Server serverToRemove = serverList.getSelectionModel().getSelectedItem();
+            serverService.remove(serverToRemove);
+        }
     }
 
     @FXML

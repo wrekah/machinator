@@ -73,7 +73,7 @@ public class WatchdogController {
 
     @FXML
     public void unwatchVm() {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to unwatch this vm?",
             "Watchdog"
         );
@@ -85,7 +85,7 @@ public class WatchdogController {
     }
 
     private void activate(ActionEvent actionEvent) {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to activate this watchdog?",
             "Watchdog"
         );
@@ -97,7 +97,7 @@ public class WatchdogController {
     }
 
     private void deactivate(ActionEvent actionEvent) {
-        boolean confirmed = ConfirmationAlertFactory.createAndShow(
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to deactivate this watchdog?",
             "Watchdog"
         );

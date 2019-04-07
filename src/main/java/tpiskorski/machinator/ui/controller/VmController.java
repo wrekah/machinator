@@ -6,9 +6,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +16,7 @@ import tpiskorski.machinator.core.job.JobService;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
+import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.VirtualMachineRowFactory;
 
 import java.io.IOException;
@@ -25,12 +24,6 @@ import java.time.LocalDateTime;
 
 @Controller
 public class VmController {
-
-    @FXML private Alert turnOnAlert;
-    @FXML private Alert turnOffAlert;
-    @FXML private Alert powerOffAlert;
-    @FXML private Alert resetAlert;
-    @FXML private Alert deleteAlert;
 
     @Autowired private JobService jobService;
     @Autowired private VirtualMachineService virtualMachineService;
@@ -88,59 +81,68 @@ public class VmController {
 
     @FXML
     public void turnOnVm() {
-        turnOnAlert.showAndWait();
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to turn on this vm?",
+            "VM"
+        );
 
-        if (turnOnAlert.getResult() == ButtonType.NO) {
-            return;
+        if (confirmed) {
+            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+            Job job = new Job();
+            job.setJobName("Turn on vm: " + selectedItem.getVmName());
+            job.setProgress("Started");
+            job.setStartTime(LocalDateTime.now());
+            job.setStatus("In progress");
+            jobService.add(job);
         }
-
-        VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-        Job job = new Job();
-        job.setJobName("Turn on vm: " + selectedItem.getVmName());
-        job.setProgress("Started");
-        job.setStartTime(LocalDateTime.now());
-        job.setStatus("In progress");
-        jobService.add(job);
     }
 
     @FXML
     public void turnOffVm() throws IOException, InterruptedException {
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to turn off this vm?",
+            "VM"
+        );
 
-        turnOffAlert.showAndWait();
-
-        if (turnOffAlert.getResult() == ButtonType.NO) {
-            return;
+        if (confirmed) {
+            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+            localVmStarter.startVm(selectedItem);
         }
-        VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-
-        localVmStarter.startVm(selectedItem);
     }
 
     @FXML
     public void powerOffVm() {
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to power off this vm?",
+            "VM"
+        );
 
-        powerOffAlert.showAndWait();
+        if (confirmed) {
 
-        if (powerOffAlert.getResult() == ButtonType.NO) {
-            return;
         }
     }
 
     @FXML
     public void resetVm() {
-        resetAlert.showAndWait();
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to reset this vm?",
+            "VM"
+        );
 
-        if (resetAlert.getResult() == ButtonType.NO) {
-            return;
+        if (confirmed) {
+
         }
     }
 
     @FXML
     public void deleteVm() {
-        deleteAlert.showAndWait();
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to delete this vm?",
+            "VM"
+        );
 
-        if (deleteAlert.getResult() == ButtonType.NO) {
-            return;
+        if (confirmed) {
+
         }
     }
 }
