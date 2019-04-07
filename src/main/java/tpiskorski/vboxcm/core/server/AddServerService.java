@@ -1,13 +1,10 @@
-package tpiskorski.vboxcm.monitoring;
+package tpiskorski.vboxcm.core.server;
 
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import tpiskorski.vboxcm.command.*;
-import tpiskorski.vboxcm.core.server.Server;
-import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.core.server.ServerType;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
 
 import java.io.IOException;

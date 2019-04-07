@@ -10,9 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.core.server.AddServerService;
 import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.monitoring.AddServerService;
 import tpiskorski.vboxcm.ui.control.ExceptionDialog;
 
 @Controller

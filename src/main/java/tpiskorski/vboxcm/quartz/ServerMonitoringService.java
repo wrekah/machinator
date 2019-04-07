@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.monitoring;
+package tpiskorski.vboxcm.quartz;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

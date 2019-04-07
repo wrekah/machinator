@@ -11,6 +11,8 @@ open module vboxcm {
     requires slf4j.api;
     requires java.sql;
     requires java.desktop;
+    requires quartz;
+    requires spring.context.support;
 
     exports tpiskorski.vboxcm;
 }
