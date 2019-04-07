@@ -1,7 +1,5 @@
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tpiskorski.machinator.ui.controller.MainController" fx:id="mainPane">
     <top>
@@ -27,6 +25,9 @@
                 </Tab>
                 <Tab text="Watchdog">
                     <fx:include source="watchdog/watchdog.fxml"/>
+                </Tab>
+                <Tab text="Jobs">
+                    <fx:include source="jobs.fxml"/>
                 </Tab>
             </tabs>
         </TabPane>
