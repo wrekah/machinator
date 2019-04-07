@@ -1,4 +1,4 @@
-package tpiskorski.vboxcm.quartz;
+package tpiskorski.vboxcm.quartz.monitor;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,19 +14,20 @@ import tpiskorski.vboxcm.core.server.Server;
 import tpiskorski.vboxcm.core.server.ServerService;
 import tpiskorski.vboxcm.core.server.ServerType;
 import tpiskorski.vboxcm.core.vm.VirtualMachine;
+import tpiskorski.vboxcm.quartz.ServerMonitoringService;
 
 import java.util.List;
 
 @Component
-public class ServerScanJob extends QuartzJobBean {
+public class ServerRefreshJob extends QuartzJobBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerScanJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
 
     private ServerMonitoringService serverMonitoringService;
     private ServerService serverService;
 
     @Autowired
-    public ServerScanJob(ServerMonitoringService serverMonitoringService, @Lazy ServerService serverService) {
+    public ServerRefreshJob(ServerMonitoringService serverMonitoringService, @Lazy ServerService serverService) {
         this.serverMonitoringService = serverMonitoringService;
         this.serverService = serverService;
     }
