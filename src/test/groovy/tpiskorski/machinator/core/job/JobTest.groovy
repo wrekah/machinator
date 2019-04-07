@@ -2,15 +2,13 @@ package tpiskorski.machinator.core.job
 
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-
 class JobTest extends Specification {
 
     def 'should properly compare  not equal jobs'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-15T20:20'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-15T20:20'))
-        def job3 = new Job('jo1', LocalDateTime.parse('2012-03-15T20:20'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
+        def job3 = new Job('job3')
 
         expect:
         job1 != job2
@@ -25,20 +23,23 @@ class JobTest extends Specification {
 
     def 'should properly compare equal jobs'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-15T20:20'))
-        def job2 = new Job('job1', LocalDateTime.parse('2019-03-15T20:20'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job1')
 
         expect:
         job1 == job2
 
         and:
         job2 == job1
+
+        and:
+        job1.hashCode() == job2.hashCode()
     }
 
     def 'should properly compare not job'() {
         given:
         def something = new Object()
-        def job = new Job('job', LocalDateTime.parse('2019-03-15T20:20'))
+        def job = new Job('job')
 
         expect:
         something != job

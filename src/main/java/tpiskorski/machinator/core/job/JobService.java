@@ -4,6 +4,8 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class JobService {
 
@@ -15,7 +17,7 @@ public class JobService {
 
     public void stopJob(Job job) {
         job.setStatus("STOPPED");
-        job.setProgress("STOPPED");
+        job.setProgress(100.0);
     }
 
     public void stopAllJobs() {

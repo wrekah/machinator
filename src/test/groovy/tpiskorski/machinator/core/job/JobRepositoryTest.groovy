@@ -3,15 +3,13 @@ package tpiskorski.machinator.core.job
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.time.LocalDateTime
-
 class JobRepositoryTest extends Specification {
 
     @Subject repository = new JobRepository()
 
     def 'should add job'() {
         given:
-        def job = new Job('job', LocalDateTime.parse('2019-03-15T02:12'))
+        def job = new Job('job')
 
         when:
         repository.add(job)
@@ -27,8 +25,8 @@ class JobRepositoryTest extends Specification {
 
     def 'should get jobs that were added'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-15T02:12'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-15T02:12'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         and:
         repository.add(job1)
@@ -40,7 +38,7 @@ class JobRepositoryTest extends Specification {
 
     def 'should remove job'() {
         given:
-        def job = new Job('job', LocalDateTime.parse('2019-03-15T02:12'))
+        def job = new Job('job')
 
         when:
         repository.add(job)
@@ -52,9 +50,9 @@ class JobRepositoryTest extends Specification {
 
     def 'should add and remove jobs'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-15T02:12'))
-        def job2 = new Job('job1', LocalDateTime.parse('2020-03-15T02:13'))
-        def job3 = new Job('job2', LocalDateTime.parse('2019-03-15T02:12'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job1')
+        def job3 = new Job('job2')
 
         when:
         repository.add(job1)

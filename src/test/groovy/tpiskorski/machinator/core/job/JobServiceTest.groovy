@@ -19,7 +19,7 @@ class JobServiceTest extends Specification {
 
         then:
         1 * job.setStatus("STOPPED")
-        1 * job.setProgress("STOPPED")
+        1 * job.setProgress(100.0)
     }
 
     def 'should stop all job'() {
@@ -32,7 +32,7 @@ class JobServiceTest extends Specification {
         then:
         1 * jobRepository.getJobsList() >> jobs
         3 * _.setStatus("STOPPED")
-        3 * _.setProgress("STOPPED")
+        3 * _.setProgress(100.0)
     }
 
     def 'should get jobs'() {

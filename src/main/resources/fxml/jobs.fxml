@@ -18,7 +18,7 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
-                <TableColumn text="Job">
+                <TableColumn text="Job" fx:id="jobColumn">
                     <cellValueFactory>
                         <PropertyValueFactory property="jobName"/>
                     </cellValueFactory>
@@ -28,7 +28,7 @@
                         <PropertyValueFactory property="status"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Progress">
+                <TableColumn text="Progress" fx:id="progressColumn">
                     <cellValueFactory>
                         <PropertyValueFactory property="progress"/>
                     </cellValueFactory>
@@ -38,6 +38,7 @@
                         <PropertyValueFactory property="startTime"/>
                     </cellValueFactory>
                 </TableColumn>
+                <TableColumn text="End time"/>
             </columns>
         </TableView>
 

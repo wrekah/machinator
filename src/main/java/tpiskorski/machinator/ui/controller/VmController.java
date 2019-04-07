@@ -88,9 +88,9 @@ public class VmController {
 
         if (confirmed) {
             VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            Job job = new Job();
-            job.setJobName("Turn on vm: " + selectedItem.getVmName());
-            job.setProgress("Started");
+            Job job = new Job("1");
+            job.setDescription("Turn on vm: " + selectedItem.getVmName());
+            job.setProgress(0.0);
             job.setStartTime(LocalDateTime.now());
             job.setStatus("In progress");
             jobService.add(job);

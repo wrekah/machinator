@@ -3,8 +3,6 @@ package tpiskorski.machinator.core.job
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.time.LocalDateTime
-
 class JobServiceModuleTest extends Specification {
 
     def jobRepository = new JobRepository()
@@ -18,8 +16,8 @@ class JobServiceModuleTest extends Specification {
 
     def 'should get jobs that were added'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-04T03:06'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-04T03:06'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         when:
         service.add(job1)
@@ -31,8 +29,8 @@ class JobServiceModuleTest extends Specification {
 
     def 'should properly remove jobs'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-04T03:06'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-04T03:06'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         when:
         service.add(job1)
@@ -56,8 +54,8 @@ class JobServiceModuleTest extends Specification {
 
     def 'should not remove the job that is not present'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-04T03:06'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-04T03:06'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         when:
         service.add(job1)
@@ -74,8 +72,8 @@ class JobServiceModuleTest extends Specification {
 
     def 'should stop job'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-04T03:06'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-04T03:06'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         when:
         service.add(job1)
@@ -91,8 +89,8 @@ class JobServiceModuleTest extends Specification {
 
     def 'should stop all jobs'() {
         given:
-        def job1 = new Job('job1', LocalDateTime.parse('2019-03-04T03:06'))
-        def job2 = new Job('job2', LocalDateTime.parse('2019-03-04T03:06'))
+        def job1 = new Job('job1')
+        def job2 = new Job('job2')
 
         when:
         service.add(job1)

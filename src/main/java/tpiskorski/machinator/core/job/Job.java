@@ -1,10 +1,7 @@
 package tpiskorski.machinator.core.job;
 
 import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.util.Callback;
 
 import java.time.LocalDateTime;
@@ -12,37 +9,40 @@ import java.util.Objects;
 
 public class Job {
 
-    private StringProperty jobName = new SimpleStringProperty();
+    private String id;
+
+    private StringProperty description = new SimpleStringProperty("");
     private StringProperty status = new SimpleStringProperty("");
-    private StringProperty progress = new SimpleStringProperty("");
+    private DoubleProperty progress = new SimpleDoubleProperty();
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<>();
 
-    public Job() {
-    }
-
-    public Job(String jobName, LocalDateTime startTime) {
-        this.jobName.set(jobName);
-        this.startTime.set(startTime);
+    public Job(String id) {
+        this.id = id;
     }
 
     static Callback<Job, Observable[]> extractor() {
-        return (Job job) -> new Observable[]{job.jobNameProperty(), job.statusProperty(), job.progressProperty(), job.startTimeProperty()};
+        return (Job job) -> new Observable[]{
+            job.descriptionProperty(), job.statusProperty(),
+            job.progressProperty(), job.startTimeProperty(),
+            job.endTimeProperty()
+        };
     }
 
-    public boolean isStopped() {
-        return status.get().equals("STOPPED") && progress.get().equals("STOPPED");
+    public String getDescription() {
+        return description.get();
     }
 
-    public String getJobName() {
-        return jobName.get();
+    public void setDescription(String description) {
+        this.description.set(description);
     }
 
-    public void setJobName(String jobName) {
-        this.jobName.set(jobName);
+    public StringProperty descriptionProperty() {
+        return description;
     }
 
-    public StringProperty jobNameProperty() {
-        return jobName;
+    public String getId() {
+        return id;
     }
 
     public String getStatus() {
@@ -57,15 +57,15 @@ public class Job {
         return status;
     }
 
-    public String getProgress() {
+    public double getProgress() {
         return progress.get();
     }
 
-    public void setProgress(String progress) {
+    public void setProgress(double progress) {
         this.progress.set(progress);
     }
 
-    public StringProperty progressProperty() {
+    public DoubleProperty progressProperty() {
         return progress;
     }
 
@@ -81,8 +81,24 @@ public class Job {
         return startTime;
     }
 
+    public LocalDateTime getEndTime() {
+        return endTime.get();
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime.set(endTime);
+    }
+
+    public ObjectProperty<LocalDateTime> endTimeProperty() {
+        return endTime;
+    }
+
+    public boolean isStopped() {
+        return status.get().equals("STOPPED") && progress.get() == 100.0;
+    }
+
     @Override public int hashCode() {
-        return Objects.hash(getJobName(), getStartTime());
+        return Objects.hashCode(this.getId());
     }
 
     @Override public boolean equals(Object obj) {
@@ -91,6 +107,6 @@ public class Job {
         }
         Job that = (Job) obj;
 
-        return Objects.equals(this.getJobName(), that.getJobName()) && Objects.equals(this.getStartTime(), that.getStartTime());
+        return Objects.equals(this.getId(), that.getId());
     }
 }
