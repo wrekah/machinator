@@ -1,4 +1,4 @@
-open module vboxcm {
+open module machinator {
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
@@ -14,5 +14,5 @@ open module vboxcm {
     requires quartz;
     requires spring.context.support;
 
-    exports tpiskorski.vboxcm;
+    exports tpiskorski.machinator;
 }

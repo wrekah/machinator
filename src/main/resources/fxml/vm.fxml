@@ -2,7 +2,7 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.vboxcm.ui.controller.VmController">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.machinator.ui.controller.VmController">
 
     <fx:define>
         <Alert fx:id="turnOnAlert" contentText="Do you really want to turn on selected vm?" headerText="" alertType="CONFIRMATION" title="VM action"/>

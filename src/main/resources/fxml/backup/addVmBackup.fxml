@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tpiskorski.vboxcm.ui.controller.backup.AddVmBackupController"
+      fx:controller="tpiskorski.machinator.ui.controller.backup.AddVmBackupController"
 
 >
 

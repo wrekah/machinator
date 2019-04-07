@@ -2,9 +2,9 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import tpiskorski.vboxcm.ui.control.WatchdogServerAddressServerCellValueFactory?>
+<?import tpiskorski.machinator.ui.control.WatchdogServerAddressServerCellValueFactory?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="tpiskorski.vboxcm.ui.controller.watchdog.WatchdogController">
+            fx:controller="tpiskorski.machinator.ui.controller.watchdog.WatchdogController">
 
 
     <fx:define>

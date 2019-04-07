@@ -1,6 +1,6 @@
 <?import javafx.scene.control.*?>
 <Menu xmlns:fx="http://javafx.com/fxml" text="File"
-      fx:controller="tpiskorski.vboxcm.ui.controller.FileMenuController">
+      fx:controller="tpiskorski.machinator.ui.controller.FileMenuController">
 
     <fx:define>
         <Alert fx:id="reloadAlert" alertType="INFORMATION" title="Configuration" contentText="Configuration reloaded!"

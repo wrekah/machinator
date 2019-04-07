@@ -1,9 +1,9 @@
-<?import tpiskorski.vboxcm.ui.control.FormattedConverter?>
+<?import tpiskorski.machinator.ui.control.FormattedConverter?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tpiskorski.vboxcm.ui.controller.backup.ModifyVmBackupController"
+      fx:controller="tpiskorski.machinator.ui.controller.backup.ModifyVmBackupController"
 
 >
 
