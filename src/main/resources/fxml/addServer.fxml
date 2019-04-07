@@ -65,8 +65,8 @@
             <GridPane.margin>
                 <Insets top="5"/>
             </GridPane.margin>
-            <Button defaultButton="true" text="Add" fx:id="addButton" onAction="#saveConfig"/>
-            <Button cancelButton="true" text="Cancel" fx:id="closeButton" onAction="#closeButtonAction"/>
+            <Button defaultButton="true" text="Add" fx:id="addButton" onAction="#addServer"/>
+            <Button cancelButton="true" text="Cancel" fx:id="closeButton" onAction="#cancelAddServer"/>
         </HBox>
 
     </GridPane>

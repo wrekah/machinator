@@ -1,11 +1,5 @@
 package tpiskorski.vboxcm.ui.controller;
 
-import tpiskorski.vboxcm.command.CommandResult;
-import tpiskorski.vboxcm.core.server.Server;
-import tpiskorski.vboxcm.core.server.ServerCoordinatingService;
-import tpiskorski.vboxcm.core.server.ServerService;
-import tpiskorski.vboxcm.monitoring.ConnectivityService;
-import tpiskorski.vboxcm.monitoring.ServerMonitoringDaemon;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -16,43 +10,40 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import tpiskorski.vboxcm.core.server.Server;
+import tpiskorski.vboxcm.core.server.ServerService;
+import tpiskorski.vboxcm.monitoring.AddServerService;
 import tpiskorski.vboxcm.ui.control.ExceptionDialog;
 
 @Controller
 public class AddServerController {
 
     private final ServerService serverService;
-    private final ServerCoordinatingService serverCoordinatingService;
     private final MainController mainController;
+    private final AddServerService addServerService;
 
     @FXML private Alert serverExistsAlert;
     @FXML private Alert noConnectivityServerAlert;
     @FXML private Alert cancelledServerAlert;
-
     @FXML private RadioButton remoteRadioButton;
     @FXML private RadioButton localhostRadioButton;
     @FXML private ToggleGroup serversToggleGroup;
-
     @FXML private StackPane addServerStackPane;
     @FXML private GridPane addServerGridPane;
     @FXML private VBox progressLayer;
-
     @FXML private Button addButton;
     @FXML private Button closeButton;
-
     @FXML private TextField address;
     @FXML private TextField port;
 
     private String savedAddress;
     private String savedPort;
 
-    @Autowired private ConnectivityService connectivityService;
-
     @Autowired
-    public AddServerController(ServerService serverService, MainController mainController, ServerMonitoringDaemon serverMonitoringDaemon, ServerCoordinatingService serverCoordinatingService) {
+    public AddServerController(ServerService serverService, MainController mainController, AddServerService addServerService) {
         this.serverService = serverService;
         this.mainController = mainController;
-        this.serverCoordinatingService = serverCoordinatingService;
+        this.addServerService = addServerService;
     }
 
     @FXML
@@ -86,10 +77,10 @@ public class AddServerController {
     }
 
     @FXML
-    public void saveConfig() {
+    public void addServer() {
         addServerGridPane.getScene().getWindow().setOnHiding(event -> {
-            if (connectivityService.isRunning()) {
-                connectivityService.cancel();
+            if (addServerService.isRunning()) {
+                addServerService.cancel();
             }
         });
 
@@ -105,26 +96,22 @@ public class AddServerController {
             return;
         }
 
-        connectivityService.setOnCancelled(workerStateEvent -> {
+        addServerService.setOnCancelled(workerStateEvent -> {
             cancelledServerAlert.showAndWait();
             closeWindow();
         });
 
-        connectivityService.setOnFailed(workerStateEvent -> {
-            noConnectivityServerAlert.showAndWait();
-            CommandResult result = connectivityService.getResult();
-            System.out.println(result.getError());
-            ExceptionDialog exceptionDialog = new ExceptionDialog(result.getError());
+        addServerService.setOnFailed(workerStateEvent -> {
+            ExceptionDialog exceptionDialog = new ExceptionDialog(addServerService.getException().toString());
             exceptionDialog.showAndWait();
             closeWindow();
         });
 
-        connectivityService.setOnSucceeded(workerStateEvent -> {
-            serverCoordinatingService.add(server);
+        addServerService.setOnSucceeded(workerStateEvent -> {
             closeWindow();
         });
 
-        connectivityService.start();
+        addServerService.start(server);
     }
 
     private void closeWindow() {
@@ -137,13 +124,13 @@ public class AddServerController {
         port.clear();
         remoteRadioButton.setSelected(true);
 
-        connectivityService.reset();
+        addServerService.reset();
 
         ((Stage) addButton.getScene().getWindow()).close();
     }
 
     @FXML
-    private void closeButtonAction() {
+    private void cancelAddServer() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
