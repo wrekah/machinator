@@ -30,7 +30,6 @@ class BackupDefinitionServiceTest extends Specification {
 
         then:
         1 * backupRepository.add(backup)
-        1 * backupScheduler.addTaskToScheduler(backup)
     }
 
     def 'should remove backup'() {
@@ -41,7 +40,6 @@ class BackupDefinitionServiceTest extends Specification {
         service.remove(backup)
 
         then:
-        1 * backupScheduler.removeTaskFromScheduler(backup)
         1 * backupRepository.remove(backup)
     }
 
@@ -56,5 +54,29 @@ class BackupDefinitionServiceTest extends Specification {
         then:
         1 * backupRepository.find(updatedBackup) >> oldBackup
         4 * oldBackup./set.*/(_)
+    }
+
+    def 'should activate backup'(){
+        given:
+        def backup = Mock(BackupDefinition)
+
+        when:
+        service.activate(backup)
+
+        then:
+        1 * backupScheduler.addTaskToScheduler(backup)
+        1 * backup.setActive(true)
+    }
+
+    def 'should deactivate backup'(){
+        given:
+        def backup = Mock(BackupDefinition)
+
+        when:
+        service.deactivate(backup)
+
+        then:
+        1 * backupScheduler.removeTaskFromScheduler(backup)
+        1 * backup.setActive(false)
     }
 }

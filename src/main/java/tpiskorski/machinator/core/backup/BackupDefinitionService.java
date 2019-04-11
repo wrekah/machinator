@@ -23,11 +23,9 @@ public class BackupDefinitionService {
 
     public void add(BackupDefinition backupDefinition) {
         backupDefinitionRepository.add(backupDefinition);
-        backupScheduler.addTaskToScheduler(backupDefinition);
     }
 
     public void remove(BackupDefinition backupDefinition) {
-        backupScheduler.removeTaskFromScheduler(backupDefinition);
         backupDefinitionRepository.remove(backupDefinition);
     }
 
@@ -41,10 +39,12 @@ public class BackupDefinitionService {
     }
 
     public void deactivate(BackupDefinition backupToDeactivate) {
+        backupScheduler.removeTaskFromScheduler(backupToDeactivate);
         backupToDeactivate.setActive(false);
     }
 
-    public void activate(BackupDefinition backupToDeactivate) {
-        backupToDeactivate.setActive(true);
+    public void activate(BackupDefinition backupToActivate) {
+        backupScheduler.addTaskToScheduler(backupToActivate);
+        backupToActivate.setActive(true);
     }
 }

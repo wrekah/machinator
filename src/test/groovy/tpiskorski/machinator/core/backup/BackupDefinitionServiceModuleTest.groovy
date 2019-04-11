@@ -132,25 +132,31 @@ class BackupDefinitionServiceModuleTest extends Specification {
         !backup.active
     }
 
-    def 'should add to scheduler when adding new backup'() {
+    def 'should add to scheduler when activating backup'() {
         given:
         def backup1 = new BackupDefinition(server1, vm1)
 
         when:
-        service.add(backup1)
+        service.activate(backup1)
 
         then:
         1 * backupScheduler.addTaskToScheduler(backup1)
+
+        and:
+        backup1.isActive()
     }
 
-    def 'should remove from scheduler when removing backup'() {
+    def 'should remove from scheduler when deactivating backup'() {
         given:
         def backup1 = new BackupDefinition(server1, vm1)
 
         when:
-        service.remove(backup1)
+        service.deactivate(backup1)
 
         then:
         1 * backupScheduler.removeTaskFromScheduler(backup1)
+
+        and:
+        !backup1.isActive()
     }
 }
