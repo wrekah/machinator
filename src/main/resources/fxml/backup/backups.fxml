@@ -3,7 +3,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.machinator.ui.controller.backup.BackupController">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tpiskorski.machinator.ui.controller.backup.BackupController">
 
 
     <fx:define>
@@ -55,11 +56,6 @@
                 <TableColumn text="Backup time">
                     <cellValueFactory>
                         <PropertyValueFactory property="backupTime"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Current files">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="currentFiles"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="File limit">

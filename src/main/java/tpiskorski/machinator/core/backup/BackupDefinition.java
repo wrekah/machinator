@@ -18,7 +18,6 @@ public class BackupDefinition {
     private ObjectProperty<LocalDate> firstBackupDay = new SimpleObjectProperty<>();
     private IntegerProperty frequency = new SimpleIntegerProperty();
     private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
-    private IntegerProperty currentFiles = new SimpleIntegerProperty();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
     private BooleanProperty active = new SimpleBooleanProperty();
 
@@ -54,18 +53,6 @@ public class BackupDefinition {
 
     public VirtualMachine getVm() {
         return vm;
-    }
-
-    public int getCurrentFiles() {
-        return currentFiles.get();
-    }
-
-    public void setCurrentFiles(int currentFiles) {
-        this.currentFiles.set(currentFiles);
-    }
-
-    public IntegerProperty currentFilesProperty() {
-        return currentFiles;
     }
 
     @Override public int hashCode() {

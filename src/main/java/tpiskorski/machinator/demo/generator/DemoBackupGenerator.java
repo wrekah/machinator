@@ -13,7 +13,6 @@ import tpiskorski.machinator.core.vm.VirtualMachineService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
@@ -26,7 +25,8 @@ public class DemoBackupGenerator implements InitializingBean {
 
     private final VirtualMachineService virtualMachineService;
 
-    @Autowired public DemoBackupGenerator(BackupDefinitionService backupDefinitionService, VirtualMachineService virtualMachineService) {
+    @Autowired
+    public DemoBackupGenerator(BackupDefinitionService backupDefinitionService, VirtualMachineService virtualMachineService) {
         this.backupDefinitionService = backupDefinitionService;
         this.virtualMachineService = virtualMachineService;
     }
@@ -56,7 +56,6 @@ public class DemoBackupGenerator implements InitializingBean {
         BackupDefinition backupDefinition = new BackupDefinition(virtualMachine.getServer(), virtualMachine);
 
         backupDefinition.setFileLimit(3);
-        backupDefinition.setCurrentFiles(ThreadLocalRandom.current().nextInt(0, backupDefinition.getFileLimit() + 1));
         backupDefinition.setFrequency(10);
         backupDefinition.setBackupTime(LocalTime.of(12, 0));
         backupDefinition.setFirstBackupDay(LocalDate.of(2019, 1, 1));

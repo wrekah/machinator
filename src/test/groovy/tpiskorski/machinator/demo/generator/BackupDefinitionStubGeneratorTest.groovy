@@ -1,14 +1,14 @@
 package tpiskorski.machinator.demo.generator
 
+import javafx.collections.ObservableList
+import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Unroll
 import tpiskorski.machinator.core.backup.BackupDefinition
 import tpiskorski.machinator.core.backup.BackupDefinitionService
 import tpiskorski.machinator.core.server.Server
 import tpiskorski.machinator.core.vm.VirtualMachine
 import tpiskorski.machinator.core.vm.VirtualMachineService
-import javafx.collections.ObservableList
-import spock.lang.Specification
-import spock.lang.Subject
-import spock.lang.Unroll
 
 class BackupDefinitionStubGeneratorTest extends Specification {
 
@@ -30,7 +30,6 @@ class BackupDefinitionStubGeneratorTest extends Specification {
         then:
         backup.server == server
         backup.vm == vm
-        backup.currentFiles <= backup.fileLimit
     }
 
     @Unroll
