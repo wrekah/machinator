@@ -92,26 +92,6 @@ class BackupDefinitionServiceModuleTest extends Specification {
         service.getBackups() == [backup1]
     }
 
-    def 'should do the update'() {
-        given:
-        def oldBackup = new BackupDefinition(server1, vm1)
-        def newBackup = new BackupDefinition(server1, vm1)
-
-        and:
-        oldBackup.fileLimit = 1
-        newBackup.fileLimit = 10
-
-        and:
-        service.add(oldBackup)
-
-        when:
-        service.update(newBackup)
-
-        then:
-        service.getBackups() == [newBackup]
-        service.getBackups().first().fileLimit == 10
-    }
-
     def 'should activate and deactivate watchdog'() {
         given:
         def backup = new BackupDefinition(server1, vm1)

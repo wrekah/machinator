@@ -29,15 +29,6 @@ public class BackupDefinitionService {
         backupDefinitionRepository.remove(backupDefinition);
     }
 
-    public void update(BackupDefinition backupDefinition) {
-        BackupDefinition backupDefinitionToModify = backupDefinitionRepository.find(backupDefinition);
-
-        backupDefinitionToModify.setFirstBackupDay(backupDefinition.getFirstBackupDay());
-        backupDefinitionToModify.setFileLimit(backupDefinition.getFileLimit());
-        backupDefinitionToModify.setBackupTime(backupDefinition.getBackupTime());
-        backupDefinitionToModify.setFrequency(backupDefinition.getFrequency());
-    }
-
     public void deactivate(BackupDefinition backupToDeactivate) {
         backupScheduler.removeTaskFromScheduler(backupToDeactivate);
         backupToDeactivate.setActive(false);

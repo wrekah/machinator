@@ -43,20 +43,7 @@ class BackupDefinitionServiceTest extends Specification {
         1 * backupRepository.remove(backup)
     }
 
-    def 'should update backup'() {
-        given:
-        def updatedBackup = Mock(BackupDefinition)
-        def oldBackup = Mock(BackupDefinition)
-
-        when:
-        service.update(updatedBackup)
-
-        then:
-        1 * backupRepository.find(updatedBackup) >> oldBackup
-        4 * oldBackup./set.*/(_)
-    }
-
-    def 'should activate backup'(){
+    def 'should activate backup'() {
         given:
         def backup = Mock(BackupDefinition)
 
@@ -68,7 +55,7 @@ class BackupDefinitionServiceTest extends Specification {
         1 * backup.setActive(true)
     }
 
-    def 'should deactivate backup'(){
+    def 'should deactivate backup'() {
         given:
         def backup = Mock(BackupDefinition)
 

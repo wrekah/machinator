@@ -37,9 +37,6 @@ public class BackupController {
     @Autowired private BackupDefinitionService backupDefinitionService;
 
     private Stage addServerStage;
-    private Stage modifyVmStage;
-
-    @Autowired private ModifyVmBackupController modifyVmBackupController;
 
     @FXML private ContextMenu contextMenu;
     @FXML private MenuItem dynamicMenuItem;
@@ -72,9 +69,6 @@ public class BackupController {
 
         addServerStage = contextAwareSceneLoader.loadPopup("/fxml/backup/addVmBackup.fxml");
         addServerStage.setTitle("Adding backup...");
-
-        modifyVmStage = contextAwareSceneLoader.loadPopup("/fxml/backup/modifyVmBackup.fxml");
-        modifyVmStage.setTitle("Modifying backup...");
 
         backupsTableView.setItems(backupDefinitionService.getBackups());
     }
@@ -130,19 +124,6 @@ public class BackupController {
         if (confirmed) {
             BackupDefinition backupDefinitionToRemove = backupsTableView.getSelectionModel().getSelectedItem();
             backupDefinitionService.remove(backupDefinitionToRemove);
-        }
-    }
-
-    @FXML
-    public void modifyVm() {
-        if (modifyVmStage.isShowing()) {
-            modifyVmBackupController.clear();
-            modifyVmStage.hide();
-        } else {
-            BackupDefinition backupDefinition = backupsTableView.getSelectionModel().getSelectedItem();
-
-            modifyVmBackupController.prepareFor(backupDefinition);
-            modifyVmStage.show();
         }
     }
 }

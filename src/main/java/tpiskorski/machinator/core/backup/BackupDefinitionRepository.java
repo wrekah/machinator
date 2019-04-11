@@ -20,10 +20,4 @@ public class BackupDefinitionRepository {
     void remove(BackupDefinition backupDefinition) {
         jobObservableList.remove(backupDefinition);
     }
-
-    BackupDefinition find(BackupDefinition backupDefinition) {
-        return jobObservableList.filtered(
-            oldBackup -> oldBackup.equals(backupDefinition)
-        ).get(0);
-    }
 }
