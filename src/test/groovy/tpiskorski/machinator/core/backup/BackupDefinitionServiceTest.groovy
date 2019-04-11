@@ -2,12 +2,16 @@ package tpiskorski.machinator.core.backup
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.quartz.backup.BackupScheduler
 
 class BackupDefinitionServiceTest extends Specification {
 
     def backupRepository = Mock(BackupDefinitionRepository)
+    def backupScheduler = Mock(BackupScheduler)
 
-    @Subject service = new BackupDefinitionService(backupRepository, backupService)
+    @Subject service = new BackupDefinitionService(
+            backupRepository, backupScheduler
+    )
 
     def 'should get backups'() {
         when:
@@ -26,6 +30,7 @@ class BackupDefinitionServiceTest extends Specification {
 
         then:
         1 * backupRepository.add(backup)
+        1 * backupScheduler.addTaskToScheduler(backup)
     }
 
     def 'should remove backup'() {
@@ -36,6 +41,7 @@ class BackupDefinitionServiceTest extends Specification {
         service.remove(backup)
 
         then:
+        1 * backupScheduler.removeTaskFromScheduler(backup)
         1 * backupRepository.remove(backup)
     }
 

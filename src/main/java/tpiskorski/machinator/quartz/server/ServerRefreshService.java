@@ -1,4 +1,4 @@
-package tpiskorski.machinator.quartz.monitor;
+package tpiskorski.machinator.quartz.server;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class ServerMonitoringService {
+public class ServerRefreshService {
 
     @Autowired private LocalMachineCommandExecutor localMachineCommandExecutor;
     @Autowired private VmDetailsService vmDetailsService;

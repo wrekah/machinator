@@ -1,4 +1,4 @@
-package tpiskorski.machinator.quartz.monitor;
+package tpiskorski.machinator.quartz.server;
 
 import org.quartz.*;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,17 +8,17 @@ import org.springframework.stereotype.Controller;
 
 @Profile("!demo")
 @Controller
-public class ServerMonitorScheduler implements InitializingBean, ServerMonitor {
+public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
 
     static final String REGULAR_SERVER_SCAN = "regularServerScan";
 
     private final Scheduler scheduler;
 
-    private final ServerMonitorListener serverMonitorListener;
+    private final ServerRefreshJobListener serverRefreshJobListener;
 
-    @Autowired public ServerMonitorScheduler(Scheduler scheduler, ServerMonitorListener serverMonitorListener) {
+    @Autowired public ServerRefreshScheduler(Scheduler scheduler, ServerRefreshJobListener serverRefreshJobListener) {
         this.scheduler = scheduler;
-        this.serverMonitorListener = serverMonitorListener;
+        this.serverRefreshJobListener = serverRefreshJobListener;
     }
 
     public void scheduleRegularScans() throws SchedulerException {
@@ -37,7 +37,7 @@ public class ServerMonitorScheduler implements InitializingBean, ServerMonitor {
     }
 
     @Override public void afterPropertiesSet() throws Exception {
-        scheduler.getListenerManager().addJobListener(serverMonitorListener);
+        scheduler.getListenerManager().addJobListener(serverRefreshJobListener);
         scheduleRegularScans();
     }
 

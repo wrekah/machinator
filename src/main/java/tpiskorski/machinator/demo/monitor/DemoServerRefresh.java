@@ -12,23 +12,23 @@ import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerService;
 import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.quartz.monitor.ServerMonitor;
+import tpiskorski.machinator.quartz.server.ServerRefresh;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Profile("demo")
 @Component
-public class DemoServerMonitor implements ServerMonitor {
+public class DemoServerRefresh implements ServerRefresh {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoServerMonitor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoServerRefresh.class);
 
     private final ServerService serverService;
     private final StubSshClient stubSshClient = new StubSshClient();
 
     private AtomicBoolean isFreezed = new AtomicBoolean(false);
 
-    @Autowired public DemoServerMonitor(ServerService serverService) {
+    @Autowired public DemoServerRefresh(ServerService serverService) {
         this.serverService = serverService;
     }
 

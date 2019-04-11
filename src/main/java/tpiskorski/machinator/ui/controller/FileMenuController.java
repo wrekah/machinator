@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.lifecycle.ShutdownService;
-import tpiskorski.machinator.quartz.monitor.ServerMonitor;
+import tpiskorski.machinator.quartz.server.ServerRefresh;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class FileMenuController {
     private final ShutdownService shutdownService;
     private final ContextAwareSceneLoader contextAwareSceneLoader;
     private final ConfigService configService;
-    private final ServerMonitor serverMonitor;
+    private final ServerRefresh serverRefresh;
 
     @FXML private MenuItem monitoringMenuItem;
 
@@ -29,17 +29,17 @@ public class FileMenuController {
     private Stage containerWindow;
 
     @Autowired
-    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ServerMonitor serverMonitor, ShutdownService shutdownService) {
+    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ServerRefresh serverRefresh, ShutdownService shutdownService) {
         this.configService = configService;
         this.contextAwareSceneLoader = contextAwareSceneLoader;
-        this.serverMonitor = serverMonitor;
+        this.serverRefresh = serverRefresh;
         this.shutdownService = shutdownService;
     }
 
     @FXML
     public void initialize() throws IOException {
         containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/config/baseConfigContainer.fxml");
-        monitoringMenuItem.setText(serverMonitor.isPaused() ? "Start Monitoring" : "Stop Monitoring");
+        monitoringMenuItem.setText(serverRefresh.isPaused() ? "Start Monitoring" : "Stop Monitoring");
     }
 
     @FXML
@@ -64,9 +64,9 @@ public class FileMenuController {
 
     @FXML
     public void freezeMonitoring() {
-        serverMonitor.pause();
-        monitoringMenuItem.setText(serverMonitor.isPaused()  ? "Start Monitoring" : "Stop Monitoring");
-        monitorAlert.setContentText("Monitoring: " + !serverMonitor.isPaused());
+        serverRefresh.pause();
+        monitoringMenuItem.setText(serverRefresh.isPaused()  ? "Start Monitoring" : "Stop Monitoring");
+        monitorAlert.setContentText("Monitoring: " + !serverRefresh.isPaused());
         monitorAlert.showAndWait();
     }
 }

@@ -1,4 +1,4 @@
-package tpiskorski.machinator.quartz.monitor;
+package tpiskorski.machinator.quartz.server;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,12 +24,12 @@ public class ServerRefreshJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
 
-    private ServerMonitoringService serverMonitoringService;
+    private ServerRefreshService serverRefreshService;
     private ServerService serverService;
 
     @Autowired
-    public ServerRefreshJob(ServerMonitoringService serverMonitoringService, @Lazy ServerService serverService) {
-        this.serverMonitoringService = serverMonitoringService;
+    public ServerRefreshJob(ServerRefreshService serverRefreshService, @Lazy ServerService serverService) {
+        this.serverRefreshService = serverRefreshService;
         this.serverService = serverService;
     }
 
@@ -39,7 +39,7 @@ public class ServerRefreshJob extends QuartzJobBean {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
             for (Server server : serversView) {
                 if (server.getServerType() == ServerType.LOCAL) {
-                    List<VirtualMachine> vms = serverMonitoringService.monitor(server);
+                    List<VirtualMachine> vms = serverRefreshService.monitor(server);
                     Platform.runLater(() -> serverService.upsert(server, vms));
                 }
             }

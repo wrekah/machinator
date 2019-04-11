@@ -1,10 +1,9 @@
-package tpiskorski.machinator.quartz.monitor;
+package tpiskorski.machinator.quartz.server;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.JobListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.core.job.Job;
 import tpiskorski.machinator.core.job.JobService;
@@ -13,11 +12,15 @@ import tpiskorski.machinator.core.job.JobStatus;
 import java.time.LocalDateTime;
 
 @Component
-public class ServerMonitorListener implements JobListener {
+public class ServerRefreshJobListener implements JobListener {
 
-    private static final String LISTENER_NAME = "ServerMonitorListener";
+    private static final String LISTENER_NAME = "ServerRefreshListener";
 
-    @Autowired private JobService jobService;
+    private final JobService jobService;
+
+    public ServerRefreshJobListener(JobService jobService) {
+        this.jobService = jobService;
+    }
 
     @Override public String getName() {
         return LISTENER_NAME;
@@ -25,7 +28,7 @@ public class ServerMonitorListener implements JobListener {
 
     @Override public void jobToBeExecuted(JobExecutionContext context) {
         JobKey key = context.getJobDetail().getKey();
-        if (context.getJobDetail().getJobClass().equals(ServerRefreshJob.class)) {
+        if (isServerRefreshJob(context)) {
             Job job = new Job(key.getName());
 
             job.setDescription("Server monitor");
@@ -37,17 +40,21 @@ public class ServerMonitorListener implements JobListener {
     }
 
     @Override public void jobExecutionVetoed(JobExecutionContext context) {
-        if (context.getJobDetail().getJobClass().equals(ServerRefreshJob.class)) {
+        if (isServerRefreshJob(context)) {
             Job job = jobService.getLastByDescription("Server monitor");
             job.setStatus(JobStatus.CANCELLED);
         }
     }
 
     @Override public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        if (context.getJobDetail().getJobClass().equals(ServerRefreshJob.class)) {
+        if (isServerRefreshJob(context)) {
             Job job = jobService.getLastByDescription("Server monitor");
 
             job.setStatus(JobStatus.COMPLETED);
         }
+    }
+
+    private boolean isServerRefreshJob(JobExecutionContext context) {
+        return context.getJobDetail().getJobClass().equals(ServerRefreshJob.class);
     }
 }

@@ -4,12 +4,16 @@ import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.core.server.Server
 import tpiskorski.machinator.core.vm.VirtualMachine
+import tpiskorski.machinator.quartz.backup.BackupScheduler
 
 class BackupDefinitionServiceModuleTest extends Specification {
 
     def backupRepository = new BackupDefinitionRepository()
+    def backupScheduler = Mock(BackupScheduler)
 
-    @Subject service = new BackupDefinitionService(backupRepository, backupService)
+    @Subject service = new BackupDefinitionService(
+            backupRepository, backupScheduler
+    )
 
     def server1 = new Server('some', '123')
     def server2 = new Server('other', '321')
@@ -126,5 +130,27 @@ class BackupDefinitionServiceModuleTest extends Specification {
 
         then:
         !backup.active
+    }
+
+    def 'should add to scheduler when adding new backup'() {
+        given:
+        def backup1 = new BackupDefinition(server1, vm1)
+
+        when:
+        service.add(backup1)
+
+        then:
+        1 * backupScheduler.addTaskToScheduler(backup1)
+    }
+
+    def 'should remove from scheduler when removing backup'() {
+        given:
+        def backup1 = new BackupDefinition(server1, vm1)
+
+        when:
+        service.remove(backup1)
+
+        then:
+        1 * backupScheduler.removeTaskFromScheduler(backup1)
     }
 }
