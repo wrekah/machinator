@@ -24,6 +24,7 @@ public class ServerRefreshJob extends QuartzJobBean {
     static final String NAME = "ServerRefreshJob";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
+
     private ServerRefreshService serverRefreshService;
     private ServerService serverService;
 
@@ -34,7 +35,7 @@ public class ServerRefreshJob extends QuartzJobBean {
     }
 
     @Override protected void executeInternal(JobExecutionContext jobExecutionContext) {
-        LOGGER.info("Servers scan started...");
+        LOGGER.info("Servers refresh started...");
         try {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
             for (Server server : serversView) {
@@ -44,8 +45,8 @@ public class ServerRefreshJob extends QuartzJobBean {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Server scan error", e);
+            LOGGER.error("Server refresh error", e);
         }
-        LOGGER.info("Servers scan finished...");
+        LOGGER.info("Servers refresh finished...");
     }
 }

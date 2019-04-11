@@ -35,7 +35,7 @@ public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
             .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
-        LOGGER.info("Scheduled servers refresh job");
+        LOGGER.info("Scheduled server refresh job");
     }
 
     @Override public void afterPropertiesSet() throws Exception {
