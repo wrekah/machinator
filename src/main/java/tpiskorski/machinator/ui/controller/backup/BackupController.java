@@ -26,20 +26,17 @@ import java.io.IOException;
 @Controller
 public class BackupController {
 
-    public TableView<BackupDefinition> backupsTableView;
-    public Button removeVmButton;
-    public Button modifyButton;
-
-    @FXML private TextField backupLocation;
     @Autowired private ConfigService configService;
-
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private BackupDefinitionService backupDefinitionService;
 
-    private Stage addServerStage;
-
+    @FXML private TableView<BackupDefinition> backupsTableView;
+    @FXML private Button removeVmButton;
+    @FXML private TextField backupLocation;
     @FXML private ContextMenu contextMenu;
     @FXML private MenuItem dynamicMenuItem;
+
+    private Stage addServerStage;
 
     @FXML
     public void initialize() throws IOException {
@@ -65,7 +62,6 @@ public class BackupController {
         });
 
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
-        modifyButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
         addServerStage = contextAwareSceneLoader.loadPopup("/fxml/backup/addVmBackup.fxml");
         addServerStage.setTitle("Adding backup...");

@@ -25,23 +25,21 @@ import java.time.LocalTime;
 @Controller
 public class AddVmBackupController {
 
-    public TextField frequency;
-    public Button cancelButton;
-    public Button addButton;
-    public DatePicker firstBackup;
-    public TextField backupTime;
-    public TextField fileLimit;
-
     @Autowired private ServerService serverService;
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private BackupDefinitionService backupDefinitionService;
 
+    @FXML private TextField frequency;
+    @FXML private Button cancelButton;
+    @FXML private Button addButton;
+    @FXML private DatePicker firstBackup;
+    @FXML private TextField backupTime;
+    @FXML private TextField fileLimit;
     @FXML private ComboBox<Server> serverComboBox;
     @FXML private ComboBox<VirtualMachine> vmComboBox;
 
     @FXML
     public void initialize() {
-
         frequency.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 frequency.setText(newValue.replaceAll("[^\\d]", ""));
@@ -105,7 +103,7 @@ public class AddVmBackupController {
         Server server = serverComboBox.getSelectionModel().getSelectedItem();
         VirtualMachine vm = vmComboBox.getSelectionModel().getSelectedItem();
         LocalDate backupDay = firstBackup.getValue();
-        Integer every = Integer.parseInt(frequency.getText());
+        int every = Integer.parseInt(frequency.getText());
         LocalTime backupTime = LocalTime.parse(this.backupTime.getText());
         int fileLimit = Integer.parseInt(this.fileLimit.getText());
 
@@ -121,7 +119,7 @@ public class AddVmBackupController {
         clear();
     }
 
-    public void clear() {
+    private void clear() {
         serverComboBox.getSelectionModel().clearSelection();
         vmComboBox.getSelectionModel().clearSelection();
         firstBackup.getEditor().clear();

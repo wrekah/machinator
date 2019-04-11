@@ -14,7 +14,6 @@
                 <SeparatorMenuItem/>
                 <MenuItem text="Open directory" onAction="#browseHomeDirectory"/>
                 <SeparatorMenuItem/>
-                <MenuItem text="Modify" onAction="#modifyVm"/>
                 <MenuItem text="Remove" onAction="#removeVm"/>
             </items>
         </ContextMenu>
