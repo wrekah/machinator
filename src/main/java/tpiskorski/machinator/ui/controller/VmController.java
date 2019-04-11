@@ -10,26 +10,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.command.LocalVmStarter;
-import tpiskorski.machinator.core.job.Job;
-import tpiskorski.machinator.core.job.JobService;
-import tpiskorski.machinator.core.job.JobStatus;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
+import tpiskorski.machinator.quartz.vm.VmActionScheduler;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.VirtualMachineRowFactory;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Controller
 public class VmController {
 
-    @Autowired private JobService jobService;
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
-    @Autowired private LocalVmStarter localVmStarter;
+    @Autowired private VmActionScheduler vmActionScheduler;
 
     @FXML private TableView<VirtualMachine> virtualMachines;
 
@@ -89,11 +84,7 @@ public class VmController {
 
         if (confirmed) {
             VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            Job job = new Job("1");
-            job.setDescription("Turn on vm: " + selectedItem.getVmName());
-            job.setStartTime(LocalDateTime.now());
-            job.setStatus(JobStatus.IN_PROGRESS);
-            jobService.add(job);
+            vmActionScheduler.scheduleTurnOn(selectedItem);
         }
     }
 
@@ -106,7 +97,7 @@ public class VmController {
 
         if (confirmed) {
             VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            localVmStarter.startVm(selectedItem);
+            vmActionScheduler.scheduleTurnOff(selectedItem);
         }
     }
 
@@ -118,7 +109,8 @@ public class VmController {
         );
 
         if (confirmed) {
-
+            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.schedulePowerOff(selectedItem);
         }
     }
 
@@ -130,7 +122,8 @@ public class VmController {
         );
 
         if (confirmed) {
-
+            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleReset(selectedItem);
         }
     }
 
@@ -142,7 +135,8 @@ public class VmController {
         );
 
         if (confirmed) {
-
+            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleDelete(selectedItem);
         }
     }
 }
