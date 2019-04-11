@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.core.backup.BackupDefinition;
 
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +21,8 @@ public class BackupScheduler implements InitializingBean {
 
     private final Scheduler scheduler;
     private final BackupJobListener backupJobListener;
+
+    private CronExpressionBuilder cronExpressionBuilder = new CronExpressionBuilder();
 
     private Map<BackupDefinition, String> jobs = new HashMap<>();
 
@@ -32,21 +36,12 @@ public class BackupScheduler implements InitializingBean {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("backupDefinition", backupDefinition);
 
-        JobDetail jobDetail = JobBuilder.newJob(BackupJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "backups")
-            .usingJobData(jobDataMap)
-            .storeDurably()
-            .build();
+        JobDetail jobDetail = buildJobDetail(jobDataMap);
+        CronTrigger trigger = buildTrigger(backupDefinition, jobDetail);
 
-        CronTrigger trigger = TriggerBuilder.newTrigger()
-            .forJob(jobDetail)
-            .withIdentity(jobDetail.getKey().getName())
-            .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * ? * *"))
-            .build();
-
-        jobs.put(backupDefinition, backupDefinition.id());
         try {
             scheduler.scheduleJob(jobDetail, trigger);
+            jobs.put(backupDefinition, backupDefinition.id());
             LOGGER.info("Added job to scheduler {}", jobDetail);
         } catch (SchedulerException e) {
             LOGGER.warn("Could not add job to scheduler", e);
@@ -67,5 +62,24 @@ public class BackupScheduler implements InitializingBean {
 
     @Override public void afterPropertiesSet() throws Exception {
         scheduler.getListenerManager().addJobListener(backupJobListener);
+    }
+
+    private JobDetail buildJobDetail(JobDataMap jobDataMap) {
+        return JobBuilder.newJob(BackupJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "backups")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+    }
+
+    private CronTrigger buildTrigger(BackupDefinition backupDefinition, JobDetail jobDetail) {
+        String cronExpression = cronExpressionBuilder.build(backupDefinition);
+
+        return TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+            .startAt(Date.from(backupDefinition.getFirstBackupDay().atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            .build();
     }
 }
