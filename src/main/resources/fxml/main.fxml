@@ -21,7 +21,7 @@
                     </BorderPane>
                 </Tab>
                 <Tab text="Backup">
-                    <fx:include fx:id="barTabPage" source="backups.fxml"/>
+                    <fx:include fx:id="barTabPage" source="backup/backups.fxml"/>
                 </Tab>
                 <Tab text="Watchdog">
                     <fx:include source="watchdog/watchdog.fxml"/>

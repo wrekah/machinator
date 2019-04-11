@@ -1,6 +1,6 @@
 package tpiskorski.machinator.ui.controller.backup;
 
-import javafx.collections.ListChangeListener;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -49,12 +49,15 @@ public class AddVmBackupController {
         setConverters();
 
         vmComboBox.disableProperty().bind(serverComboBox.valueProperty().isNull());
-        serverComboBox.setItems(serverService.getServers());
 
-        serverComboBox.getItems().addListener((ListChangeListener<Server>) change -> {
-            serverComboBox.getSelectionModel().clearSelection();
+        serverComboBox.pressedProperty().addListener((observable, oldValue, newValue) -> {
+            serverComboBox.setItems(FXCollections.observableArrayList(serverService.getServers()));
         });
-        vmComboBox.setItems(virtualMachineService.getVms());
+
+        vmComboBox.pressedProperty().addListener((observable, oldValue, newValue) -> {
+            Server server = serverComboBox.getSelectionModel().getSelectedItem();
+            vmComboBox.setItems(FXCollections.observableArrayList(virtualMachineService.getVms(server)));
+        });
     }
 
     private void setConverters() {
