@@ -44,7 +44,7 @@ public class App extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         Parent rootNode = fxmlLoader.load();
 
-        stage.setTitle("machinator");
+        stage.setTitle("Machinator");
         Scene scene = new Scene(rootNode);
 
         setShutdownHooks(stage);

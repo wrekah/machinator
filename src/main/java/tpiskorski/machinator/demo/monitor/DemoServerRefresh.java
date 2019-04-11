@@ -59,7 +59,11 @@ public class DemoServerRefresh implements ServerRefresh {
     }
 
     @Override public void pause() {
-        isFreezed.set(!isFreezed.get());
+        isFreezed.set(true);
+    }
+
+    @Override public void resume() {
+        isFreezed.set(false);
     }
 
     @Override public boolean isPaused() {

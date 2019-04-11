@@ -1,6 +1,5 @@
 package tpiskorski.machinator.quartz.server;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.quartz.DisallowConcurrentExecution;
@@ -22,8 +21,9 @@ import java.util.List;
 @Component
 public class ServerRefreshJob extends QuartzJobBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
+    static final String NAME = "ServerRefreshJob";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
     private ServerRefreshService serverRefreshService;
     private ServerService serverService;
 
@@ -40,7 +40,7 @@ public class ServerRefreshJob extends QuartzJobBean {
             for (Server server : serversView) {
                 if (server.getServerType() == ServerType.LOCAL) {
                     List<VirtualMachine> vms = serverRefreshService.monitor(server);
-                    Platform.runLater(() -> serverService.upsert(server, vms));
+                    serverService.upsert(server, vms);
                 }
             }
         } catch (Exception e) {

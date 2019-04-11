@@ -64,9 +64,13 @@ public class FileMenuController {
 
     @FXML
     public void freezeMonitoring() {
-        serverRefresh.pause();
-        monitoringMenuItem.setText(serverRefresh.isPaused()  ? "Start Monitoring" : "Stop Monitoring");
-        monitorAlert.setContentText("Monitoring: " + !serverRefresh.isPaused());
+        if (serverRefresh.isPaused()) {
+            serverRefresh.resume();
+            monitoringMenuItem.setText("Stop Monitoring");
+        } else {
+            serverRefresh.pause();
+            monitoringMenuItem.setText("Start Monitoring");
+        }
         monitorAlert.showAndWait();
     }
 }
