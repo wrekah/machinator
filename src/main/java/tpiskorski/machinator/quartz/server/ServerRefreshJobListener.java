@@ -50,7 +50,11 @@ public class ServerRefreshJobListener implements JobListener {
     @Override public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
         if (isServerRefreshJob(context)) {
             Job job = jobService.getLastByDescription("Server refresh");
-            job.setStatus(JobStatus.COMPLETED);
+            if (jobException == null) {
+                job.setStatus(JobStatus.COMPLETED);
+            } else {
+                job.setStatus(JobStatus.FAILED);
+            }
         }
     }
 
