@@ -11,8 +11,6 @@ import tpiskorski.machinator.core.backup.BackupDefinitionService;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
@@ -55,10 +53,10 @@ public class DemoBackupGenerator implements InitializingBean {
     BackupDefinition createBackupForVm(VirtualMachine virtualMachine) {
         BackupDefinition backupDefinition = new BackupDefinition(virtualMachine.getServer(), virtualMachine);
 
+        backupDefinition.setFirstDay(1);
+        backupDefinition.setDayInterval(10);
+        backupDefinition.setHourTime(12);
         backupDefinition.setFileLimit(3);
-        backupDefinition.setFrequency(10);
-        backupDefinition.setBackupTime(LocalTime.of(12, 0));
-        backupDefinition.setFirstBackupDay(LocalDate.of(2019, 1, 1));
 
         return backupDefinition;
     }

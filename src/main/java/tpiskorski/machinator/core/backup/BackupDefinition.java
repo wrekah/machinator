@@ -1,13 +1,14 @@
 package tpiskorski.machinator.core.backup;
 
 import javafx.beans.Observable;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Callback;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Objects;
 
 public class BackupDefinition {
@@ -15,9 +16,9 @@ public class BackupDefinition {
     private Server server;
     private VirtualMachine vm;
 
-    private ObjectProperty<LocalDate> firstBackupDay = new SimpleObjectProperty<>();
-    private IntegerProperty frequency = new SimpleIntegerProperty();
-    private ObjectProperty<LocalTime> backupTime = new SimpleObjectProperty<>();
+    private IntegerProperty firstDay = new SimpleIntegerProperty();
+    private IntegerProperty dayInterval = new SimpleIntegerProperty();
+    private IntegerProperty hourTime = new SimpleIntegerProperty();
     private IntegerProperty fileLimit = new SimpleIntegerProperty();
     private BooleanProperty active = new SimpleBooleanProperty();
 
@@ -29,10 +30,45 @@ public class BackupDefinition {
 
     static Callback<BackupDefinition, Observable[]> extractor() {
         return (BackupDefinition backupDefinition) -> new Observable[]{
-            backupDefinition.firstBackupDayProperty(), backupDefinition.frequencyProperty(),
-            backupDefinition.backupTimeProperty(), backupDefinition.fileLimitProperty(),
-            backupDefinition.activeProperty()
+            backupDefinition.firstDayProperty(), backupDefinition.dayIntervalProperty(),
+            backupDefinition.fileLimitProperty(), backupDefinition.activeProperty()
         };
+    }
+
+    public int getHourTime() {
+        return hourTime.get();
+    }
+
+    public void setHourTime(int hourTime) {
+        this.hourTime.set(hourTime);
+    }
+
+    public IntegerProperty hourTimeProperty() {
+        return hourTime;
+    }
+
+    public int getFirstDay() {
+        return firstDay.get();
+    }
+
+    public void setFirstDay(int firstDay) {
+        this.firstDay.set(firstDay);
+    }
+
+    public IntegerProperty firstDayProperty() {
+        return firstDay;
+    }
+
+    public int getDayInterval() {
+        return dayInterval.get();
+    }
+
+    public void setDayInterval(int dayInterval) {
+        this.dayInterval.set(dayInterval);
+    }
+
+    public IntegerProperty dayIntervalProperty() {
+        return dayInterval;
     }
 
     public boolean isActive() {
@@ -66,42 +102,6 @@ public class BackupDefinition {
         BackupDefinition that = (BackupDefinition) obj;
 
         return Objects.equals(this.getServer(), that.getServer()) && Objects.equals(this.getVm(), that.getVm());
-    }
-
-    public LocalDate getFirstBackupDay() {
-        return firstBackupDay.get();
-    }
-
-    public void setFirstBackupDay(LocalDate firstBackupDay) {
-        this.firstBackupDay.set(firstBackupDay);
-    }
-
-    public ObjectProperty<LocalDate> firstBackupDayProperty() {
-        return firstBackupDay;
-    }
-
-    public int getFrequency() {
-        return frequency.get();
-    }
-
-    public void setFrequency(int frequency) {
-        this.frequency.set(frequency);
-    }
-
-    public IntegerProperty frequencyProperty() {
-        return frequency;
-    }
-
-    public LocalTime getBackupTime() {
-        return backupTime.get();
-    }
-
-    public void setBackupTime(LocalTime backupTime) {
-        this.backupTime.set(backupTime);
-    }
-
-    public ObjectProperty<LocalTime> backupTimeProperty() {
-        return backupTime;
     }
 
     public int getFileLimit() {

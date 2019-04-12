@@ -6,18 +6,21 @@
 
 >
 
-    <GridPane>
+    <GridPane vgap="5">
 
         <columnConstraints>
-            <ColumnConstraints halignment="CENTER" prefWidth="100"/>
-            <ColumnConstraints halignment="CENTER" prefWidth="150"/>
+            <ColumnConstraints halignment="CENTER"/>
         </columnConstraints>
 
         <padding>
             <Insets top="25" right="25" bottom="25" left="25"/>
         </padding>
 
-        <Label text="Server" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="Server" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <padding>
+                <Insets right="10"/>
+            </padding>
+        </Label>
         <ComboBox promptText="Pick server" fx:id="serverComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
                   prefWidth="150"/>
 
@@ -26,20 +29,33 @@
                   prefWidth="150"/>
 
 
-        <Label text="First backup" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <DatePicker fx:id="firstBackup" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="2"
+              GridPane.columnSpan="2">
+            <Label text="Starting on the "/>
+            <TextField fx:id="firstDay" promptText="day" maxWidth="50"/>
+            <Label text=" of the month"/>
+        </HBox>
 
-        <Label text="Every " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <TextField promptText="days" fx:id="frequency" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="3"
+              GridPane.columnSpan="2">
+            <Label text="Every"/>
+            <TextField fx:id="dayInterval" promptText="days" maxWidth="50"/>
+            <Label text="day(s)"/>
+        </HBox>
 
-        <Label text="Backup time" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <TextField fx:id="backupTime" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="5"
+              GridPane.columnSpan="2">
+            <Label text="Backup hour"/>
+            <TextField promptText="time" maxWidth="50" fx:id="backupHour"/>
+        </HBox>
 
+        <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="6"
+              GridPane.columnSpan="2">
+            <Label text="Backup file limit"/>
+            <TextField promptText="#" maxWidth="50" fx:id="fileLimit"/>
+        </HBox>
 
-        <Label text="File limit" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-        <TextField fx:id="fileLimit" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-
-        <HBox spacing="5" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="6">
+        <HBox spacing="5" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="7">
             <GridPane.margin>
                 <Insets top="5"/>
             </GridPane.margin>

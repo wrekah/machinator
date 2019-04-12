@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -18,9 +17,6 @@ import tpiskorski.machinator.core.server.ServerService;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 @DependsOn("mainController")
 @Controller
 public class AddVmBackupController {
@@ -29,20 +25,29 @@ public class AddVmBackupController {
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private BackupDefinitionService backupDefinitionService;
 
-    @FXML private TextField frequency;
-    @FXML private Button cancelButton;
-    @FXML private Button addButton;
-    @FXML private DatePicker firstBackup;
-    @FXML private TextField backupTime;
+    @FXML private TextField dayInterval;
+    @FXML private TextField firstDay;
+    @FXML private TextField backupHour;
+
     @FXML private TextField fileLimit;
+
     @FXML private ComboBox<Server> serverComboBox;
     @FXML private ComboBox<VirtualMachine> vmComboBox;
 
+    @FXML private Button cancelButton;
+    @FXML private Button addButton;
+
     @FXML
     public void initialize() {
-        frequency.textProperty().addListener((observable, oldValue, newValue) -> {
+        dayInterval.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                frequency.setText(newValue.replaceAll("[^\\d]", ""));
+                dayInterval.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        firstDay.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                firstDay.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
 
@@ -105,17 +110,13 @@ public class AddVmBackupController {
     public void add() {
         Server server = serverComboBox.getSelectionModel().getSelectedItem();
         VirtualMachine vm = vmComboBox.getSelectionModel().getSelectedItem();
-        LocalDate backupDay = firstBackup.getValue();
-        int every = Integer.parseInt(frequency.getText());
-        LocalTime backupTime = LocalTime.parse(this.backupTime.getText());
-        int fileLimit = Integer.parseInt(this.fileLimit.getText());
 
         BackupDefinition backupDefinition = new BackupDefinition(server, vm);
 
-        backupDefinition.setFirstBackupDay(backupDay);
-        backupDefinition.setFrequency(every);
-        backupDefinition.setBackupTime(backupTime);
-        backupDefinition.setFileLimit(fileLimit);
+        backupDefinition.setFirstDay(Integer.parseInt(firstDay.getText()));
+        backupDefinition.setDayInterval(Integer.parseInt(dayInterval.getText()));
+        backupDefinition.setHourTime(Integer.parseInt(backupHour.getText()));
+        backupDefinition.setFileLimit(Integer.parseInt(this.fileLimit.getText()));
 
         backupDefinitionService.add(backupDefinition);
         ((Stage) addButton.getScene().getWindow()).close();
@@ -125,9 +126,9 @@ public class AddVmBackupController {
     private void clear() {
         serverComboBox.getSelectionModel().clearSelection();
         vmComboBox.getSelectionModel().clearSelection();
-        firstBackup.getEditor().clear();
-        frequency.clear();
-        backupTime.clear();
+        firstDay.clear();
+        firstDay.clear();
+        dayInterval.clear();
         fileLimit.clear();
     }
 }
