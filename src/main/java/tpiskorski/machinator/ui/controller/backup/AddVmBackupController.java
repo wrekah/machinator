@@ -113,9 +113,9 @@ public class AddVmBackupController {
 
         BackupDefinition backupDefinition = new BackupDefinition(server, vm);
 
-        backupDefinition.setFirstDay(Integer.parseInt(firstDay.getText()));
-        backupDefinition.setDayInterval(Integer.parseInt(dayInterval.getText()));
-        backupDefinition.setHourTime(Integer.parseInt(backupHour.getText()));
+        backupDefinition.setStartAtDayOfTheMonth(Integer.parseInt(firstDay.getText()));
+        backupDefinition.setRepeatInDays(Integer.parseInt(dayInterval.getText()));
+        backupDefinition.setHour(Integer.parseInt(backupHour.getText()));
         backupDefinition.setFileLimit(Integer.parseInt(this.fileLimit.getText()));
 
         backupDefinitionService.add(backupDefinition);

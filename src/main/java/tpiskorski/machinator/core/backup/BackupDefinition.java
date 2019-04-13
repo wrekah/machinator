@@ -2,9 +2,7 @@ package tpiskorski.machinator.core.backup;
 
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Callback;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.vm.VirtualMachine;
@@ -16,10 +14,11 @@ public class BackupDefinition {
     private Server server;
     private VirtualMachine vm;
 
-    private IntegerProperty firstDay = new SimpleIntegerProperty();
-    private IntegerProperty dayInterval = new SimpleIntegerProperty();
-    private IntegerProperty hourTime = new SimpleIntegerProperty();
-    private IntegerProperty fileLimit = new SimpleIntegerProperty();
+    private int startAtDayOfTheMonth;
+    private int repeatInDays;
+    private int hour;
+    private int fileLimit;
+
     private BooleanProperty active = new SimpleBooleanProperty();
 
     public BackupDefinition(Server server, VirtualMachine vm) {
@@ -29,46 +28,39 @@ public class BackupDefinition {
     }
 
     static Callback<BackupDefinition, Observable[]> extractor() {
-        return (BackupDefinition backupDefinition) -> new Observable[]{
-            backupDefinition.firstDayProperty(), backupDefinition.dayIntervalProperty(),
-            backupDefinition.fileLimitProperty(), backupDefinition.activeProperty()
-        };
+        return (BackupDefinition backupDefinition) -> new Observable[]{backupDefinition.activeProperty()};
     }
 
-    public int getHourTime() {
-        return hourTime.get();
+    public int getStartAtDayOfTheMonth() {
+        return startAtDayOfTheMonth;
     }
 
-    public void setHourTime(int hourTime) {
-        this.hourTime.set(hourTime);
+    public void setStartAtDayOfTheMonth(int startAtDayOfTheMonth) {
+        this.startAtDayOfTheMonth = startAtDayOfTheMonth;
     }
 
-    public IntegerProperty hourTimeProperty() {
-        return hourTime;
+    public int getRepeatInDays() {
+        return repeatInDays;
     }
 
-    public int getFirstDay() {
-        return firstDay.get();
+    public void setRepeatInDays(int repeatInDays) {
+        this.repeatInDays = repeatInDays;
     }
 
-    public void setFirstDay(int firstDay) {
-        this.firstDay.set(firstDay);
+    public int getHour() {
+        return hour;
     }
 
-    public IntegerProperty firstDayProperty() {
-        return firstDay;
+    public void setHour(int hour) {
+        this.hour = hour;
     }
 
-    public int getDayInterval() {
-        return dayInterval.get();
+    public int getFileLimit() {
+        return fileLimit;
     }
 
-    public void setDayInterval(int dayInterval) {
-        this.dayInterval.set(dayInterval);
-    }
-
-    public IntegerProperty dayIntervalProperty() {
-        return dayInterval;
+    public void setFileLimit(int fileLimit) {
+        this.fileLimit = fileLimit;
     }
 
     public boolean isActive() {
@@ -102,18 +94,6 @@ public class BackupDefinition {
         BackupDefinition that = (BackupDefinition) obj;
 
         return Objects.equals(this.getServer(), that.getServer()) && Objects.equals(this.getVm(), that.getVm());
-    }
-
-    public int getFileLimit() {
-        return fileLimit.get();
-    }
-
-    public void setFileLimit(int fileLimit) {
-        this.fileLimit.set(fileLimit);
-    }
-
-    public IntegerProperty fileLimitProperty() {
-        return fileLimit;
     }
 
     public String id() {

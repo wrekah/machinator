@@ -53,9 +53,9 @@ public class DemoBackupGenerator implements InitializingBean {
     BackupDefinition createBackupForVm(VirtualMachine virtualMachine) {
         BackupDefinition backupDefinition = new BackupDefinition(virtualMachine.getServer(), virtualMachine);
 
-        backupDefinition.setFirstDay(1);
-        backupDefinition.setDayInterval(10);
-        backupDefinition.setHourTime(12);
+        backupDefinition.setStartAtDayOfTheMonth(1);
+        backupDefinition.setRepeatInDays(10);
+        backupDefinition.setHour(12);
         backupDefinition.setFileLimit(3);
 
         return backupDefinition;

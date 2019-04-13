@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.core.backup.BackupDefinition;
 
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -79,7 +77,6 @@ public class BackupScheduler implements InitializingBean {
             .forJob(jobDetail)
             .withIdentity(jobDetail.getKey().getName())
             .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
-            .startAt(Date.from(backupDefinition.getFirstBackupDay().atStartOfDay(ZoneId.systemDefault()).toInstant()))
             .build();
     }
 }

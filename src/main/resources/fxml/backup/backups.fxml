@@ -43,19 +43,19 @@
                         <PropertyValueFactory property="vm"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="First Backup day">
+                <TableColumn text="First day">
                     <cellValueFactory>
-                        <PropertyValueFactory property="firstBackupDay"/>
+                        <PropertyValueFactory property="startAtDayOfTheMonth"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Frequency">
+                <TableColumn text="Days Interval">
                     <cellValueFactory>
-                        <PropertyValueFactory property="frequency"/>
+                        <PropertyValueFactory property="repeatInDays"/>
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Backup time">
+                <TableColumn text="Backup hour">
                     <cellValueFactory>
-                        <PropertyValueFactory property="backupTime"/>
+                        <PropertyValueFactory property="hour"/>
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn text="File limit">
