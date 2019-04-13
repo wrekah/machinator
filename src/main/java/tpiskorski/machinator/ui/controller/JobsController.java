@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.core.job.Job;
 import tpiskorski.machinator.core.job.JobService;
 import tpiskorski.machinator.core.job.JobStatus;
+import tpiskorski.machinator.ui.control.TooltipTableRow;
 
 @Controller
 public class JobsController {
@@ -27,6 +28,7 @@ public class JobsController {
     @FXML
     public void initialize() {
         jobs.setItems(jobService.getJobs());
+        jobs.setRowFactory((tableView) -> new TooltipTableRow<>(Job::getDescription));
 
         BooleanBinding stopJobBinding = createStopJobBinding();
         BooleanBinding stopAllJobBinding = createStopAllJobsBinding();
