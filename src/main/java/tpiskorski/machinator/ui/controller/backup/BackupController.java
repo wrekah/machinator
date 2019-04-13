@@ -35,6 +35,7 @@ public class BackupController {
     @FXML private TextField backupLocation;
     @FXML private ContextMenu contextMenu;
     @FXML private MenuItem dynamicMenuItem;
+    @FXML private Button triggerNowButton;
 
     private Stage addServerStage;
 
@@ -62,6 +63,7 @@ public class BackupController {
         });
 
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
+        triggerNowButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
         addServerStage = contextAwareSceneLoader.loadPopup("/fxml/backup/addVmBackup.fxml");
         addServerStage.setTitle("Adding backup...");
@@ -120,6 +122,19 @@ public class BackupController {
         if (confirmed) {
             BackupDefinition backupDefinitionToRemove = backupsTableView.getSelectionModel().getSelectedItem();
             backupDefinitionService.remove(backupDefinitionToRemove);
+        }
+    }
+
+    @FXML
+    public void triggerNow() {
+        boolean confirmed = ConfirmationAlertFactory.createAndAsk(
+            "Do you really want to trigger this backup now?",
+            "Backup"
+        );
+
+        if (confirmed) {
+            BackupDefinition backupDefinitionToTrigger = backupsTableView.getSelectionModel().getSelectedItem();
+            backupDefinitionService.triggerNow(backupDefinitionToTrigger);
         }
     }
 }

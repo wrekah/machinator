@@ -38,4 +38,8 @@ public class BackupDefinitionService {
         backupScheduler.addTaskToScheduler(backupToActivate);
         backupToActivate.setActive(true);
     }
+
+    public void triggerNow(BackupDefinition backupDefinitionToTrigger) {
+        backupScheduler.triggerNow(backupDefinitionToTrigger);
+    }
 }

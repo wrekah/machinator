@@ -54,7 +54,12 @@ public class BackupJobListener implements JobListener {
 
             Job job = jobService.get(key.getName());
 
-            job.setStatus(JobStatus.COMPLETED);
+            if (jobException == null) {
+                job.setStatus(JobStatus.COMPLETED);
+            } else {
+                job.setStatus(JobStatus.FAILED);
+            }
+
             job.setEndTime(LocalDateTime.now());
 
             jobService.add(job);

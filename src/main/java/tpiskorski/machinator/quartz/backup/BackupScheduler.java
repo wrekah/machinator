@@ -10,7 +10,6 @@ import tpiskorski.machinator.core.backup.BackupDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class BackupScheduler implements InitializingBean {
@@ -34,7 +33,12 @@ public class BackupScheduler implements InitializingBean {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("backupDefinition", backupDefinition);
 
-        JobDetail jobDetail = buildJobDetail(jobDataMap);
+        JobDetail jobDetail = JobBuilder.newJob(BackupJob.class)
+            .withIdentity(backupDefinition.id(), "backups")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
         CronTrigger trigger = buildTrigger(backupDefinition, jobDetail);
 
         try {
@@ -62,14 +66,6 @@ public class BackupScheduler implements InitializingBean {
         scheduler.getListenerManager().addJobListener(backupJobListener);
     }
 
-    private JobDetail buildJobDetail(JobDataMap jobDataMap) {
-        return JobBuilder.newJob(BackupJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "backups")
-            .usingJobData(jobDataMap)
-            .storeDurably()
-            .build();
-    }
-
     private CronTrigger buildTrigger(BackupDefinition backupDefinition, JobDetail jobDetail) {
         String cronExpression = cronExpressionBuilder.build(backupDefinition);
 
@@ -78,5 +74,17 @@ public class BackupScheduler implements InitializingBean {
             .withIdentity(jobDetail.getKey().getName())
             .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
             .build();
+    }
+
+    public void triggerNow(BackupDefinition backupDefinitionToTrigger) {
+        String id = jobs.get(backupDefinitionToTrigger);
+        if (id != null) {
+            try {
+                scheduler.triggerJob(JobKey.jobKey(id, "backups"));
+                LOGGER.info("Removed job from scheduler {}", id);
+            } catch (SchedulerException e) {
+                LOGGER.warn("Could not add job to scheduler", e);
+            }
+        }
     }
 }

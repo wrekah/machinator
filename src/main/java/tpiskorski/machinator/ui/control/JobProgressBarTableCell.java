@@ -26,7 +26,7 @@ public class JobProgressBarTableCell implements Callback<TableColumn<Job, JobSta
                     if (item == JobStatus.IN_PROGRESS) {
                         progressBar.setStyle("-fx-accent: blue");
                         progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                    } else if (item == JobStatus.STOPPED || item == JobStatus.CANCELLED) {
+                    } else if (item == JobStatus.STOPPED || item == JobStatus.CANCELLED || item == JobStatus.FAILED) {
                         progressBar.setStyle("-fx-accent: red");
                         progressBar.setProgress(100.0);
                     } else {
