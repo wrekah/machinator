@@ -13,7 +13,7 @@ public class LocalVmStarter {
     @Autowired private CommandFactory commandFactory;
 
     public void startVm(VirtualMachine vm) throws IOException, InterruptedException {
-        Command command = commandFactory.make(BaseCommand.START_VM, vm.getVmName());
+        Command command = commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName());
         CommandResult commandResult = localMachineCommandExecutor.execute(command);
     }
 }

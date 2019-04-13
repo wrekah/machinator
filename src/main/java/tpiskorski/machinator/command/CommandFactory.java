@@ -12,17 +12,14 @@ public class CommandFactory {
     private static final List<String> SHELL = List.of("sh", "-c");
 
     public Command make(BaseCommand baseCommand) {
-        return make(baseCommand, "");
+        String command = baseCommand.asString();
+        List<String> parts = Stream.concat(SHELL.stream(), Stream.of(command)).collect(Collectors.toList());
+
+        return Command.of(parts);
     }
 
-    public Command make(BaseCommand baseCommand, String arg) {
-        String command;
-        if (arg.isEmpty()) {
-            command = baseCommand.asString();
-        } else {
-            command = baseCommand.asString() + " " + arg;
-        }
-
+    public Command makeWithArgs(BaseCommand baseCommand, String... args) {
+        String command = String.format(baseCommand.asString(), (Object[]) args);
         List<String> parts = Stream.concat(SHELL.stream(), Stream.of(command)).collect(Collectors.toList());
 
         return Command.of(parts);

@@ -23,7 +23,7 @@ public class VmDetailsService {
 
     public void enrichVms(List<VirtualMachine> vms) throws IOException, InterruptedException {
         for (VirtualMachine vm : vms) {
-            Command command = commandFactory.make(BaseCommand.SHOW_VM_INFO, vm.getId());
+            Command command = commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId());
             CommandResult result = localMachineCommandExecutor.execute(command);
             ShowVmInfoUpdate update = showVmInfoParser.parse(result);
 
