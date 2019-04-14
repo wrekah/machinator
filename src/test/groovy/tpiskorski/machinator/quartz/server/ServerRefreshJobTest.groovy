@@ -25,7 +25,7 @@ class ServerRefreshJobTest extends Specification {
         then:
         1 * serverService.getServers() >> ([] as ObservableList)
         0 * serverRefreshService.monitor(_)
-        0 * serverService.upsert(_, _)
+        0 * serverService.updateReachable(_, _)
     }
 
     def 'should not do server refresh job if servers are remote'() {
@@ -45,7 +45,7 @@ class ServerRefreshJobTest extends Specification {
         1 * serverService.getServers() >> ([server1, server2] as ObservableList)
         0 * serverRefreshService.monitor(server1)
         0 * serverRefreshService.monitor(server2)
-        0 * serverService.upsert(_, _)
+        0 * serverService.updateReachable(_, _)
     }
 
     def 'should refresh each server'() {
@@ -65,6 +65,6 @@ class ServerRefreshJobTest extends Specification {
         1 * serverService.getServers() >> ([server1, server2] as ObservableList)
         1 * serverRefreshService.monitor(server1)
         1 * serverRefreshService.monitor(server2)
-        2 * serverService.upsert(_, _)
+        2 * serverService.updateReachable(_, _)
     }
 }

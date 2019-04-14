@@ -17,8 +17,6 @@ import tpiskorski.machinator.quartz.vm.VmActionScheduler;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.VirtualMachineRowFactory;
 
-import java.io.IOException;
-
 @Controller
 public class VmController {
 
@@ -83,21 +81,21 @@ public class VmController {
         );
 
         if (confirmed) {
-            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            vmActionScheduler.scheduleTurnOn(selectedItem);
+            VirtualMachine selectedVm = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleTurnOn(selectedVm);
         }
     }
 
     @FXML
-    public void turnOffVm() throws IOException, InterruptedException {
+    public void turnOffVm() {
         boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to turn off this vm?",
             "VM"
         );
 
         if (confirmed) {
-            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            vmActionScheduler.scheduleTurnOff(selectedItem);
+            VirtualMachine selectedVm = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleTurnOff(selectedVm);
         }
     }
 
@@ -109,8 +107,8 @@ public class VmController {
         );
 
         if (confirmed) {
-            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            vmActionScheduler.schedulePowerOff(selectedItem);
+            VirtualMachine selectedVm = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.schedulePowerOff(selectedVm);
         }
     }
 
@@ -122,8 +120,8 @@ public class VmController {
         );
 
         if (confirmed) {
-            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            vmActionScheduler.scheduleReset(selectedItem);
+            VirtualMachine selectedVm = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleReset(selectedVm);
         }
     }
 
@@ -135,8 +133,8 @@ public class VmController {
         );
 
         if (confirmed) {
-            VirtualMachine selectedItem = virtualMachines.getSelectionModel().getSelectedItem();
-            vmActionScheduler.scheduleDelete(selectedItem);
+            VirtualMachine selectedVm = virtualMachines.getSelectionModel().getSelectedItem();
+            vmActionScheduler.scheduleDelete(selectedVm);
         }
     }
 }
