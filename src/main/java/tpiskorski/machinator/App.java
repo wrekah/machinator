@@ -26,7 +26,10 @@ public class App extends javafx.application.Application {
 
     @Override
     public void stop() {
-        springContext.stop();
+        if (springContext.isActive()) {
+            ShutdownService shutdownService = springContext.getBean(ShutdownService.class);
+            shutdownService.shutdown();
+        }
     }
 
     @Override

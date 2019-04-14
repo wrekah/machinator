@@ -8,6 +8,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.lifecycle.state.AppStatePersister;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Service
 public class ShutdownService {
 
@@ -16,6 +19,9 @@ public class ShutdownService {
     private final ConfigurableApplicationContext springContext;
     private final AppStatePersister appStatePersister;
 
+    private Lock shutdownLock = new ReentrantLock();
+    private boolean isShutdownComplete = false;
+
     @Autowired
     public ShutdownService(ConfigurableApplicationContext springContext, AppStatePersister appStatePersister) {
         this.springContext = springContext;
@@ -23,10 +29,23 @@ public class ShutdownService {
     }
 
     public void shutdown() {
-        LOGGER.info("Shutting down application...");
-        appStatePersister.persist();
-        springContext.close();
-        Platform.exit();
-        LOGGER.info("Shutdown complete");
+        try {
+            shutdownLock.lock();
+
+            if (isShutdownComplete) {
+                return;
+            }
+
+            LOGGER.info("Shutting down application...");
+
+            appStatePersister.persist();
+            springContext.close();
+            Platform.exit();
+            isShutdownComplete = true;
+
+            LOGGER.info("Shutdown complete");
+        } finally {
+            shutdownLock.unlock();
+        }
     }
 }
