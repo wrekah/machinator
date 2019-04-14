@@ -54,9 +54,9 @@ public class VmGenerator {
 
     private VirtualMachineState state() {
         if (ThreadLocalRandom.current().nextBoolean()) {
-            return VirtualMachineState.ON;
+            return VirtualMachineState.RUNNING;
         } else {
-            return VirtualMachineState.OFF;
+            return VirtualMachineState.POWEROFF;
         }
     }
 

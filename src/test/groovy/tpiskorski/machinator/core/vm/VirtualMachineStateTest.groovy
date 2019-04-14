@@ -12,7 +12,8 @@ class VirtualMachineStateTest extends Specification {
 
         where:
         string           || expectedResult
-        "\"poweroff\""   || VirtualMachineState.OFF
+        "\"poweroff\""   || VirtualMachineState.POWEROFF
+        "\"running\""    || VirtualMachineState.RUNNING
         "something else" || VirtualMachineState.UNREACHABLE
     }
 }

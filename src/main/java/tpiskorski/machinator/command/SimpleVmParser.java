@@ -28,7 +28,7 @@ public class SimpleVmParser {
         VirtualMachine vm = new VirtualMachine();
         vm.setId(vmId);
         vm.setVmName(vmName);
-        vm.setState(VirtualMachineState.ON);
+        vm.setState(VirtualMachineState.RUNNING);
 
         return vm;
     }

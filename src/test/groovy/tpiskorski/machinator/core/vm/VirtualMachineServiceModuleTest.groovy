@@ -114,14 +114,14 @@ class VirtualMachineServiceModuleTest extends Specification {
         given:
         vm1.cpuCores = 1
         vm1.ramMemory = 1024
-        vm1.state = VirtualMachineState.OFF
+        vm1.state = VirtualMachineState.POWEROFF
         vm1.vmName = 'vm1'
 
         and:
         def vmUpdate = new VirtualMachine(vm1.server, vm1.id)
         vmUpdate.cpuCores = 4
         vmUpdate.ramMemory = 2048
-        vmUpdate.state = VirtualMachineState.ON
+        vmUpdate.state = VirtualMachineState.RUNNING
         vmUpdate.vmName = 'vm2'
 
         when:
@@ -134,7 +134,7 @@ class VirtualMachineServiceModuleTest extends Specification {
         service.getVms().first() == vm1
         vm1.cpuCores == 4
         vm1.ramMemory == 2048
-        vm1.state == VirtualMachineState.ON
+        vm1.state == VirtualMachineState.RUNNING
         vm1.vmName == 'vm2'
     }
 }

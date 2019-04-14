@@ -31,6 +31,6 @@ longmode="on"
         then:
         result.cpus == 1
         result.memory == 1024
-        result.state == VirtualMachineState.OFF
+        result.state == VirtualMachineState.POWEROFF
     }
 }
