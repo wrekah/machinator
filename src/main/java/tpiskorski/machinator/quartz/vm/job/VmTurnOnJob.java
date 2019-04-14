@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
+import tpiskorski.machinator.core.vm.VirtualMachineState;
 
 import java.io.IOException;
 
@@ -29,12 +30,15 @@ public class VmTurnOnJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
+        vm.getServer().getLock().lock();
+
         Command command = commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName());
 
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
-
-        } catch (IOException |InterruptedException e) {
+            vm.setState(VirtualMachineState.RUNNING);
+            vm.getServer().getLock().unlock();
+        } catch (IOException | InterruptedException e) {
             LOGGER.error("VmTurnOnJob job failed", e);
             throw new JobExecutionException(e);
         }

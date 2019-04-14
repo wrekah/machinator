@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
+import tpiskorski.machinator.core.vm.VirtualMachineState;
 
 import java.io.IOException;
 
@@ -28,11 +29,13 @@ public class VmTurnOffJob extends QuartzJobBean {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
+        vm.getServer().getLock().lock();
 
         Command command = commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName());
-
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
+            vm.setState(VirtualMachineState.POWEROFF);
+            vm.getServer().getLock().unlock();
 
         } catch (IOException |InterruptedException e) {
             LOGGER.error("VmTurnOffJob job failed", e);

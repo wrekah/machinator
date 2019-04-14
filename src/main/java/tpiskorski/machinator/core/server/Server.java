@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Callback;
 
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
 
@@ -16,6 +17,8 @@ public class Server {
 
     private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
     private ServerType serverType;
+
+    private ReentrantLock lock = new ReentrantLock();
 
     public Server(String address, String port) {
         setAddress(address);
@@ -31,6 +34,10 @@ public class Server {
 
     static Callback<Server, Observable[]> extractor() {
         return (Server server) -> new Observable[]{server.serverStateProperty()};
+    }
+
+    public ReentrantLock getLock() {
+        return lock;
     }
 
     public ServerType getServerType() {
