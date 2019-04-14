@@ -19,6 +19,11 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
+                <TableColumn text="Type">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="jobType"/>
+                    </cellValueFactory>
+                </TableColumn>
                 <TableColumn text="Description">
                     <cellValueFactory>
                         <PropertyValueFactory property="description"/>

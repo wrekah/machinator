@@ -18,6 +18,7 @@ public class Job {
     private ObjectProperty<JobStatus> status = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<>();
+    private JobType jobType;
 
     public Job(String id) {
         this.id = id;
@@ -27,8 +28,16 @@ public class Job {
     static Callback<Job, Observable[]> extractor() {
         return (Job job) -> new Observable[]{
             job.descriptionProperty(), job.statusProperty(),
-            job.startTimeProperty(), job.endTimeProperty()
+            job.startTimeProperty(), job.endTimeProperty(),
         };
+    }
+
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
     }
 
     public JobStatus getStatus() {
