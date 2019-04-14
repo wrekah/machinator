@@ -16,9 +16,12 @@ public class Job {
 
     private StringProperty description = new SimpleStringProperty("");
     private ObjectProperty<JobStatus> status = new SimpleObjectProperty<>();
+
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<>();
+
     private JobType jobType;
+    private String errorCause;
 
     public Job(String id) {
         this.id = id;
@@ -30,6 +33,14 @@ public class Job {
             job.descriptionProperty(), job.statusProperty(),
             job.startTimeProperty(), job.endTimeProperty(),
         };
+    }
+
+    public String getErrorCause() {
+        return errorCause;
+    }
+
+    public void setErrorCause(String errorCause) {
+        this.errorCause = errorCause;
     }
 
     public JobType getJobType() {

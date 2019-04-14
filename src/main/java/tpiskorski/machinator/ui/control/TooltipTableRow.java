@@ -2,25 +2,21 @@ package tpiskorski.machinator.ui.control;
 
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Tooltip;
+import tpiskorski.machinator.core.job.Job;
 
-import java.util.function.Function;
-
-public class TooltipTableRow<T> extends TableRow<T> {
-
-    private Function<T, String> toolTipStringFunction;
-
-    public TooltipTableRow(Function<T, String> toolTipStringFunction) {
-        this.toolTipStringFunction = toolTipStringFunction;
-    }
+public class TooltipTableRow extends TableRow<Job> {
 
     @Override
-    protected void updateItem(T item, boolean empty) {
-        super.updateItem(item, empty);
-        if (item == null) {
+    protected void updateItem(Job job, boolean empty) {
+        super.updateItem(job, empty);
+        if (job == null) {
             setTooltip(null);
         } else {
-            Tooltip tooltip = new Tooltip(toolTipStringFunction.apply(item));
-            setTooltip(tooltip);
+            String errorCause = job.getErrorCause();
+            if (errorCause != null && !errorCause.isEmpty()) {
+                Tooltip tooltip = new Tooltip(errorCause);
+                setTooltip(tooltip);
+            }
         }
     }
 }

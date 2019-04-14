@@ -28,7 +28,7 @@ public class JobsController {
     @FXML
     public void initialize() {
         jobs.setItems(jobService.getJobs());
-        jobs.setRowFactory((tableView) -> new TooltipTableRow<>(Job::getDescription));
+        jobs.setRowFactory((tableView) -> new TooltipTableRow());
 
         BooleanBinding stopJobBinding = createStopJobBinding();
         BooleanBinding stopAllJobBinding = createStopAllJobsBinding();

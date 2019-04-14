@@ -97,6 +97,6 @@ public class BackupDefinition {
     }
 
     public String id() {
-        return server.getAddress() + "-" + vm.getId();
+        return server.getAddress() + "-" + vm.getVmName();
     }
 }

@@ -3,7 +3,6 @@ package tpiskorski.machinator.quartz.backup;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.command.CommandResult;
 import tpiskorski.machinator.core.backup.BackupDefinition;
 import tpiskorski.machinator.core.job.Job;
 import tpiskorski.machinator.core.job.JobService;
@@ -61,7 +60,7 @@ public class BackupJobListener implements JobListener {
                 job.setStatus(JobStatus.COMPLETED);
             } else {
                 job.setStatus(JobStatus.FAILED);
-                CommandResult result = (CommandResult) context.getResult();
+                job.setErrorCause(jobException.getMessage());
             }
 
             job.setEndTime(LocalDateTime.now());
