@@ -1,6 +1,8 @@
 package tpiskorski.machinator.core.vm;
 
 public enum VirtualMachineState {
+    COMMAND_IN_PROGRESS,
+
     RUNNING,
     POWEROFF,
     UNREACHABLE;
