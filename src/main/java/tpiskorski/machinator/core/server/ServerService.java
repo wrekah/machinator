@@ -43,6 +43,11 @@ public class ServerService {
         virtualMachineService.replace(server, vms);
     }
 
+    public void refresh(Server server, List<VirtualMachine> vms) {
+        server.setServerState(ServerState.REACHABLE);
+        virtualMachineService.refresh(vms);
+    }
+
     public boolean contains(Server server) {
         return serverRepository.contains(server);
     }

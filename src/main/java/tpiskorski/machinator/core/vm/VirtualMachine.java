@@ -1,9 +1,9 @@
 package tpiskorski.machinator.core.vm;
 
-import tpiskorski.machinator.core.server.Server;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.util.Callback;
+import tpiskorski.machinator.core.server.Server;
 
 import java.util.Objects;
 
@@ -109,7 +109,8 @@ public class VirtualMachine {
         VirtualMachine that = (VirtualMachine) obj;
 
         return Objects.equals(this.getServer(), that.getServer())
-            && Objects.equals(this.getId(), that.getId());
+            && Objects.equals(this.getId(), that.getId())
+            && Objects.equals(this.getState(), that.getState());
     }
 
     @Override

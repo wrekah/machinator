@@ -69,4 +69,20 @@ public class VirtualMachineService {
     public void upsert(List<VirtualMachine> vms) {
         vms.forEach(this::upsert);
     }
+
+    public void refresh(List<VirtualMachine> vms) {
+        vms.forEach(this::refresh);
+    }
+
+    private void refresh(VirtualMachine virtualMachine) {
+        if(virtualMachineRepository.contains(virtualMachine)){
+            update(virtualMachine);
+        }else{
+            add(virtualMachine);
+        }
+    }
+
+    private void update(VirtualMachine virtualMachine) {
+        virtualMachineRepository.update(virtualMachine);
+    }
 }

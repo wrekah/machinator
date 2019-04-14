@@ -41,7 +41,7 @@ public class ServerRefreshJob extends QuartzJobBean {
             for (Server server : serversView) {
                 if (server.getServerType() == ServerType.LOCAL) {
                     List<VirtualMachine> vms = serverRefreshService.monitor(server);
-                    serverService.updateReachable(server, vms);
+                    serverService.refresh(server, vms);
                 }
             }
         } catch (Exception e) {

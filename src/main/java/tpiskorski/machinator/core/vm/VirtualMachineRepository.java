@@ -1,9 +1,9 @@
 package tpiskorski.machinator.core.vm;
 
-import tpiskorski.machinator.core.server.Server;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
+import tpiskorski.machinator.core.server.Server;
 
 import java.util.Optional;
 
@@ -34,9 +34,22 @@ public class VirtualMachineRepository {
         vmObservableList.removeIf(virtualMachine -> virtualMachine.getServer().equals(serverToRemove));
     }
 
-     Optional<VirtualMachine> find(VirtualMachine vm) {
+    Optional<VirtualMachine> find(VirtualMachine vm) {
         return vmObservableList.stream()
             .filter(virtualMachine -> virtualMachine.equals(vm))
             .findFirst();
+    }
+
+    public boolean contains(VirtualMachine virtualMachine) {
+        return vmObservableList.contains(virtualMachine);
+    }
+
+    public void update(VirtualMachine virtualMachine) {
+        VirtualMachine vm = find(virtualMachine).get();
+
+        vm.setState(virtualMachine.getState());
+        vm.setCpuCores(virtualMachine.getCpuCores());
+        vm.setRamMemory(virtualMachine.getRamMemory());
+        vm.setVmName(virtualMachine.getVmName());
     }
 }
