@@ -30,6 +30,14 @@ class JobRepository {
             .findFirst();
     }
 
+    public Job getLastById(String id){
+        return jobObservableList.stream()
+            .filter(job -> job.getId().equals(id))
+            .filter(job -> job.getStatus() == JobStatus.IN_PROGRESS)
+            .max(Comparator.comparing(Job::getStartTime))
+            .get();
+    }
+
     public Job getLastByType(JobType jobType) {
         return jobObservableList.stream()
             .filter(job -> job.getJobType() == jobType)

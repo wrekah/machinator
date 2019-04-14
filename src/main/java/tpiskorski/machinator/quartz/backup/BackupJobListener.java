@@ -51,19 +51,14 @@ public class BackupJobListener implements JobListener {
         JobKey key = context.getJobDetail().getKey();
         if (key.getGroup().equals("backups")) {
 
-            JobDataMap map = context.getMergedJobDataMap();
-            BackupDefinition backupDefinition = (BackupDefinition) map.get("backupDefinition");
-
-            Job job = jobService.get(key.getName());
-
+            Job job = jobService.getLast(key.getName());
+            job.setEndTime(LocalDateTime.now());
             if (jobException == null) {
                 job.setStatus(JobStatus.COMPLETED);
             } else {
                 job.setStatus(JobStatus.FAILED);
                 job.setErrorCause(jobException.getMessage());
             }
-
-            job.setEndTime(LocalDateTime.now());
         }
     }
 }

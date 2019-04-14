@@ -12,7 +12,9 @@ import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.core.backup.BackupDefinition;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @Component
 public class BackupJob extends QuartzJobBean {
@@ -22,6 +24,8 @@ public class BackupJob extends QuartzJobBean {
     private final ConfigService configService;
     private final LocalMachineCommandExecutor localMachineCommandExecutor;
     private final CommandFactory commandFactory;
+
+    private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
 
     @Autowired
     public BackupJob(ConfigService configService, LocalMachineCommandExecutor localMachineCommandExecutor, CommandFactory commandFactory) {
@@ -35,10 +39,25 @@ public class BackupJob extends QuartzJobBean {
         BackupDefinition backupDefinition = (BackupDefinition) mergedJobDataMap.get("backupDefinition");
         LOGGER.info("Started for {}", backupDefinition.id());
 
-        Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile", backupDefinition.getVm().getVmName());
+        File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
+        backupLocation.mkdirs();
+
+        long count;
         try {
-            CommandResult result = localMachineCommandExecutor.executeIn(command, configService.getConfig().getBackupLocation());
-            if (result.isFailed()) {
+            count = Files.list(backupLocation.toPath()).count();
+            if (count >= backupDefinition.getFileLimit()) {
+                LOGGER.error("Backup job failed. File limit exceeded");
+                throw new JobExecutionException("File limit exceeded");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Backup job failed", e);
+            throw new JobExecutionException(e);
+        }
+
+        Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName());
+        try {
+            CommandResult result = localMachineCommandExecutor.executeIn(command, backupLocation.toPath().toAbsolutePath().toString());
+            if (!exportVmResultInterpreter.isSuccess(result)) {
                 LOGGER.error("Backup job failed");
                 throw new JobExecutionException(result.getError());
             }

@@ -50,4 +50,8 @@ public class JobService {
     public Job getLastServerRefreshJob() {
         return jobRepository.getLastByType(JobType.SERVER_REFRESH);
     }
+
+    public Job getLast(String id) {
+        return jobRepository.getLastById(id);
+    }
 }
