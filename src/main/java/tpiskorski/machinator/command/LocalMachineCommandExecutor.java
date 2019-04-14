@@ -17,7 +17,16 @@ public class LocalMachineCommandExecutor {
     public CommandResult execute(Command command) throws IOException, InterruptedException {
         LOGGER.info("Executing command {}", command);
         Process process = processExecutor.execute(command);
+        CommandResult result = commandResultFactory.from(process);
         LOGGER.info("Execution successful");
-        return commandResultFactory.from(process);
+        return result;
+    }
+
+    public CommandResult executeIn(Command command, String directoryPath) throws IOException, InterruptedException {
+        LOGGER.info("Executing command {}", command);
+        Process process = processExecutor.executeIn(command, directoryPath);
+        CommandResult result = commandResultFactory.from(process);
+        LOGGER.info("Execution successful");
+        return result;
     }
 }

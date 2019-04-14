@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 @Repository
@@ -29,10 +30,11 @@ class JobRepository {
             .findFirst();
     }
 
-    public Job getLastByDescription(String description) {
+    public Job getLastByType(JobType jobType) {
         return jobObservableList.stream()
-            .filter(job -> job.getDescription().equals(description))
+            .filter(job -> job.getJobType() == jobType)
             .filter(job -> job.getStatus() == JobStatus.IN_PROGRESS)
-            .findFirst().get();
+            .max(Comparator.comparing(Job::getStartTime))
+            .get();
     }
 }

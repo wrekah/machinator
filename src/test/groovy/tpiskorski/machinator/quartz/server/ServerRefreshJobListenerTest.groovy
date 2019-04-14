@@ -66,7 +66,7 @@ class ServerRefreshJobListenerTest extends Specification {
         listener.jobExecutionVetoed(jobExecutionContext)
 
         then:
-        1 * jobService.getLastByDescription(_) >> job
+        1 * jobService.getLastServerRefreshJob() >> job
         1 * job.setStatus(JobStatus.CANCELLED)
     }
 
@@ -86,7 +86,7 @@ class ServerRefreshJobListenerTest extends Specification {
         listener.jobWasExecuted(jobExecutionContext, null)
 
         then:
-        1 * jobService.getLastByDescription(_) >> job
+        1 * jobService.getLastServerRefreshJob() >> job
         1 * job.setStatus(JobStatus.COMPLETED)
     }
 
@@ -108,7 +108,7 @@ class ServerRefreshJobListenerTest extends Specification {
         listener.jobWasExecuted(jobExecutionContext, jobExecutionException)
 
         then:
-        1 * jobService.getLastByDescription(_) >> job
+        1 * jobService.getLastServerRefreshJob() >> job
         1 * job.setStatus(JobStatus.FAILED)
     }
 }

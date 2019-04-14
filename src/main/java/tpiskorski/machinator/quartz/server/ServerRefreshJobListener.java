@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import tpiskorski.machinator.core.job.Job;
 import tpiskorski.machinator.core.job.JobService;
 import tpiskorski.machinator.core.job.JobStatus;
+import tpiskorski.machinator.core.job.JobType;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +33,8 @@ public class ServerRefreshJobListener implements JobListener {
             JobKey key = context.getJobDetail().getKey();
             Job job = new Job(key.getName());
 
-            job.setDescription("Server refresh");
+            job.setJobType(JobType.SERVER_REFRESH);
+            job.setDescription("Regular server refresh");
             job.setStatus(JobStatus.IN_PROGRESS);
             job.setStartTime(LocalDateTime.now());
 
@@ -42,14 +44,14 @@ public class ServerRefreshJobListener implements JobListener {
 
     @Override public void jobExecutionVetoed(JobExecutionContext context) {
         if (isServerRefreshJob(context)) {
-            Job job = jobService.getLastByDescription("Server refresh");
+            Job job = jobService.getLastServerRefreshJob();
             job.setStatus(JobStatus.CANCELLED);
         }
     }
 
     @Override public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
         if (isServerRefreshJob(context)) {
-            Job job = jobService.getLastByDescription("Server refresh");
+            Job job = jobService.getLastServerRefreshJob();
             job.setEndTime(LocalDateTime.now());
             if (jobException == null) {
                 job.setStatus(JobStatus.COMPLETED);

@@ -29,8 +29,9 @@ public class JobService {
         return jobRepository.getJobsList();
     }
 
-    public boolean allCompleted(){
-        return (jobRepository.getJobsList().stream().filter(job -> job.getStatus()==JobStatus.IN_PROGRESS).count() == 0);
+    public boolean allCompleted() {
+        return jobRepository.getJobsList().stream()
+            .noneMatch(job -> job.getStatus() == JobStatus.IN_PROGRESS);
     }
 
     public void add(Job job) {
@@ -46,7 +47,7 @@ public class JobService {
         return job.get();
     }
 
-    public Job getLastByDescription(String description) {
-        return jobRepository.getLastByDescription(description);
+    public Job getLastServerRefreshJob() {
+        return jobRepository.getLastByType(JobType.SERVER_REFRESH);
     }
 }
