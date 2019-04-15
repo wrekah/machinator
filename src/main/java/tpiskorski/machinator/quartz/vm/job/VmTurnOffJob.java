@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.stereotype.Component;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
+@Component
 public class VmTurnOffJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(VmTurnOffJob.class);
 

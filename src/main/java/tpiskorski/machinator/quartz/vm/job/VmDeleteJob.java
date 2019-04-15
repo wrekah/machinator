@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.stereotype.Component;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 
 import java.io.IOException;
 
+@Component
 public class VmDeleteJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmDeleteJob.class);
@@ -34,11 +36,9 @@ public class VmDeleteJob extends QuartzJobBean {
 
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
-
-        } catch (IOException|InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             LOGGER.error("VmDeleteJob job failed", e);
             throw new JobExecutionException(e);
         }
     }
-
 }
