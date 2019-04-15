@@ -43,18 +43,10 @@ public class ServerRefreshJob extends QuartzJobBean {
 
                 if (server.getServerType() == ServerType.LOCAL) {
                     LOGGER.info("Server refresh {}", server.getAddress());
-                    boolean locked = server.getLock().tryLock();
-
-                    if (locked) {
-                        List<VirtualMachine> vms = serverRefreshService.monitor(server);
-                        serverService.refresh(server, vms);
-                        server.getLock().unlock();
-                    }else{
-                        LOGGER.info("Skipping refresh because there is some work going on the server");
-                    }
+                    List<VirtualMachine> vms = serverRefreshService.monitor(server);
+                    serverService.refresh(server, vms);
                 }
             }
-
         } catch (Exception e) {
             LOGGER.error("Server refresh error", e);
         }

@@ -6,6 +6,8 @@ import javafx.util.Callback;
 import tpiskorski.machinator.core.server.Server;
 
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class VirtualMachine {
 
@@ -17,6 +19,8 @@ public class VirtualMachine {
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
     private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
 
+    private Lock lock = new ReentrantLock();
+
     public VirtualMachine() {
     }
 
@@ -27,7 +31,24 @@ public class VirtualMachine {
     }
 
     static Callback<VirtualMachine, Observable[]> extractor() {
-        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty(), vm.stateProperty()};
+        return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty()};
+    }
+
+    public void lock() {
+        lock.lock();
+        setState(VirtualMachineState.COMMAND_IN_PROGRESS);
+    }
+
+    public boolean tryLocking() {
+        boolean locked = lock.tryLock();
+        if (locked) {
+            setState(VirtualMachineState.COMMAND_IN_PROGRESS);
+        }
+        return locked;
+    }
+
+    public void unlock() {
+        lock.unlock();
     }
 
     public String getServerAddress() {
@@ -109,8 +130,7 @@ public class VirtualMachine {
         VirtualMachine that = (VirtualMachine) obj;
 
         return Objects.equals(this.getServer(), that.getServer())
-            && Objects.equals(this.getId(), that.getId())
-            && Objects.equals(this.getState(), that.getState());
+            && Objects.equals(this.getId(), that.getId());
     }
 
     @Override

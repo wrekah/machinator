@@ -1,9 +1,9 @@
 package tpiskorski.machinator.core.vm;
 
-import tpiskorski.machinator.core.server.Server;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.core.server.Server;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +75,9 @@ public class VirtualMachineService {
     }
 
     private void refresh(VirtualMachine virtualMachine) {
-        if(virtualMachineRepository.contains(virtualMachine)){
+        if (virtualMachineRepository.contains(virtualMachine)) {
             update(virtualMachine);
-        }else{
+        } else {
             add(virtualMachine);
         }
     }

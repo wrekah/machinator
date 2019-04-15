@@ -30,14 +30,14 @@ public class VmTurnOnJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
-        vm.getServer().getLock().lock();
+        vm.lock();
 
         Command command = commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName());
 
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
             vm.setState(VirtualMachineState.RUNNING);
-            vm.getServer().getLock().unlock();
+            vm.unlock();
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmTurnOnJob job failed", e);
             throw new JobExecutionException(e);

@@ -2,6 +2,8 @@ package tpiskorski.machinator.core.vm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import tpiskorski.machinator.core.server.Server;
 
@@ -9,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public class VirtualMachineRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VirtualMachineRepository.class);
 
     private ObservableList<VirtualMachine> vmObservableList = FXCollections.observableArrayList(VirtualMachine.extractor());
 
@@ -47,9 +51,17 @@ public class VirtualMachineRepository {
     public void update(VirtualMachine virtualMachine) {
         VirtualMachine vm = find(virtualMachine).get();
 
-        vm.setState(virtualMachine.getState());
-        vm.setCpuCores(virtualMachine.getCpuCores());
-        vm.setRamMemory(virtualMachine.getRamMemory());
-        vm.setVmName(virtualMachine.getVmName());
+        boolean locked = vm.tryLocking();
+
+        if (locked) {
+            vm.setState(virtualMachine.getState());
+            vm.setCpuCores(virtualMachine.getCpuCores());
+            vm.setRamMemory(virtualMachine.getRamMemory());
+            vm.setVmName(virtualMachine.getVmName());
+
+            vm.unlock();
+        } else {
+            LOGGER.info("Skipping {} vm because work is in progress", vm.getId());
+        }
     }
 }

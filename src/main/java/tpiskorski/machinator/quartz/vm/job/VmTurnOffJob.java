@@ -12,6 +12,7 @@ import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class VmTurnOffJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(VmTurnOffJob.class);
@@ -29,15 +30,15 @@ public class VmTurnOffJob extends QuartzJobBean {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
-        vm.getServer().getLock().lock();
+        vm.lock();
 
         Command command = commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName());
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
             vm.setState(VirtualMachineState.POWEROFF);
-            vm.getServer().getLock().unlock();
 
-        } catch (IOException |InterruptedException e) {
+            vm.unlock();
+        } catch (IOException | InterruptedException e) {
             LOGGER.error("VmTurnOffJob job failed", e);
             throw new JobExecutionException(e);
         }
