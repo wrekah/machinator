@@ -16,7 +16,7 @@ public class VmActionScheduler implements InitializingBean {
 
     private final Scheduler scheduler;
 
-    @Autowired private VmDeleteJobListener vmDeleteJobListener;
+    @Autowired private VmActionJobListener vmActionJobListener;
 
     @Autowired public VmActionScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
@@ -63,7 +63,6 @@ public class VmActionScheduler implements InitializingBean {
     }
 
     @Override public void afterPropertiesSet() throws Exception {
-        scheduler.getListenerManager().addJobListener(vmDeleteJobListener);
-        //  schedule();
+        scheduler.getListenerManager().addJobListener(vmActionJobListener);
     }
 }

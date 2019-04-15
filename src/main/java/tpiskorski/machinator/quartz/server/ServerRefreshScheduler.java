@@ -31,7 +31,7 @@ public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
         CronTrigger trigger = TriggerBuilder.newTrigger()
             .forJob(jobDetail)
             .withIdentity(jobDetail.getKey().getName())
-            .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * ? * *"))
+            .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * 1/1 * ? *"))
             .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
