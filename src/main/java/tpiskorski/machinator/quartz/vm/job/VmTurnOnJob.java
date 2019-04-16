@@ -34,6 +34,7 @@ public class VmTurnOnJob extends QuartzJobBean {
 
         vm.lock();
 
+        //todo error handling
         Command command = commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName());
 
         try {

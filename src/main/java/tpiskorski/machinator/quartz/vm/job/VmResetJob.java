@@ -38,6 +38,7 @@ public class VmResetJob extends QuartzJobBean {
         Command command = commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName());
 
         try {
+            //todo make sure that handling locking is properly done
             CommandResult result = localMachineCommandExecutor.execute(command);
             if(vmResetResultInterpreter.isSuccess(result)){
                 vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);

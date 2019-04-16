@@ -32,6 +32,7 @@ public class VmDeleteJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
+        //todo error handling
         Command command = commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName());
 
         try {

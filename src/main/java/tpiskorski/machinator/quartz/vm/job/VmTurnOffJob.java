@@ -32,6 +32,7 @@ public class VmTurnOffJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
         vm.lock();
+        //todo error handling
 
         Command command = commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName());
         try {

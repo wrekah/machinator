@@ -33,6 +33,7 @@ public class VmPowerOffJob extends QuartzJobBean {
 
         Command command = commandFactory.makeWithArgs(BaseCommand.POWER_OFF_VM, vm.getVmName());
 
+        //todo issue power off, do polling with timeout until state is power off - config option
         try {
             CommandResult result = localMachineCommandExecutor.execute(command);
         } catch (IOException | InterruptedException e) {

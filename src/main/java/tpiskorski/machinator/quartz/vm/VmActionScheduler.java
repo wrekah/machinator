@@ -7,8 +7,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.quartz.vm.job.VmDeleteJob;
+import tpiskorski.machinator.quartz.vm.job.*;
 
+import java.util.UUID;
+
+//todo refactor
+//todo abstract all jobs classes
 @Service
 public class VmActionScheduler implements InitializingBean {
 
@@ -23,19 +27,99 @@ public class VmActionScheduler implements InitializingBean {
     }
 
     public void scheduleTurnOn(VirtualMachine vm) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("vm", vm);
 
+        JobDetail jobDetail = JobBuilder.newJob(VmTurnOnJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .startNow()
+            .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            LOGGER.info("Added job to scheduler {}", jobDetail);
+        } catch (SchedulerException e) {
+            LOGGER.warn("Could not add job to scheduler", e);
+        }
     }
 
     public void schedulePowerOff(VirtualMachine vm) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("vm", vm);
 
+        JobDetail jobDetail = JobBuilder.newJob(VmPowerOffJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .startNow()
+            .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            LOGGER.info("Added job to scheduler {}", jobDetail);
+        } catch (SchedulerException e) {
+            LOGGER.warn("Could not add job to scheduler", e);
+        }
     }
 
     public void scheduleTurnOff(VirtualMachine vm) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("vm", vm);
 
+        JobDetail jobDetail = JobBuilder.newJob(VmTurnOffJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .startNow()
+            .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            LOGGER.info("Added job to scheduler {}", jobDetail);
+        } catch (SchedulerException e) {
+            LOGGER.warn("Could not add job to scheduler", e);
+        }
     }
 
     public void scheduleReset(VirtualMachine vm) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("vm", vm);
 
+        JobDetail jobDetail = JobBuilder.newJob(VmResetJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .startNow()
+            .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            LOGGER.info("Added job to scheduler {}", jobDetail);
+        } catch (SchedulerException e) {
+            LOGGER.warn("Could not add job to scheduler", e);
+        }
     }
 
     public void scheduleDelete(VirtualMachine vm) {
@@ -43,7 +127,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmDeleteJob.class)
-            .withIdentity(vm.getVmName(), "vmAction")
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
