@@ -65,6 +65,6 @@ class ServerRefreshJobTest extends Specification {
         1 * serverService.getServers() >> ([server1, server2] as ObservableList)
         1 * serverRefreshService.monitor(server1)
         1 * serverRefreshService.monitor(server2)
-        2 * serverService.updateReachable(_, _)
+        2 * serverService.refresh(_, _)
     }
 }
