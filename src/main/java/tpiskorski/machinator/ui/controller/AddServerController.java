@@ -33,11 +33,16 @@ public class AddServerController {
     @FXML private VBox progressLayer;
     @FXML private Button addButton;
     @FXML private Button closeButton;
+
     @FXML private TextField address;
     @FXML private TextField port;
+    @FXML private TextField userField;
+    @FXML private PasswordField passwordField;
 
     private String savedAddress;
     private String savedPort;
+    private String savedUser;
+    private String savedPassword;
 
     @Autowired
     public AddServerController(ServerService serverService, MainController mainController, AddServerService addServerService) {
@@ -50,6 +55,8 @@ public class AddServerController {
     public void initialize() {
         address.disableProperty().bind(localhostRadioButton.selectedProperty());
         port.disableProperty().bind(localhostRadioButton.selectedProperty());
+        userField.disableProperty().bind(localhostRadioButton.selectedProperty());
+        passwordField.disableProperty().bind(localhostRadioButton.selectedProperty());
 
         BooleanBinding nonBlankAddress = Bindings.createBooleanBinding(() ->
                 address.getText().trim().isEmpty(),
@@ -66,12 +73,20 @@ public class AddServerController {
         serversToggleGroup.selectedToggleProperty().addListener((observable, previousToggle, nextToggle) -> {
             if (nextToggle == localhostRadioButton) {
                 savedAddress = address.getText();
-                address.setText("Local Machine");
                 savedPort = port.getText();
+                savedUser = userField.getText();
+                savedPassword = passwordField.getText();
+
+                address.setText("Local Machine");
+
                 port.clear();
+                userField.clear();
+                passwordField.clear();
             } else {
                 address.setText(savedAddress);
                 port.setText(savedPort);
+                userField.setText(savedUser);
+                passwordField.setText(savedPassword);
             }
         });
     }
