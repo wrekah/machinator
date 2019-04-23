@@ -13,9 +13,15 @@ public class Server {
 
     private String address;
     private String port;
+    private Credentials credentials;
+    private ServerType serverType;
 
     private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
-    private ServerType serverType;
+
+    public Server(Credentials credentials, String address, String port) {
+        this(address, port);
+        this.credentials = credentials;
+    }
 
     public Server(String address, String port) {
         setAddress(address);
@@ -31,6 +37,10 @@ public class Server {
 
     static Callback<Server, Observable[]> extractor() {
         return (Server server) -> new Observable[]{server.serverStateProperty()};
+    }
+
+    public Credentials getCredentials() {
+        return credentials;
     }
 
     public ServerType getServerType() {

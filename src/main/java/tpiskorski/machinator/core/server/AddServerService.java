@@ -8,6 +8,7 @@ public class AddServerService extends Service<Void> {
 
     private final AddLocalServerService addLocalServerService;
     private final AddRemoteServerService addRemoteServerService;
+
     private Server server;
 
     public AddServerService(AddLocalServerService addLocalServerService, AddRemoteServerService addRemoteServerService) {

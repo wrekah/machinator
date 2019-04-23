@@ -73,4 +73,16 @@ class ServerTest extends Specification {
         server.address == 'Local Machine'
         server.serverType == ServerType.LOCAL
     }
+
+    def 'should create server with credentials'() {
+        given:
+        def credentials = new Credentials('user', 'pw')
+        def server = new Server(credentials, 'some', '123')
+
+        expect:
+        server.credential == credential
+        server.address == 'some'
+        server.port == '123'
+        server.serverState == ServerState.UNKNOWN
+    }
 }

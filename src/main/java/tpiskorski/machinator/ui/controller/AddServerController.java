@@ -103,7 +103,13 @@ public class AddServerController {
         mainController.disableMainWindow();
         addServerStackPane.getChildren().add(progressLayer);
 
-        Server server = new Server(address.getText(), port.getText());
+        Server server;
+        if (serversToggleGroup.getSelectedToggle().isSelected()) {
+            Credentials credentials = new Credentials(userField.getText(), passwordField.getText());
+            server = new Server(credentials, address.getText(), port.getText());
+        } else {
+            server = new Server(address.getText(), port.getText());
+        }
 
         if (serverService.contains(server)) {
             serverExistsAlert.showAndWait();
@@ -111,6 +117,12 @@ public class AddServerController {
             return;
         }
 
+        setServiceEventBindings();
+
+        addServerService.start(server);
+    }
+
+    private void setServiceEventBindings() {
         addServerService.setOnCancelled(workerStateEvent -> {
             cancelledServerAlert.showAndWait();
             closeWindow();
@@ -125,8 +137,6 @@ public class AddServerController {
         addServerService.setOnSucceeded(workerStateEvent -> {
             closeWindow();
         });
-
-        addServerService.start(server);
     }
 
     private void closeWindow() {

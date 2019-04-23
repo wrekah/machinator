@@ -35,6 +35,7 @@ public class ServerController {
     @Autowired private ServerService serverService;
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private VmController vmController;
+    @Autowired private AddServerController addServerController;
 
     private Stage addServerStage;
 
@@ -116,10 +117,12 @@ public class ServerController {
 
     @FXML
     public void addServer() {
+        addServerController.resetFields();
         if (addServerStage.isShowing()) {
             addServerStage.hide();
         } else {
             addServerStage.show();
         }
+        addServerController.resetFields();
     }
 }
