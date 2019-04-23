@@ -13,6 +13,7 @@ open module machinator {
     requires java.desktop;
     requires quartz;
     requires spring.context.support;
+    requires jsch;
 
     exports tpiskorski.machinator;
 }
