@@ -45,7 +45,7 @@ public class ServerService {
 
     public void refresh(Server server, List<VirtualMachine> vms) {
         server.setServerState(ServerState.REACHABLE);
-        virtualMachineService.refresh(vms);
+        virtualMachineService.refresh(server, vms);
     }
 
     public boolean contains(Server server) {

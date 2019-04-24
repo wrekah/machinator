@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.core.server.Server;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 @Service
 public class VirtualMachineService {
@@ -70,8 +74,18 @@ public class VirtualMachineService {
         vms.forEach(this::upsert);
     }
 
-    public void refresh(List<VirtualMachine> vms) {
+    public void refresh(Server server, List<VirtualMachine> vms) {
+        List<VirtualMachine> toRemove = getVmsThatMissingInRefresh(server, vms);
+
         vms.forEach(this::refresh);
+        toRemove.forEach(this::remove);
+    }
+
+    private List<VirtualMachine> getVmsThatMissingInRefresh(Server server, List<VirtualMachine> vms) {
+        return virtualMachineRepository.getVms().stream()
+            .filter(virtualMachine -> virtualMachine.getServer().equals(server))
+            .filter(not(new HashSet<>(vms)::contains))
+            .collect(Collectors.toList());
     }
 
     private void refresh(VirtualMachine virtualMachine) {
