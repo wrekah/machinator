@@ -28,26 +28,6 @@ class ServerRefreshJobTest extends Specification {
         0 * serverService.updateReachable(_, _)
     }
 
-    def 'should not do server refresh job if servers are remote'() {
-        given:
-        def jobExecutionContext = Mock(JobExecutionContext)
-        def server1 = Mock(Server) {
-            getServerType() >> ServerType.REMOTE
-        }
-        def server2 = Mock(Server) {
-            getServerType() >> ServerType.REMOTE
-        }
-
-        when:
-        job.executeInternal(jobExecutionContext)
-
-        then:
-        1 * serverService.getServers() >> ([server1, server2] as ObservableList)
-        0 * serverRefreshService.monitor(server1)
-        0 * serverRefreshService.monitor(server2)
-        0 * serverService.updateReachable(_, _)
-    }
-
     def 'should refresh each server'() {
         given:
         def jobExecutionContext = Mock(JobExecutionContext)
@@ -55,7 +35,7 @@ class ServerRefreshJobTest extends Specification {
             getServerType() >> ServerType.LOCAL
         }
         def server2 = Mock(Server) {
-            getServerType() >> ServerType.LOCAL
+            getServerType() >> ServerType.REMOTE
         }
 
         when:

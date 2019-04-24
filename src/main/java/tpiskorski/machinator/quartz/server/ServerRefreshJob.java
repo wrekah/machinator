@@ -12,7 +12,6 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerService;
-import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 
 import java.util.List;
@@ -40,12 +39,9 @@ public class ServerRefreshJob extends QuartzJobBean {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
             for (Server server : serversView) {
-
-                if (server.getServerType() == ServerType.LOCAL) {
-                    LOGGER.info("Server refresh {}", server.getAddress());
-                    List<VirtualMachine> vms = serverRefreshService.monitor(server);
-                    serverService.refresh(server, vms);
-                }
+                LOGGER.info("Server refresh {}", server.getAddress());
+                List<VirtualMachine> vms = serverRefreshService.monitor(server);
+                serverService.refresh(server, vms);
             }
         } catch (Exception e) {
             LOGGER.error("Server refresh error", e);
