@@ -8,6 +8,12 @@
 
     <GridPane>
 
+        <fx:define>
+            <Alert fx:id="watchdogExistsAlert" contentText="Watchdog already present!" headerText="" alertType="WARNING"
+                   title="Adding watchdog..."/>
+
+        </fx:define>
+
         <columnConstraints>
             <ColumnConstraints halignment="CENTER" prefWidth="100"/>
             <ColumnConstraints halignment="CENTER" prefWidth="150"/>

@@ -32,4 +32,8 @@ public class WatchdogService {
     public void deactivate(Watchdog watchdogToActivate) {
         watchdogToActivate.setActive(false);
     }
+
+    public boolean contains(Watchdog watchdog) {
+        return watchdogRepository.contains(watchdog);
+    }
 }

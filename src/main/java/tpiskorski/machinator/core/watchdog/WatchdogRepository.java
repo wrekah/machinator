@@ -20,4 +20,8 @@ public class WatchdogRepository {
     void remove(Watchdog watchdog) {
         watchdogs.remove(watchdog);
     }
+
+    public boolean contains(Watchdog watchdog) {
+        return watchdogs.contains(watchdog);
+    }
 }
