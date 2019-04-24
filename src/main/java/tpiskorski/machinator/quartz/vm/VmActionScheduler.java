@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.quartz.vm.job.*;
 
@@ -144,6 +145,32 @@ public class VmActionScheduler implements InitializingBean {
         } catch (SchedulerException e) {
             LOGGER.warn("Could not add job to scheduler", e);
         }
+    }
+
+    public void scheduleMove(VirtualMachine vm, Server destination) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("vm", vm);
+        jobDataMap.put("destination", destination);
+
+        JobDetail jobDetail = JobBuilder.newJob(VmMoveJob.class)
+            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+            .forJob(jobDetail)
+            .withIdentity(jobDetail.getKey().getName())
+            .startNow()
+            .build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            LOGGER.info("Added job to scheduler {}", jobDetail);
+        } catch (SchedulerException e) {
+            LOGGER.warn("Could not add job to scheduler", e);
+        }
+
     }
 
     @Override public void afterPropertiesSet() throws Exception {

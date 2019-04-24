@@ -1,7 +1,5 @@
 package tpiskorski.machinator.ui.control;
 
-import tpiskorski.machinator.core.server.Server;
-import tpiskorski.machinator.core.vm.VirtualMachine;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
@@ -16,12 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.core.server.Server;
+import tpiskorski.machinator.core.vm.VirtualMachine;
+import tpiskorski.machinator.quartz.vm.VmActionScheduler;
 
 @Component
 public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Server>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerCellFactory.class);
 
+  private final VmActionScheduler vmActionScheduler;
     private final LocalDragContainer localDragContainer;
 
     private final Image OK = new Image("/icon/success.png");
@@ -29,7 +31,8 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
     private final Image UNKNOWN = new Image("/icon/unknown.png");
 
     @Autowired
-    public ServerCellFactory(LocalDragContainer localDragContainer) {
+    public ServerCellFactory(VmActionScheduler vmActionScheduler, LocalDragContainer localDragContainer) {
+        this.vmActionScheduler = vmActionScheduler;
         this.localDragContainer = localDragContainer;
     }
 
@@ -65,7 +68,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
         };
 
         listCell.setOnDragEntered(dragEvent -> {
-            if (listCell.getItem() == null) {
+            if (shouldSkipDrag(listCell)) {
                 return;
             }
             listCell.setStyle("-fx-background-color: lightslategray;");
@@ -73,7 +76,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
         listCell.setOnDragExited((DragEvent event) ->
         {
-            if (listCell.getItem() == null) {
+            if (shouldSkipDrag(listCell)) {
                 return;
             }
             listCell.setStyle("");
@@ -81,7 +84,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
         listCell.setOnDragOver((DragEvent event) ->
         {
-            if (listCell.getItem() == null) {
+            if (shouldSkipDrag(listCell)) {
                 return;
             }
             Dragboard db = event.getDragboard();
@@ -93,7 +96,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
         listCell.setOnDragDropped((DragEvent event) ->
         {
-            if (listCell.getItem() == null) {
+            if (shouldSkipDrag(listCell)) {
                 return;
             }
 
@@ -117,6 +120,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
                     VirtualMachine virtualMachine = localDragContainer.getVirtualMachine();
                     LOGGER.info("Dropped vm {}-{} on server {}", virtualMachine.getServer(), virtualMachine.getVmName(), listCell.getItem().getAddress());
+                    vmActionScheduler.scheduleMove(virtualMachine, listCell.getItem());
                     success = true;
                 }
             }
@@ -125,5 +129,12 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
         });
 
         return listCell;
+    }
+
+    private boolean shouldSkipDrag(ListCell<Server> listCell) {
+        if (listCell.getItem() == null) {
+            return true;
+        }
+        return listCell.getItem().equals(localDragContainer.getVirtualMachine().getServer());
     }
 }

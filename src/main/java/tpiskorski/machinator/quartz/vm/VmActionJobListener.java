@@ -68,6 +68,7 @@ public class VmActionJobListener implements JobListener {
             context.getJobDetail().getJobClass().equals(VmPowerOffJob.class) ||
             context.getJobDetail().getJobClass().equals(VmResetJob.class) ||
             context.getJobDetail().getJobClass().equals(VmTurnOnJob.class) ||
+            context.getJobDetail().getJobClass().equals(VmMoveJob.class) ||
             context.getJobDetail().getJobClass().equals(VmTurnOffJob.class);
     }
 }

@@ -80,7 +80,7 @@ class ServerTest extends Specification {
         def server = new Server(credentials, 'some', '123')
 
         expect:
-        server.credential == credential
+        server.credentials == credentials
         server.address == 'some'
         server.port == '123'
         server.serverState == ServerState.UNKNOWN

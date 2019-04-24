@@ -6,6 +6,7 @@ public enum BaseCommand {
     SHOW_VM_INFO("VBoxManage showvminfo --machinereadable \"%s\""),
 
     EXPORT_VM("VBoxManage export --output %s.ova \"%s\""),
+    IMPORT_VM("VBoxManage import %s.ova"),
     DELETE_VM("VBoxManage unregistervm \"%s\""),
 
     START_VM("VBoxManage startvm --type headless \"%s\""),
