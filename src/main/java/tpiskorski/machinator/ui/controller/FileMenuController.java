@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.lifecycle.ShutdownService;
-import tpiskorski.machinator.quartz.server.ServerRefresh;
+import tpiskorski.machinator.quartz.server.ServerRefreshScheduler;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class FileMenuController {
     private final ShutdownService shutdownService;
     private final ContextAwareSceneLoader contextAwareSceneLoader;
     private final ConfigService configService;
-    private final ServerRefresh serverRefresh;
+    private final ServerRefreshScheduler serverRefreshScheduler;
 
     @FXML private MenuItem monitoringMenuItem;
 
@@ -29,17 +29,17 @@ public class FileMenuController {
     private Stage containerWindow;
 
     @Autowired
-    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ServerRefresh serverRefresh, ShutdownService shutdownService) {
+    public FileMenuController(ConfigService configService, ContextAwareSceneLoader contextAwareSceneLoader, ServerRefreshScheduler serverRefreshScheduler, ShutdownService shutdownService) {
         this.configService = configService;
         this.contextAwareSceneLoader = contextAwareSceneLoader;
-        this.serverRefresh = serverRefresh;
+        this.serverRefreshScheduler = serverRefreshScheduler;
         this.shutdownService = shutdownService;
     }
 
     @FXML
     public void initialize() throws IOException {
         containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/config/baseConfigContainer.fxml");
-        monitoringMenuItem.setText(serverRefresh.isPaused() ? "Start Monitoring" : "Stop Monitoring");
+        monitoringMenuItem.setText(serverRefreshScheduler.isPaused() ? "Start Monitoring" : "Stop Monitoring");
     }
 
     @FXML
@@ -64,11 +64,11 @@ public class FileMenuController {
 
     @FXML
     public void freezeMonitoring() {
-        if (serverRefresh.isPaused()) {
-            serverRefresh.resume();
+        if (serverRefreshScheduler.isPaused()) {
+            serverRefreshScheduler.resume();
             monitoringMenuItem.setText("Stop Monitoring");
         } else {
-            serverRefresh.pause();
+            serverRefreshScheduler.pause();
             monitoringMenuItem.setText("Start Monitoring");
         }
         monitorAlert.showAndWait();

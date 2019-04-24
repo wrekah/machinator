@@ -21,7 +21,6 @@ Windows: `./mvnw.cmd clean spring-boot:run`
 ##### With maven installed 
 Use `mvn clean spring-boot:run`, ensure u have *JAVA_PATH* defined as env variable
 #### Spring profiles
-You can run Machinator with following profiles
+You can run Machinator with following profiles:
 * **dev** - Machinator restricts itself to use just in memory config and console logging
-* **demo** - auto-generates content for demo and development purposes, simulates dynamic behaviour
 

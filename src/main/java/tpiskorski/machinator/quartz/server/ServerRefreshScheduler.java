@@ -5,12 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 
-@Profile("!demo")
 @Controller
-public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
+public class ServerRefreshScheduler implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshScheduler.class);
 
@@ -43,7 +41,7 @@ public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
         schedule();
     }
 
-    @Override public void pause() {
+    public void pause() {
         try {
             scheduler.pauseJob(JobKey.jobKey(ServerRefreshJob.NAME));
             LOGGER.info("Paused server refresh job");
@@ -52,7 +50,7 @@ public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
         }
     }
 
-    @Override public void resume() {
+    public void resume() {
         try {
             scheduler.resumeJob(JobKey.jobKey(ServerRefreshJob.NAME));
             LOGGER.info("Resumed server refresh job");
@@ -61,7 +59,7 @@ public class ServerRefreshScheduler implements InitializingBean, ServerRefresh {
         }
     }
 
-    @Override public boolean isPaused() {
+    public boolean isPaused() {
         try {
             Trigger onlyTrigger = scheduler.getTriggersOfJob(JobKey.jobKey(ServerRefreshJob.NAME)).get(0);
             Trigger.TriggerState onlyTriggerState = scheduler.getTriggerState(onlyTrigger.getKey());
