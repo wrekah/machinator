@@ -1,6 +1,7 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model
 
 import spock.lang.Specification
+import tpiskorski.machinator.core.server.Credentials
 import tpiskorski.machinator.core.server.Server
 
 class SerializableServerTest extends Specification {
@@ -9,7 +10,8 @@ class SerializableServerTest extends Specification {
         given:
         def address = 'localhost'
         def port = '8889'
-        def server = new Server(address, port)
+        def credentials = new Credentials('user', 'password')
+        def server = new Server(credentials, address, port)
 
         and:
         def serializableServer = new SerializableServer(server)
@@ -20,6 +22,7 @@ class SerializableServerTest extends Specification {
         expect:
         convertedBackServer.address == address
         convertedBackServer.port == port
+        convertedBackServer.credentials == credentials
         convertedBackServer == server
     }
 }
