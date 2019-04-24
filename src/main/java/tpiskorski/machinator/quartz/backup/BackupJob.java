@@ -1,5 +1,6 @@
 package tpiskorski.machinator.quartz.backup;
 
+import com.jcraft.jsch.JSchException;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.core.backup.BackupDefinition;
+import tpiskorski.machinator.core.server.ServerType;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,14 +25,17 @@ public class BackupJob extends QuartzJobBean {
 
     private final ConfigService configService;
     private final LocalMachineCommandExecutor localMachineCommandExecutor;
+    private final RemoteCommandExecutor remoteCommandExecutor;
     private final CommandFactory commandFactory;
 
     private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
+    private ScpClient scpClient = new ScpClient();
 
     @Autowired
-    public BackupJob(ConfigService configService, LocalMachineCommandExecutor localMachineCommandExecutor, CommandFactory commandFactory) {
+    public BackupJob(ConfigService configService, LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
         this.configService = configService;
         this.localMachineCommandExecutor = localMachineCommandExecutor;
+        this.remoteCommandExecutor = remoteCommandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -39,6 +44,42 @@ public class BackupJob extends QuartzJobBean {
         BackupDefinition backupDefinition = (BackupDefinition) mergedJobDataMap.get("backupDefinition");
         LOGGER.info("Started for {}", backupDefinition.id());
 
+        try {
+            if (backupDefinition.getServer().getServerType() == ServerType.LOCAL) {
+                doLocalBackup(backupDefinition);
+            } else {
+                doRemoteBackup(backupDefinition);
+            }
+        } catch (JSchException | IOException e) {
+            throw new JobExecutionException(e);
+        }
+    }
+
+    private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException {
+        File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
+        backupLocation.mkdirs();
+
+        long count;
+        try {
+            count = Files.list(backupLocation.toPath()).count();
+            if (count >= backupDefinition.getFileLimit()) {
+                LOGGER.error("Backup job failed. File limit exceeded");
+                throw new JobExecutionException("File limit exceeded");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Backup job failed", e);
+            throw new JobExecutionException(e);
+        }
+
+        RemoteContext remoteContext = RemoteContext.of(backupDefinition.getServer());
+
+        Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName());
+        remoteCommandExecutor.execute(command, remoteContext);
+
+        //   scpClient.copy();
+    }
+
+    private void doLocalBackup(BackupDefinition backupDefinition) throws JobExecutionException {
         File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
         backupLocation.mkdirs();
 

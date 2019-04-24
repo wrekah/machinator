@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.command.*;
+import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
 
@@ -19,13 +20,15 @@ public class VmResetJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(VmResetJob.class);
 
     private final LocalMachineCommandExecutor localMachineCommandExecutor;
+    private final RemoteCommandExecutor remoteCommandExecutor;
     private final CommandFactory commandFactory;
 
     private VmResetResultInterpreter vmResetResultInterpreter = new VmResetResultInterpreter();
 
     @Autowired
-    public VmResetJob(LocalMachineCommandExecutor localMachineCommandExecutor, CommandFactory commandFactory) {
+    public VmResetJob(LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
         this.localMachineCommandExecutor = localMachineCommandExecutor;
+        this.remoteCommandExecutor = remoteCommandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -39,11 +42,18 @@ public class VmResetJob extends QuartzJobBean {
 
         try {
             //todo make sure that handling locking is properly done
-            CommandResult result = localMachineCommandExecutor.execute(command);
-            if(vmResetResultInterpreter.isSuccess(result)){
+            CommandResult result;
+            if (vm.getServer().getServerType() == ServerType.LOCAL) {
+                result = localMachineCommandExecutor.execute(command);
+            } else {
+                RemoteContext remoteContext = RemoteContext.of(vm.getServer());
+                result = remoteCommandExecutor.execute(command, remoteContext);
+            }
+
+            if (vmResetResultInterpreter.isSuccess(result)) {
                 vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
                 vm.unlock();
-            }else{
+            } else {
                 vm.setState(VirtualMachineState.POWEROFF);
                 vm.unlock();
                 throw new JobExecutionException("Fail");

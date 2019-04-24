@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.command.*;
+import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
 
@@ -19,11 +20,16 @@ public class VmTurnOffJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(VmTurnOffJob.class);
 
     private final LocalMachineCommandExecutor localMachineCommandExecutor;
+    private final RemoteCommandExecutor remoteCommandExecutor;
     private final CommandFactory commandFactory;
 
+    private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
+
+
     @Autowired
-    public VmTurnOffJob(LocalMachineCommandExecutor localMachineCommandExecutor, CommandFactory commandFactory) {
+    public VmTurnOffJob(LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
         this.localMachineCommandExecutor = localMachineCommandExecutor;
+        this.remoteCommandExecutor = remoteCommandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -34,10 +40,24 @@ public class VmTurnOffJob extends QuartzJobBean {
         vm.lock();
         //todo error handling
 
-        Command command = commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName());
+        Command turnOffVmCommand = commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName());
+        Command infoVmCommand = commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId());
+
         try {
-            CommandResult result = localMachineCommandExecutor.execute(command);
-            vm.setState(VirtualMachineState.POWEROFF);
+
+            CommandResult result;
+            if (vm.getServer().getServerType() == ServerType.LOCAL) {
+                result = localMachineCommandExecutor.execute(turnOffVmCommand);
+                result = localMachineCommandExecutor.execute(infoVmCommand);
+                ShowVmInfoUpdate update = showVmInfoParser.parse(result);
+                vm.setState(update.getState());
+            } else {
+                RemoteContext remoteContext = RemoteContext.of(vm.getServer());
+                result = remoteCommandExecutor.execute(turnOffVmCommand, remoteContext);
+                result = remoteCommandExecutor.execute(infoVmCommand, remoteContext);
+                ShowVmInfoUpdate update = showVmInfoParser.parse(result);
+                vm.setState(update.getState());
+            }
 
             vm.unlock();
         } catch (IOException | InterruptedException e) {
