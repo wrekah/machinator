@@ -17,16 +17,16 @@ public class CommandResultFactory {
         String std = stringify(process.getInputStream());
         String error = stringify(process.getErrorStream());
 
-        if (!error.isEmpty()) {
-            return new CommandResult(std, error, true);
-        } else {
-            return new CommandResult(std, error, false);
-        }
+        return from(std, error);
     }
 
     private String stringify(InputStream inputStream) {
         return new BufferedReader(new InputStreamReader(inputStream))
             .lines()
             .collect(Collectors.joining("\n"));
+    }
+
+    public CommandResult from(String std, String err) {
+        return new CommandResult(std, err, !err.isEmpty());
     }
 }

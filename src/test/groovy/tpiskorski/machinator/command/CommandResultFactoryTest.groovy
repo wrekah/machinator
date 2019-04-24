@@ -24,7 +24,7 @@ class CommandResultFactoryTest extends Specification {
         def inputStream = IOUtils.toInputStream('', 'UTF-8')
         def errorStream = IOUtils.toInputStream('', 'UTF-8')
 
-        def process = GroovyMock(Process)
+        def process = Mock(Process)
 
         when:
         def result = factory.from(process)
@@ -46,7 +46,7 @@ class CommandResultFactoryTest extends Specification {
         def inputStream = IOUtils.toInputStream('', 'UTF-8')
         def errorStream = IOUtils.toInputStream(errorMsg, 'UTF-8')
 
-        def process = GroovyMock(Process)
+        def process = Mock(Process)
 
         when:
         def result = factory.from(process)
@@ -68,7 +68,7 @@ class CommandResultFactoryTest extends Specification {
         def inputStream = IOUtils.toInputStream(msg, 'UTF-8')
         def errorStream = IOUtils.toInputStream('', 'UTF-8')
 
-        def process = GroovyMock(Process)
+        def process = Mock(Process)
 
         when:
         def result = factory.from(process)
