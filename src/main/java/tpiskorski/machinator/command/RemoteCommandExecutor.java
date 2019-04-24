@@ -19,26 +19,30 @@ public class RemoteCommandExecutor {
 
     public CommandResult execute(Command command, RemoteContext remoteContext) {
         try {
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(remoteContext.getUser(), remoteContext.getAddress(), remoteContext.getPort());
-
-            UserInfo userInfo = new PasswordOnlyUserInfo(remoteContext.getPassword());
-            session.setPassword(remoteContext.getPassword());
-            session.setUserInfo(userInfo);
-
+            Session session = prepareSession(remoteContext);
+            LOGGER.debug("About to connect");
             session.connect();
+            LOGGER.debug("Connected");
             ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
-
+            LOGGER.debug("Channel created");
             channelExec.setCommand(command.toEscapedString());
+
+            InputStream inputStream = channelExec.getInputStream();
+            InputStream errStream = channelExec.getErrStream();
+
             channelExec.connect();
+            LOGGER.debug("Channel connected");
 
-            String stdout = read(channelExec.getInputStream());
-            String stderr = read(channelExec.getErrStream());
+            String stdout = read(inputStream);
+            String stderr = read(errStream);
 
-            LOGGER.info("Exit status of remote command {}", channelExec.getExitStatus());
+            LOGGER.debug("Exit status of remote command {}", channelExec.getExitStatus());
 
             channelExec.disconnect();
+            LOGGER.debug("Channel disconnected");
+
             session.disconnect();
+            LOGGER.debug("Session disconnected");
 
             return commandResultFactory.from(stdout, stderr);
         } catch (JSchException | IOException e) {
@@ -46,6 +50,22 @@ public class RemoteCommandExecutor {
         }
 
         return null;
+    }
+
+    private Session prepareSession(RemoteContext remoteContext) throws JSchException {
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(remoteContext.getUser(), remoteContext.getAddress(), remoteContext.getPort());
+
+        UserInfo userInfo = new PasswordOnlyUserInfo(remoteContext.getPassword());
+        session.setPassword(remoteContext.getPassword());
+        session.setUserInfo(userInfo);
+
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("PreferredAuthentications", "password");
+        session.setConfig(config);
+
+        return session;
     }
 
     private String read(InputStream is) throws IOException {
