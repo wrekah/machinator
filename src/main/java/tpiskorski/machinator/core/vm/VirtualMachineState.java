@@ -6,6 +6,7 @@ public enum VirtualMachineState {
     ABORTED,
     RUNNING,
     RUNNING_RECENTLY_RESET,
+    SAVED,
     POWEROFF,
     UNREACHABLE;
 
@@ -16,6 +17,8 @@ public enum VirtualMachineState {
             return RUNNING;
         } else if (vmState.equals("\"aborted\"")) {
             return ABORTED;
+        } else if (vmState.equals("\"saved\"")) {
+            return SAVED;
         } else {
             return UNREACHABLE;
         }

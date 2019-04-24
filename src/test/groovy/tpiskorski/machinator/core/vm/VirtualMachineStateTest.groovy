@@ -11,10 +11,12 @@ class VirtualMachineStateTest extends Specification {
         VirtualMachineState.parse(string) == expectedResult
 
         where:
-        string           || expectedResult
-        "\"poweroff\""   || VirtualMachineState.POWEROFF
-        "\"running\""    || VirtualMachineState.RUNNING
-        "something else" || VirtualMachineState.UNREACHABLE
+        string             || expectedResult
+        '"poweroff"'       || VirtualMachineState.POWEROFF
+        '"running"'        || VirtualMachineState.RUNNING
+        '"aborted"'        || VirtualMachineState.ABORTED
+        '"saved"'          || VirtualMachineState.SAVED
+        '"something else"' || VirtualMachineState.UNREACHABLE
     }
 }
 
