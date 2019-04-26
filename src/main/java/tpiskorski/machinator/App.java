@@ -7,12 +7,15 @@ import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import tpiskorski.machinator.action.BeanDefinitions;
 import tpiskorski.machinator.lifecycle.ShutdownService;
 
 import java.io.IOException;
 
+@Import(BeanDefinitions.class)
 @EnableScheduling
 @SpringBootApplication
 public class App extends javafx.application.Application {

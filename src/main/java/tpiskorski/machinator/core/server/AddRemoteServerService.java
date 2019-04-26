@@ -2,6 +2,8 @@ package tpiskorski.machinator.core.server;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.ui.core.PlatformThreadAction;
@@ -14,7 +16,8 @@ import java.util.List;
 public class AddRemoteServerService {
 
     @Autowired private CommandFactory commandFactory;
-    @Autowired private RemoteCommandExecutor remoteCommandExecutor;
+    @Autowired private CommandExecutor commandExecutor;
+
     @Autowired private ServerService serverService;
     @Autowired private RemoteVmDetailsService remoteVmDetailsService;
 
@@ -23,16 +26,24 @@ public class AddRemoteServerService {
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
     public void add(Server server) throws IOException, InterruptedException {
-        RemoteContext remoteContext = RemoteContext.of(server);
-        Command command = commandFactory.make(BaseCommand.IS_VBOX_INSTALLED);
-        CommandResult result = remoteCommandExecutor.execute(command, remoteContext);
+        ExecutionContext isVboxInstalled = ExecutionContext.builder()
+            .executeOn(server)
+            .command(commandFactory.make(BaseCommand.IS_VBOX_INSTALLED))
+            .build();
+
+        CommandResult result = commandExecutor.execute(isVboxInstalled);
 
         if (result.isFailed()) {
             throw new RuntimeException(result.getError());
         }
 
-        command = commandFactory.make(BaseCommand.LIST_ALL_VMS);
-        result = remoteCommandExecutor.execute(command, remoteContext);
+        ExecutionContext listAllVms
+            = ExecutionContext.builder()
+            .executeOn(server)
+            .command(commandFactory.make(BaseCommand.LIST_ALL_VMS))
+            .build();
+
+        result = commandExecutor.execute(listAllVms);
 
         if (result.isFailed()) {
             throw new RuntimeException(result.getError());

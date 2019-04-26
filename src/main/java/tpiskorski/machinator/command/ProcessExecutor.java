@@ -18,8 +18,8 @@ public class ProcessExecutor {
         return process;
     }
 
-    public Process executeIn(Command command, String directoryPath) throws InterruptedException, IOException {
-        ProcessBuilder builder = processBuilder(command, new File(directoryPath));
+    public Process executeIn(Command command, File directory) throws InterruptedException, IOException {
+        ProcessBuilder builder = processBuilder(command, directory);
 
         Process process = builder.start();
         process.waitFor(TIMEOUT, TimeUnit.SECONDS);

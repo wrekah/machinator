@@ -97,7 +97,7 @@ public class BackupJob extends QuartzJobBean {
 
         Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName());
         try {
-            CommandResult result = localMachineCommandExecutor.executeIn(command, backupLocation.toPath().toAbsolutePath().toString());
+            CommandResult result = localMachineCommandExecutor.executeIn(command, backupLocation);
             if (!exportVmResultInterpreter.isSuccess(result)) {
                 LOGGER.error("Backup job failed");
                 throw new JobExecutionException(result.getError());

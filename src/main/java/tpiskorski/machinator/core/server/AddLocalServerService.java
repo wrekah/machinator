@@ -2,6 +2,8 @@ package tpiskorski.machinator.core.server;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.ui.core.PlatformThreadAction;
@@ -13,7 +15,8 @@ import java.util.List;
 @Service
 public class AddLocalServerService {
 
-    @Autowired private LocalMachineCommandExecutor localMachineCommandExecutor;
+    @Autowired private CommandExecutor commandExecutor;
+
     @Autowired private CommandFactory commandFactory;
     @Autowired private ServerService serverService;
     @Autowired private VmDetailsService vmDetailsService;
@@ -22,13 +25,13 @@ public class AddLocalServerService {
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
     public void add(Server server) throws IOException, InterruptedException {
-        CommandResult result = ping();
+        CommandResult result = ping(server);
 
         if (result.isFailed()) {
             throw new RuntimeException(result.getError());
         }
 
-        result = listAllVms();
+        result = listAllVms(server);
 
         if (result.isFailed()) {
             throw new RuntimeException(result.getError());
@@ -48,15 +51,21 @@ public class AddLocalServerService {
         };
     }
 
-    private CommandResult listAllVms() throws IOException, InterruptedException {
-        CommandResult result;
-        Command command = commandFactory.make(BaseCommand.LIST_ALL_VMS);
-        result = localMachineCommandExecutor.execute(command);
-        return result;
+    private CommandResult listAllVms(Server server) throws IOException, InterruptedException {
+        ExecutionContext context = ExecutionContext.builder()
+            .executeOn(server)
+            .command(commandFactory.make(BaseCommand.LIST_ALL_VMS))
+            .build();
+
+        return commandExecutor.execute(context);
     }
 
-    private CommandResult ping() throws IOException, InterruptedException {
-        Command command = commandFactory.make(BaseCommand.IS_VBOX_INSTALLED);
-        return localMachineCommandExecutor.execute(command);
+    private CommandResult ping(Server server) throws IOException, InterruptedException {
+        ExecutionContext context = ExecutionContext.builder()
+            .executeOn(server)
+            .command(commandFactory.make(BaseCommand.IS_VBOX_INSTALLED))
+            .build();
+
+        return commandExecutor.execute(context);
     }
 }

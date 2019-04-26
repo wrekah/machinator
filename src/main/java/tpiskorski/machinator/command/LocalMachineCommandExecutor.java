@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 
 @Component
@@ -22,9 +23,9 @@ public class LocalMachineCommandExecutor {
         return result;
     }
 
-    public CommandResult executeIn(Command command, String directoryPath) throws IOException, InterruptedException {
+    public CommandResult executeIn(Command command, File directory) throws IOException, InterruptedException {
         LOGGER.info("Executing command {}", command);
-        Process process = processExecutor.executeIn(command, directoryPath);
+        Process process = processExecutor.executeIn(command, directory);
         CommandResult result = commandResultFactory.from(process);
         LOGGER.info("Execution successful");
         return result;
