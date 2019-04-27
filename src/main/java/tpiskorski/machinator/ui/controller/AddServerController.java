@@ -10,7 +10,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.server.AddServerService;
+import tpiskorski.machinator.core.server.AddServerJavafxService;
+import tpiskorski.machinator.core.server.Credentials;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerService;
 import tpiskorski.machinator.ui.control.ExceptionDialog;
@@ -20,7 +21,7 @@ public class AddServerController {
 
     private final ServerService serverService;
     private final MainController mainController;
-    private final AddServerService addServerService;
+    private final AddServerJavafxService addServerJavafxService;
 
     @FXML private Alert serverExistsAlert;
     @FXML private Alert noConnectivityServerAlert;
@@ -45,10 +46,10 @@ public class AddServerController {
     private String savedPassword;
 
     @Autowired
-    public AddServerController(ServerService serverService, MainController mainController, AddServerService addServerService) {
+    public AddServerController(ServerService serverService, MainController mainController, AddServerJavafxService addServerJavafxService) {
         this.serverService = serverService;
         this.mainController = mainController;
-        this.addServerService = addServerService;
+        this.addServerJavafxService = addServerJavafxService;
     }
 
     @FXML
@@ -94,8 +95,8 @@ public class AddServerController {
     @FXML
     public void addServer() {
         addServerGridPane.getScene().getWindow().setOnHiding(event -> {
-            if (addServerService.isRunning()) {
-                addServerService.cancel();
+            if (addServerJavafxService.isRunning()) {
+                addServerJavafxService.cancel();
             }
         });
 
@@ -119,22 +120,22 @@ public class AddServerController {
 
         setServiceEventBindings();
 
-        addServerService.start(server);
+        addServerJavafxService.start(server);
     }
 
     private void setServiceEventBindings() {
-        addServerService.setOnCancelled(workerStateEvent -> {
+        addServerJavafxService.setOnCancelled(workerStateEvent -> {
             cancelledServerAlert.showAndWait();
             closeWindow();
         });
 
-        addServerService.setOnFailed(workerStateEvent -> {
-            ExceptionDialog exceptionDialog = new ExceptionDialog(addServerService.getException().toString());
+        addServerJavafxService.setOnFailed(workerStateEvent -> {
+            ExceptionDialog exceptionDialog = new ExceptionDialog(addServerJavafxService.getException().toString());
             exceptionDialog.showAndWait();
             closeWindow();
         });
 
-        addServerService.setOnSucceeded(workerStateEvent -> {
+        addServerJavafxService.setOnSucceeded(workerStateEvent -> {
             closeWindow();
         });
     }
@@ -149,7 +150,7 @@ public class AddServerController {
         port.clear();
         remoteRadioButton.setSelected(true);
 
-        addServerService.reset();
+        addServerJavafxService.reset();
 
         ((Stage) addButton.getScene().getWindow()).close();
     }

@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
 import tpiskorski.machinator.command.*;
 import tpiskorski.machinator.core.server.Server;
 import tpiskorski.machinator.core.server.ServerType;
@@ -22,8 +24,7 @@ public class VmMoveJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmMoveJob.class);
 
-    private final LocalMachineCommandExecutor localMachineCommandExecutor;
-    private final RemoteCommandExecutor remoteCommandExecutor;
+    private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
 
     private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
@@ -31,9 +32,8 @@ public class VmMoveJob extends QuartzJobBean {
     private ScpClient scpClient = new ScpClient();
 
     @Autowired
-    public VmMoveJob(LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
-        this.localMachineCommandExecutor = localMachineCommandExecutor;
-        this.remoteCommandExecutor = remoteCommandExecutor;
+    public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
+        this.commandExecutor = commandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -57,30 +57,51 @@ public class VmMoveJob extends QuartzJobBean {
 
             vm.setState(VirtualMachineState.COMMAND_IN_PROGRESS);
 
-            localMachineCommandExecutor.execute(turnOffVmCommand);
+            ExecutionContext turnOff = ExecutionContext.builder()
+                .command(turnOffVmCommand)
+                .executeOn(vm.getServer())
+                .build();
 
-            CommandResult result = localMachineCommandExecutor.execute(infoVmCommand);
+            ExecutionContext infoVm = ExecutionContext.builder()
+                .command(infoVmCommand)
+                .executeOn(vm.getServer())
+                .build();
+
+            commandExecutor.execute(turnOff);
+
+            CommandResult result = commandExecutor.execute(infoVm);
             ShowVmInfoUpdate update = showVmInfoParser.parse(result);
             if (update.getState() != VirtualMachineState.POWEROFF) {
                 throw new JobExecutionException("Could not poweroff vm");
             }
 
-            Command exportVmCommand = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "/tmp/moveVmTempFile", vm.getVmName());
             RemoteContext remoteContext = RemoteContext.of(destination);
 
+            ExecutionContext exportVm = ExecutionContext.builder()
+                .executeOn(vm.getServer())
+                .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "/tmp/moveVmTempFile", vm.getVmName()))
+                .build();
+
             try {
-                result = localMachineCommandExecutor.execute(exportVmCommand);
+                result = commandExecutor.execute(exportVm);
                 if (!exportVmResultInterpreter.isSuccess(result)) {
                     LOGGER.error("Backup job failed");
                     throw new JobExecutionException(result.getError());
                 }
                 scpClient.copyLocalToRemote(remoteContext, "/tmp", "/tmp", "moveVmTempFile.ova");
 
-                Command importVmCommand = commandFactory.makeWithArgs(BaseCommand.IMPORT_VM, "/tmp/moveVmTempFile");
-                remoteCommandExecutor.execute(importVmCommand, remoteContext);
-                Command startVmCommand = commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName());
-                remoteCommandExecutor.execute(startVmCommand, remoteContext);
+                ExecutionContext importVm = ExecutionContext.builder()
+                    .command(commandFactory.makeWithArgs(BaseCommand.IMPORT_VM, "/tmp/moveVmTempFile"))
+                    .executeOn(destination)
+                    .build();
 
+                ExecutionContext startVm = ExecutionContext.builder()
+                    .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
+                    .executeOn(destination)
+                    .build();
+
+                commandExecutor.execute(importVm);
+                commandExecutor.execute(startVm);
             } catch (IOException | InterruptedException e) {
                 LOGGER.error("Backup job failed", e);
                 throw new JobExecutionException(e);

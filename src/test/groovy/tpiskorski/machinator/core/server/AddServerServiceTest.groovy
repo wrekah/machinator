@@ -4,11 +4,11 @@ import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.core.vm.VirtualMachine
 
-class AddRemoteServerServiceTest extends Specification {
+class AddServerServiceTest extends Specification {
 
     def serverService = Mock(ServerService)
 
-    @Subject addRemoteServerService = new AddRemoteServerService(
+    @Subject addRemoteServerService = new AddServerService(
             serverService: serverService
     )
 

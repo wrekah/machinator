@@ -8,8 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.command.*;
-import tpiskorski.machinator.core.server.ServerType;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
+import tpiskorski.machinator.command.BaseCommand;
+import tpiskorski.machinator.command.CommandFactory;
+import tpiskorski.machinator.command.CommandResult;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineState;
 
@@ -19,16 +22,14 @@ import java.io.IOException;
 public class VmResetJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(VmResetJob.class);
 
-    private final LocalMachineCommandExecutor localMachineCommandExecutor;
-    private final RemoteCommandExecutor remoteCommandExecutor;
+    private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
 
     private VmResetResultInterpreter vmResetResultInterpreter = new VmResetResultInterpreter();
 
     @Autowired
-    public VmResetJob(LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
-        this.localMachineCommandExecutor = localMachineCommandExecutor;
-        this.remoteCommandExecutor = remoteCommandExecutor;
+    public VmResetJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
+        this.commandExecutor = commandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -38,17 +39,14 @@ public class VmResetJob extends QuartzJobBean {
         vm.lock();
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
-        Command command = commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName());
+        ExecutionContext resetVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName()))
+            .build();
 
         try {
             //todo make sure that handling locking is properly done
-            CommandResult result;
-            if (vm.getServer().getServerType() == ServerType.LOCAL) {
-                result = localMachineCommandExecutor.execute(command);
-            } else {
-                RemoteContext remoteContext = RemoteContext.of(vm.getServer());
-                result = remoteCommandExecutor.execute(command, remoteContext);
-            }
+            CommandResult result = commandExecutor.execute(resetVm);
 
             if (vmResetResultInterpreter.isSuccess(result)) {
                 vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);

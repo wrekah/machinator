@@ -9,7 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.command.*;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
+import tpiskorski.machinator.command.BaseCommand;
+import tpiskorski.machinator.command.CommandFactory;
+import tpiskorski.machinator.command.CommandResult;
+import tpiskorski.machinator.command.RemoteContext;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.core.backup.BackupDefinition;
 import tpiskorski.machinator.core.server.ServerType;
@@ -23,19 +28,18 @@ public class BackupJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupJob.class);
 
-    private final ConfigService configService;
-    private final LocalMachineCommandExecutor localMachineCommandExecutor;
-    private final RemoteCommandExecutor remoteCommandExecutor;
+    private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
+
+    private final ConfigService configService;
 
     private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
     private ScpClient scpClient = new ScpClient();
 
     @Autowired
-    public BackupJob(ConfigService configService, LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
+    public BackupJob(ConfigService configService, CommandExecutor commandExecutor, CommandFactory commandFactory) {
         this.configService = configService;
-        this.localMachineCommandExecutor = localMachineCommandExecutor;
-        this.remoteCommandExecutor = remoteCommandExecutor;
+        this.commandExecutor = commandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -50,12 +54,12 @@ public class BackupJob extends QuartzJobBean {
             } else {
                 doRemoteBackup(backupDefinition);
             }
-        } catch (JSchException | IOException e) {
+        } catch (JSchException | IOException | InterruptedException e) {
             throw new JobExecutionException(e);
         }
     }
 
-    private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException {
+    private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException, InterruptedException {
         File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
         backupLocation.mkdirs();
 
@@ -73,10 +77,13 @@ public class BackupJob extends QuartzJobBean {
 
         RemoteContext remoteContext = RemoteContext.of(backupDefinition.getServer());
 
-        Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName());
-        remoteCommandExecutor.execute(command, remoteContext);
+        ExecutionContext exportVm = ExecutionContext.builder()
+            .executeOn(backupDefinition.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName()))
+            .build();
 
-        //   scpClient.copy();
+        commandExecutor.execute(exportVm);
+        scpClient.copyRemoteToLocal(remoteContext, "/home/piskorski", "/Users/sg0221154/machinator", "backupFile1.ova");
     }
 
     private void doLocalBackup(BackupDefinition backupDefinition) throws JobExecutionException {
@@ -95,9 +102,13 @@ public class BackupJob extends QuartzJobBean {
             throw new JobExecutionException(e);
         }
 
-        Command command = commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName());
         try {
-            CommandResult result = localMachineCommandExecutor.executeIn(command, backupLocation);
+            ExecutionContext exportVm = ExecutionContext.builder()
+                .executeOn(backupDefinition.getServer())
+                .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "backupFile" + (count + 1), backupDefinition.getVm().getVmName()))
+                .build();
+
+            CommandResult result = commandExecutor.execute(exportVm);
             if (!exportVmResultInterpreter.isSuccess(result)) {
                 LOGGER.error("Backup job failed");
                 throw new JobExecutionException(result.getError());

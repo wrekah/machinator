@@ -8,8 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.action.CommandExecutor;
+import tpiskorski.machinator.action.ExecutionContext;
 import tpiskorski.machinator.command.*;
-import tpiskorski.machinator.core.server.ServerType;
 import tpiskorski.machinator.core.vm.VirtualMachine;
 import tpiskorski.machinator.core.vm.VirtualMachineService;
 
@@ -21,8 +22,7 @@ public class VmDeleteJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmDeleteJob.class);
 
-    private final LocalMachineCommandExecutor localMachineCommandExecutor;
-    private final RemoteCommandExecutor remoteCommandExecutor;
+    private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
 
     @Autowired private VirtualMachineService virtualMachineService;
@@ -31,9 +31,8 @@ public class VmDeleteJob extends QuartzJobBean {
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
     @Autowired
-    public VmDeleteJob(LocalMachineCommandExecutor localMachineCommandExecutor, RemoteCommandExecutor remoteCommandExecutor, CommandFactory commandFactory) {
-        this.localMachineCommandExecutor = localMachineCommandExecutor;
-        this.remoteCommandExecutor = remoteCommandExecutor;
+    public VmDeleteJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
+        this.commandExecutor = commandExecutor;
         this.commandFactory = commandFactory;
     }
 
@@ -46,32 +45,28 @@ public class VmDeleteJob extends QuartzJobBean {
         Command deleteVmCommand = commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName());
         Command listAllVmsCommand = commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId());
 
+        ExecutionContext deleteVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(deleteVmCommand)
+            .build();
+
+        ExecutionContext listVms = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(listAllVmsCommand)
+            .build();
+
         try {
-            CommandResult result;
-            if (vm.getServer().getServerType() == ServerType.LOCAL) {
-                result = localMachineCommandExecutor.execute(deleteVmCommand);
-                result = localMachineCommandExecutor.execute(listAllVmsCommand);
-                List<VirtualMachine> vms = simpleVmParser.parse(result);
-                if (!vms.contains(vm)) {
-                    virtualMachineService.remove(vm);
-                } else {
-                    throw new JobExecutionException("Could not delete vm");
-                }
-
-                ShowVmInfoUpdate update = showVmInfoParser.parse(result);
-                vm.setState(update.getState());
+            CommandResult result = commandExecutor.execute(deleteVm);
+            result = commandExecutor.execute(listVms);
+            List<VirtualMachine> vms = simpleVmParser.parse(result);
+            if (!vms.contains(vm)) {
+                virtualMachineService.remove(vm);
             } else {
-                RemoteContext remoteContext = RemoteContext.of(vm.getServer());
-                result = remoteCommandExecutor.execute(deleteVmCommand, remoteContext);
-                result = remoteCommandExecutor.execute(listAllVmsCommand, remoteContext);
-                List<VirtualMachine> vms = simpleVmParser.parse(result);
-                if (!vms.contains(vm)) {
-                    virtualMachineService.remove(vm);
-                } else {
-                    throw new JobExecutionException("Could not delete vm");
-                }
-
+                throw new JobExecutionException("Could not delete vm");
             }
+
+            ShowVmInfoUpdate update = showVmInfoParser.parse(result);
+            vm.setState(update.getState());
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmDeleteJob job failed", e);
             throw new JobExecutionException(e);
