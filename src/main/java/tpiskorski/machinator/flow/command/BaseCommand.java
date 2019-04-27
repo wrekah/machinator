@@ -7,7 +7,7 @@ public enum BaseCommand {
 
     EXPORT_VM("VBoxManage export --output %s.ova \"%s\""),
     IMPORT_VM("VBoxManage import %s.ova"),
-    DELETE_VM("VBoxManage unregistervm \"%s\""),
+    DELETE_VM("VBoxManage unregistervm --delete \"%s\""),
 
     START_VM("VBoxManage startvm --type headless \"%s\""),
     POWER_OFF_VM("VBoxManage controlvm \"%s\" acpipowerbutton"),
