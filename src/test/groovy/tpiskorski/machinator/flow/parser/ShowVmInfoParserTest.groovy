@@ -3,6 +3,7 @@ package tpiskorski.machinator.flow.parser
 import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.flow.command.CommandResult
+import tpiskorski.machinator.model.vm.VirtualMachineState
 
 class ShowVmInfoParserTest extends Specification {
 

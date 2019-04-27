@@ -1,4 +1,4 @@
-package tpiskorski.machinator.model.server;
+package tpiskorski.machinator.flow.javafx;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,6 +6,8 @@ import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.command.*;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
+import tpiskorski.machinator.model.server.Server;
+import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.ui.core.PlatformThreadAction;
 import tpiskorski.machinator.ui.core.PlatformThreadUpdater;

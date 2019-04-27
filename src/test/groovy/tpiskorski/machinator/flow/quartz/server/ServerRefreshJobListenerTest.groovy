@@ -6,6 +6,9 @@ import org.quartz.JobExecutionException
 import org.quartz.JobKey
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.model.job.Job
+import tpiskorski.machinator.model.job.JobService
+import tpiskorski.machinator.model.job.JobStatus
 
 class ServerRefreshJobListenerTest extends Specification {
 

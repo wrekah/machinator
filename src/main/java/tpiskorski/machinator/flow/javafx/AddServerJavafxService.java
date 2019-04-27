@@ -1,7 +1,8 @@
-package tpiskorski.machinator.model.server;
+package tpiskorski.machinator.flow.javafx;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import tpiskorski.machinator.model.server.Server;
 
 @org.springframework.stereotype.Service
 public class AddServerJavafxService extends Service<Void> {

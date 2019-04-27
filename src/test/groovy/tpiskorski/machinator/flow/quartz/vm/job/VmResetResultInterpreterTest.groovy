@@ -2,6 +2,7 @@ package tpiskorski.machinator.flow.quartz.vm.job
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.flow.command.CommandResult
 import tpiskorski.machinator.flow.parser.VmResetResultInterpreter
 
 class VmResetResultInterpreterTest extends Specification {

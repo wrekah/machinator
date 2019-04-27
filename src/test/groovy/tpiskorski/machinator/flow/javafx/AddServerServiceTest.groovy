@@ -1,7 +1,9 @@
-package tpiskorski.machinator.model.server
+package tpiskorski.machinator.flow.javafx
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.model.server.Server
+import tpiskorski.machinator.model.server.ServerService
 import tpiskorski.machinator.model.vm.VirtualMachine
 
 class AddServerServiceTest extends Specification {

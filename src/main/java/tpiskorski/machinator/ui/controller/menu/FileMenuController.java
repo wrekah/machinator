@@ -1,4 +1,4 @@
-package tpiskorski.machinator.ui.controller;
+package tpiskorski.machinator.ui.controller.menu;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

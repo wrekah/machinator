@@ -1,4 +1,4 @@
-package tpiskorski.machinator.ui.controller;
+package tpiskorski.machinator.ui.controller.server;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -10,11 +10,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.model.server.AddServerJavafxService;
+import tpiskorski.machinator.flow.javafx.AddServerJavafxService;
 import tpiskorski.machinator.model.server.Credentials;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.ui.control.ExceptionDialog;
+import tpiskorski.machinator.ui.controller.MainController;
 
 @Controller
 public class AddServerController {

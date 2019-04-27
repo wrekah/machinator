@@ -1,4 +1,4 @@
-package tpiskorski.machinator.ui.controller;
+package tpiskorski.machinator.ui.controller.server;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
@@ -18,6 +18,7 @@ import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.ServerCellFactory;
+import tpiskorski.machinator.ui.controller.vm.VmController;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;

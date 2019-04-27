@@ -1,4 +1,4 @@
-package tpiskorski.machinator.ui.controller;
+package tpiskorski.machinator.ui.controller.vm;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;

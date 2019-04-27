@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import tpiskorski.machinator.ui.control.VirtualMachineStateCell?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.machinator.ui.controller.VmController">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.machinator.ui.controller.vm.VmController">
 
     <HBox alignment="CENTER">
         <Button text="Turn on vm" fx:id="turnOnVmButton" onAction="#turnOnVm"/>

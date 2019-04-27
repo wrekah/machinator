@@ -2,6 +2,7 @@ package tpiskorski.machinator.flow.quartz.backup
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.flow.command.CommandResult
 import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter
 
 class ExportVmResultInterpreterTest extends Specification {

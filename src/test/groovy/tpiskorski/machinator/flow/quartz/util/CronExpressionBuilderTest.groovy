@@ -3,6 +3,8 @@ package tpiskorski.machinator.flow.quartz.util
 import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.model.backup.BackupDefinition
+import tpiskorski.machinator.model.server.Server
+import tpiskorski.machinator.model.vm.VirtualMachine
 
 class CronExpressionBuilderTest extends Specification {
 

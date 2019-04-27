@@ -7,6 +7,7 @@ import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableBackupDefinition
 import tpiskorski.machinator.model.backup.BackupDefinition
+import tpiskorski.machinator.model.backup.BackupDefinitionService
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.vm.VirtualMachine
 

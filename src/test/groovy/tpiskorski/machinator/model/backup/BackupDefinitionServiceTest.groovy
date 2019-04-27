@@ -2,6 +2,7 @@ package tpiskorski.machinator.model.backup
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.flow.quartz.backup.BackupScheduler
 
 class BackupDefinitionServiceTest extends Specification {
 
