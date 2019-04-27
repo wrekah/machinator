@@ -1,6 +1,6 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model;
 
-import tpiskorski.machinator.core.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachine;
 
 import java.io.Serializable;
 

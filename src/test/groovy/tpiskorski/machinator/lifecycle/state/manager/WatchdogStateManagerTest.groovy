@@ -3,13 +3,13 @@ package tpiskorski.machinator.lifecycle.state.manager
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.machinator.core.server.Server
-import tpiskorski.machinator.core.vm.VirtualMachine
-import tpiskorski.machinator.core.watchdog.Watchdog
-import tpiskorski.machinator.core.watchdog.WatchdogService
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableWatchdog
+import tpiskorski.machinator.model.server.Server
+import tpiskorski.machinator.model.vm.VirtualMachine
+import tpiskorski.machinator.model.watchdog.Watchdog
+import tpiskorski.machinator.model.watchdog.WatchdogService
 
 class WatchdogStateManagerTest extends Specification {
 

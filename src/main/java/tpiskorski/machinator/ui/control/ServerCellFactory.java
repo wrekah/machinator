@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.core.server.Server;
-import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.quartz.vm.VmActionScheduler;
+import tpiskorski.machinator.model.server.Server;
+import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.flow.quartz.vm.VmActionScheduler;
 
 @Component
 public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Server>> {

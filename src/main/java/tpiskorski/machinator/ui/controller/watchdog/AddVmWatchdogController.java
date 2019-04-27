@@ -10,12 +10,12 @@ import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.server.Server;
-import tpiskorski.machinator.core.server.ServerService;
-import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.core.vm.VirtualMachineService;
-import tpiskorski.machinator.core.watchdog.Watchdog;
-import tpiskorski.machinator.core.watchdog.WatchdogService;
+import tpiskorski.machinator.model.server.Server;
+import tpiskorski.machinator.model.server.ServerService;
+import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineService;
+import tpiskorski.machinator.model.watchdog.Watchdog;
+import tpiskorski.machinator.model.watchdog.WatchdogService;
 
 @Controller
 public class AddVmWatchdogController {

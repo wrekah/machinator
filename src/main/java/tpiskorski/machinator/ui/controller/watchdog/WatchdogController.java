@@ -12,8 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.watchdog.Watchdog;
-import tpiskorski.machinator.core.watchdog.WatchdogService;
+import tpiskorski.machinator.model.watchdog.Watchdog;
+import tpiskorski.machinator.model.watchdog.WatchdogService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 

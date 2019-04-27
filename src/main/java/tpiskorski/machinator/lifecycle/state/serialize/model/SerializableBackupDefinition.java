@@ -1,6 +1,6 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model;
 
-import tpiskorski.machinator.core.backup.BackupDefinition;
+import tpiskorski.machinator.model.backup.BackupDefinition;
 
 import java.io.Serializable;
 

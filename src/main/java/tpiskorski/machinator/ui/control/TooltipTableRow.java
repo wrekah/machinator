@@ -2,7 +2,7 @@ package tpiskorski.machinator.ui.control;
 
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Tooltip;
-import tpiskorski.machinator.core.job.Job;
+import tpiskorski.machinator.model.job.Job;
 
 public class TooltipTableRow extends TableRow<Job> {
 

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.lifecycle.ShutdownService;
-import tpiskorski.machinator.quartz.server.ServerRefreshScheduler;
+import tpiskorski.machinator.flow.quartz.server.ServerRefreshScheduler;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;

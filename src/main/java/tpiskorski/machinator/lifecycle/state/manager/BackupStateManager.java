@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.core.backup.BackupDefinitionService;
+import tpiskorski.machinator.model.backup.BackupDefinitionService;
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableBackupDefinition;
 
 import java.io.IOException;

@@ -4,8 +4,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import tpiskorski.machinator.core.job.Job;
-import tpiskorski.machinator.core.job.JobStatus;
+import tpiskorski.machinator.model.job.Job;
+import tpiskorski.machinator.model.job.JobStatus;
 
 public class JobProgressBarTableCell implements Callback<TableColumn<Job, JobStatus>, TableCell<Job, JobStatus>> {
 

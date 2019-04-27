@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.config.Config;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.core.backup.BackupDefinition;
-import tpiskorski.machinator.core.backup.BackupDefinitionService;
+import tpiskorski.machinator.model.backup.BackupDefinition;
+import tpiskorski.machinator.model.backup.BackupDefinitionService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 

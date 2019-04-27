@@ -3,11 +3,11 @@ package tpiskorski.machinator.lifecycle.state.manager
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.machinator.core.server.Server
-import tpiskorski.machinator.core.server.ServerService
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableServer
+import tpiskorski.machinator.model.server.Server
+import tpiskorski.machinator.model.server.ServerService
 
 class ServerStateManagerTest extends Specification {
 

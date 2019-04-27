@@ -1,6 +1,6 @@
 package tpiskorski.machinator.ui.control;
 
-import tpiskorski.machinator.core.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachine;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.core.watchdog.WatchdogService;
+import tpiskorski.machinator.model.watchdog.WatchdogService;
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableWatchdog;
 
 import java.io.IOException;

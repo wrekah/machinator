@@ -1,11 +1,11 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model
 
 import spock.lang.Specification
-import tpiskorski.machinator.core.backup.BackupDefinition
-import tpiskorski.machinator.core.server.Credentials
-import tpiskorski.machinator.core.server.Server
-import tpiskorski.machinator.core.vm.VirtualMachine
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableBackupDefinition
+import tpiskorski.machinator.model.backup.BackupDefinition
+import tpiskorski.machinator.model.server.Credentials
+import tpiskorski.machinator.model.server.Server
+import tpiskorski.machinator.model.vm.VirtualMachine
 
 class SerializableBackupDefinitionTest extends Specification {
 

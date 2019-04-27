@@ -1,6 +1,6 @@
 package tpiskorski.machinator.ui.control;
 
-import tpiskorski.machinator.core.watchdog.Watchdog;
+import tpiskorski.machinator.model.watchdog.Watchdog;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;

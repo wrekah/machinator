@@ -10,10 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.core.vm.VirtualMachineService;
-import tpiskorski.machinator.core.vm.VirtualMachineState;
-import tpiskorski.machinator.quartz.vm.VmActionScheduler;
+import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineService;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
+import tpiskorski.machinator.flow.quartz.vm.VmActionScheduler;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.control.VirtualMachineRowFactory;
 

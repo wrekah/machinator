@@ -10,10 +10,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.server.AddServerJavafxService;
-import tpiskorski.machinator.core.server.Credentials;
-import tpiskorski.machinator.core.server.Server;
-import tpiskorski.machinator.core.server.ServerService;
+import tpiskorski.machinator.model.server.AddServerJavafxService;
+import tpiskorski.machinator.model.server.Credentials;
+import tpiskorski.machinator.model.server.Server;
+import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.ui.control.ExceptionDialog;
 
 @Controller

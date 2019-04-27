@@ -10,7 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import tpiskorski.machinator.action.BeanDefinitions;
+import tpiskorski.machinator.spring.BeanDefinitions;
 import tpiskorski.machinator.lifecycle.ShutdownService;
 
 import java.io.IOException;

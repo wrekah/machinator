@@ -7,9 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.job.Job;
-import tpiskorski.machinator.core.job.JobService;
-import tpiskorski.machinator.core.job.JobStatus;
+import tpiskorski.machinator.model.job.Job;
+import tpiskorski.machinator.model.job.JobService;
+import tpiskorski.machinator.model.job.JobStatus;
 import tpiskorski.machinator.ui.control.TooltipTableRow;
 
 @Controller

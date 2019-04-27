@@ -10,12 +10,12 @@ import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.core.backup.BackupDefinition;
-import tpiskorski.machinator.core.backup.BackupDefinitionService;
-import tpiskorski.machinator.core.server.Server;
-import tpiskorski.machinator.core.server.ServerService;
-import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.core.vm.VirtualMachineService;
+import tpiskorski.machinator.model.backup.BackupDefinition;
+import tpiskorski.machinator.model.backup.BackupDefinitionService;
+import tpiskorski.machinator.model.server.Server;
+import tpiskorski.machinator.model.server.ServerService;
+import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineService;
 
 @DependsOn("mainController")
 @Controller

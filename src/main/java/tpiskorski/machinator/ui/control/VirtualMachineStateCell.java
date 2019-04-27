@@ -4,8 +4,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import tpiskorski.machinator.core.vm.VirtualMachine;
-import tpiskorski.machinator.core.vm.VirtualMachineState;
+import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 public class VirtualMachineStateCell implements Callback<TableColumn<VirtualMachine, VirtualMachineState>, TableCell<VirtualMachine, VirtualMachineState>> {
 

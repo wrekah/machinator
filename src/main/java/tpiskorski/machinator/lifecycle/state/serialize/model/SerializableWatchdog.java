@@ -1,6 +1,6 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model;
 
-import tpiskorski.machinator.core.watchdog.Watchdog;
+import tpiskorski.machinator.model.watchdog.Watchdog;
 
 import java.io.Serializable;
 

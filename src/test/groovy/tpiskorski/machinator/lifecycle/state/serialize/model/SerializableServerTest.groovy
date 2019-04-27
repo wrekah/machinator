@@ -1,8 +1,8 @@
 package tpiskorski.machinator.lifecycle.state.serialize.model
 
 import spock.lang.Specification
-import tpiskorski.machinator.core.server.Credentials
-import tpiskorski.machinator.core.server.Server
+import tpiskorski.machinator.model.server.Credentials
+import tpiskorski.machinator.model.server.Server
 
 class SerializableServerTest extends Specification {
 
