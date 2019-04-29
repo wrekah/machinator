@@ -20,6 +20,8 @@ import tpiskorski.machinator.ui.controller.MainController;
 @Controller
 public class AddServerController {
 
+    private static final String DEFAULT_SSH_PORT = "22";
+
     private final ServerService serverService;
     private final MainController mainController;
     private final AddServerJavafxService addServerJavafxService;
@@ -146,10 +148,7 @@ public class AddServerController {
 
         addServerGridPane.setDisable(false);
         mainController.enableMainWindow();
-
-        address.clear();
-        port.clear();
-        remoteRadioButton.setSelected(true);
+        resetFields();
 
         addServerJavafxService.reset();
 
@@ -160,5 +159,15 @@ public class AddServerController {
     private void cancelAddServer() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
+    }
+
+    void resetFields() {
+        port.setText(DEFAULT_SSH_PORT);
+        remoteRadioButton.setSelected(true);
+
+        savedAddress = "";
+        savedPort = "";
+        savedUser = "";
+        savedPassword = "";
     }
 }
