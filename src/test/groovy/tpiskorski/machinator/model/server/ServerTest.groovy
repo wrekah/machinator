@@ -95,4 +95,14 @@ class ServerTest extends Specification {
         server1.getSimpleAddress() == 'Local Machine'
         server2.getSimpleAddress() == 'some:123'
     }
+
+    def 'should call simple address when invoking tostring'() {
+        given:
+        def server1 = new Server('Local Machine', '')
+        def server2 = new Server('some', '123')
+
+        expect:
+        server1.toString() == 'Local Machine'
+        server2.toString() == 'some:123'
+    }
 }

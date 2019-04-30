@@ -41,9 +41,4 @@ public class ServerService {
     public boolean contains(Server server) {
         return serverRepository.contains(server);
     }
-
-    public void upsert(Server server, List<VirtualMachine> vms) {
-        server.setServerState(ServerState.REACHABLE);
-        virtualMachineService.upsert(vms);
-    }
 }

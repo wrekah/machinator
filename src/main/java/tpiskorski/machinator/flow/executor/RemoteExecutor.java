@@ -23,7 +23,7 @@ public class RemoteExecutor {
         try {
             Session session = prepareSession(executionContext);
             LOGGER.debug("About to connect");
-            session.connect();
+            session.connect(10000);
             LOGGER.debug("Connected");
             ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
             LOGGER.debug("Channel created");
@@ -48,10 +48,8 @@ public class RemoteExecutor {
 
             return commandResultFactory.from(stdout, stderr);
         } catch (JSchException | IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     private Session prepareSession(ExecutionContext executionContext) throws JSchException {

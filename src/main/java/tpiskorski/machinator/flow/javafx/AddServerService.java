@@ -62,7 +62,7 @@ public class AddServerService {
     PlatformThreadAction addServerAndVmsAction(Server server, List<VirtualMachine> vms) {
         return () -> {
             serverService.add(server);
-            serverService.upsert(server, vms);
+            serverService.refresh(server, vms);
         };
     }
 }

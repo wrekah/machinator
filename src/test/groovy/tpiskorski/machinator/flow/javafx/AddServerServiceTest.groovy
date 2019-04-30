@@ -25,6 +25,6 @@ class AddServerServiceTest extends Specification {
 
         then:
         1 * serverService.add(server)
-        1 * serverService.upsert(server, vms)
+        1 * serverService.refresh(server, vms)
     }
 }

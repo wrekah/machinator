@@ -2,6 +2,7 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineRepository
 import tpiskorski.machinator.model.vm.VirtualMachineService
 
@@ -66,8 +67,6 @@ class ServerServiceModuleTest extends Specification {
     }
 
     def 'should check if contains server'() {
-        given:
-
         when:
         service.add(server1)
 
@@ -81,5 +80,24 @@ class ServerServiceModuleTest extends Specification {
         then:
         !service.contains(server1)
         !service.contains(server2)
+    }
+
+    def 'should perform refresh'() {
+        given:
+        def vm1 = new VirtualMachine(server1, 'vm1')
+        def vm2 = new VirtualMachine(server1, 'vm2')
+        def vm3 = new VirtualMachine(server1, 'v1')
+
+        when:
+        service.refresh(server1, [vm1, vm2, vm3])
+
+        then:
+        virtualMachineService.getVms(server1).size() == 3
+
+        when:
+        service.refresh(server1, [])
+
+        then:
+        virtualMachineService.getVms(server1).empty
     }
 }

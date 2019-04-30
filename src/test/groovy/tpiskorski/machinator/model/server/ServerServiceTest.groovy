@@ -2,6 +2,7 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineService
 
 class ServerServiceTest extends Specification {
@@ -51,5 +52,18 @@ class ServerServiceTest extends Specification {
 
         then:
         1 * serverRepository.contains(server)
+    }
+
+    def 'should perform refresh'() {
+        given:
+        def server = Mock(Server)
+        def vms = [Mock(VirtualMachine)]
+
+        when:
+        service.refresh(server, vms)
+
+        then:
+        1 * server.setServerState(ServerState.REACHABLE)
+        1 * virtualMachineService.refresh(server, vms)
     }
 }
