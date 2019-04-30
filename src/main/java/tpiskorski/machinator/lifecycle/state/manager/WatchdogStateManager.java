@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.model.watchdog.WatchdogService;
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableWatchdog;
+import tpiskorski.machinator.model.watchdog.WatchdogService;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,7 +49,6 @@ public class WatchdogStateManager extends StateManager {
             List<SerializableWatchdog> restoredWatchdogs = objectRestorer.restore(getPersistResourceFileName());
 
             LOGGER.info("Restoring {} watchdogs", restoredWatchdogs.size());
-
 
             restoredWatchdogs.stream()
                 .map(SerializableWatchdog::toWatchdog)

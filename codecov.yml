@@ -1,3 +1,4 @@
 ignore:
   - src/main/java/tpiskorski/machinator/ui
   - BeanDefinitions.java
+  - src/main/java/tpiskorski/machinator/lifecycle/state/serialize/io

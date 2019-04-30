@@ -47,6 +47,24 @@ class ServerStateManagerTest extends Specification {
         3 * serverService.add(_)
     }
 
+    def 'should not restore anything if io exception is thrown'() {
+        when:
+        persister.restore()
+
+        then:
+        1 * objectRestorer.restore(_) >> { throw new IOException() }
+        0 * _
+    }
+
+    def 'should not restore anything if class not found exception is thrown'() {
+        when:
+        persister.restore()
+
+        then:
+        1 * objectRestorer.restore(_) >> { throw new ClassNotFoundException() }
+        0 * _
+    }
+
     def createServers() {
         [
                 new Server('some', '123'),

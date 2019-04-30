@@ -49,6 +49,36 @@ class WatchdogStateManagerTest extends Specification {
         3 * watchdogService.add(_)
     }
 
+    def 'should not restore anything if io exception is thrown'() {
+        when:
+        persister.restore()
+
+        then:
+        1 * objectRestorer.restore(_) >> { throw new IOException() }
+        0 * _
+    }
+
+    def 'should not restore anything if class not found exception is thrown'() {
+        when:
+        persister.restore()
+
+        then:
+        1 * objectRestorer.restore(_) >> { throw new ClassNotFoundException() }
+        0 * _
+    }
+
+    def 'should not persist anything if exception is thrown'(){
+        given:
+        def watchdogs = createWatchdogs()
+
+        when:
+        persister.persist()
+
+        then:
+        1 * watchdogService.getWatchdogs() >> watchdogs
+        1 * objectPersister.persist(_, _)
+    }
+
     def createWatchdogs() {
         def server1 = new Server('some', '123')
         def server2 = new Server('some', '321')
