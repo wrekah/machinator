@@ -1,2 +1,3 @@
 ignore:
   - src/main/java/tpiskorski/machinator/ui
+  - BeanDefinitions.java

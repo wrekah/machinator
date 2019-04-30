@@ -2,7 +2,6 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineService
 
 class ServerServiceTest extends Specification {
@@ -41,31 +40,6 @@ class ServerServiceTest extends Specification {
         then:
         1 * serverRepository.remove(server)
         1 * virtualMachineService.removeByServer(server)
-    }
-
-    def 'should update unreachable to server and vms'() {
-        given:
-        def server = Mock(Server)
-
-        when:
-        service.updateUnreachable(server)
-
-        then:
-        1 * server.setServerState(ServerState.NOT_REACHABLE)
-        1 * virtualMachineService.updateNotReachableBy(server)
-    }
-
-    def 'should update reachable to server and vms'() {
-        given:
-        def server = Mock(Server)
-        def vms = [Mock(VirtualMachine)]
-
-        when:
-        service.updateReachable(server, vms)
-
-        then:
-        1 * server.setServerState(ServerState.REACHABLE)
-        1 * virtualMachineService.replace(server, vms)
     }
 
     def 'should check if it contains server'() {

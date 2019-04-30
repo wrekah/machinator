@@ -80,4 +80,17 @@ class WatchdogRepositoryTest extends Specification {
         then:
         repository.getWatchdogs().empty
     }
+
+    def 'should check if contains watchdog'() {
+        given:
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
+
+        and:
+        repository.add(watchdog1)
+
+        expect:
+        repository.contains(watchdog1)
+        !repository.contains(watchdog2)
+    }
 }

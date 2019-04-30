@@ -85,4 +85,14 @@ class ServerTest extends Specification {
         server.port == '123'
         server.serverState == ServerState.UNKNOWN
     }
+
+    def 'should get simple address'() {
+        given:
+        def server1 = new Server('Local Machine', '')
+        def server2 = new Server('some', '123')
+
+        expect:
+        server1.getSimpleAddress() == 'Local Machine'
+        server2.getSimpleAddress() == 'some:123'
+    }
 }

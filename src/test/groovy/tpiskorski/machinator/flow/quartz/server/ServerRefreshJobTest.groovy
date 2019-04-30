@@ -25,7 +25,7 @@ class ServerRefreshJobTest extends Specification {
         then:
         1 * serverService.getServers() >> ([] as ObservableList)
         0 * serverRefreshService.monitor(_)
-        0 * serverService.updateReachable(_, _)
+        0 * serverService.refresh(_, _)
     }
 
     def 'should refresh each server'() {

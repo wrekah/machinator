@@ -2,10 +2,8 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
-import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineRepository
 import tpiskorski.machinator.model.vm.VirtualMachineService
-import tpiskorski.machinator.model.vm.VirtualMachineState
 
 class ServerServiceModuleTest extends Specification {
 
@@ -65,59 +63,6 @@ class ServerServiceModuleTest extends Specification {
 
         then:
         service.getServers() == [server1]
-    }
-
-    def 'should update not_reachable state to the server and vms'() {
-        given:
-        def vm1 = new VirtualMachine(server1, 'vm1')
-        def vm2 = new VirtualMachine(server1, 'vm2')
-        def vm3 = new VirtualMachine(server2, 'v1')
-
-        and:
-        service.add(server1)
-        service.add(server2)
-
-        and:
-        virtualMachineService.add(vm1)
-        virtualMachineService.add(vm2)
-        virtualMachineService.add(vm3)
-
-        when:
-        service.updateUnreachable(server1)
-
-        then:
-        server1.serverState == ServerState.NOT_REACHABLE
-        vm1.state == VirtualMachineState.UNREACHABLE
-        vm2.state == VirtualMachineState.UNREACHABLE
-    }
-
-    def 'should update reachable state to the server and vms'() {
-        given:
-        def vm1 = new VirtualMachine(server1, 'vm1')
-        def vm2 = new VirtualMachine(server1, 'vm2')
-        def vm3 = new VirtualMachine(server2, 'v1')
-
-        and:
-        service.add(server1)
-        service.add(server2)
-
-        and:
-        virtualMachineService.add(vm1)
-        virtualMachineService.add(vm2)
-        virtualMachineService.add(vm3)
-
-        and:
-        def newVm1 = new VirtualMachine(server1, 'some new vm')
-
-        when:
-        service.updateReachable(server1, [newVm1])
-
-        then:
-        server1.serverState == ServerState.REACHABLE
-
-        and:
-        virtualMachineService.getVms(server1).contains(newVm1)
-        virtualMachineService.getVms().contains(newVm1)
     }
 
     def 'should check if contains server'() {

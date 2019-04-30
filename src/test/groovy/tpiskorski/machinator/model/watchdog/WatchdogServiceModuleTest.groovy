@@ -108,4 +108,17 @@ class WatchdogServiceModuleTest extends Specification {
         then:
         !watchdog.active
     }
+
+    def 'should check if contains watchdog'() {
+        given:
+        def watchdog1 = new Watchdog(vm1, server2)
+        def watchdog2 = new Watchdog(vm1, server3)
+
+        and:
+        service.add(watchdog1)
+
+        expect:
+        service.contains(watchdog1)
+        !service.contains(watchdog2)
+    }
 }

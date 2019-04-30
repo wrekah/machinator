@@ -33,16 +33,6 @@ public class ServerService {
         serverRepository.add(server);
     }
 
-    public void updateUnreachable(Server server) {
-        server.setServerState(ServerState.NOT_REACHABLE);
-        virtualMachineService.updateNotReachableBy(server);
-    }
-
-    public void updateReachable(Server server, List<VirtualMachine> vms) {
-        server.setServerState(ServerState.REACHABLE);
-        virtualMachineService.replace(server, vms);
-    }
-
     public void refresh(Server server, List<VirtualMachine> vms) {
         server.setServerState(ServerState.REACHABLE);
         virtualMachineService.refresh(server, vms);

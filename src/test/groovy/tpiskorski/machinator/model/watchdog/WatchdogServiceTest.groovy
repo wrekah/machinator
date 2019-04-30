@@ -38,4 +38,15 @@ class WatchdogServiceTest extends Specification {
         then:
         1 * watchdogRepository.getWatchdogs()
     }
+
+    def 'should check if contains watchdog'() {
+        given:
+        def watchdog = Mock(Watchdog)
+
+        when:
+        service.contains(watchdog)
+
+        then:
+        1 * watchdogRepository.contains(watchdog)
+    }
 }
