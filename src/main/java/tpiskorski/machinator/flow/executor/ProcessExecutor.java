@@ -9,18 +9,8 @@ import java.util.concurrent.TimeUnit;
 public class ProcessExecutor {
 
     private static final int TIMEOUT = 5;
-    private static final String WORK_DIR = "user.home";
 
-    public Process execute(Command command) throws InterruptedException, IOException {
-        ProcessBuilder builder = processBuilder(command, new File(System.getProperty(WORK_DIR)));
-
-        Process process = builder.start();
-        process.waitFor(TIMEOUT, TimeUnit.SECONDS);
-
-        return process;
-    }
-
-    public Process executeIn(Command command, File directory) throws InterruptedException, IOException {
+    public Process execute(Command command, File directory) throws InterruptedException, IOException {
         ProcessBuilder builder = processBuilder(command, directory);
 
         Process process = builder.start();

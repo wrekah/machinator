@@ -119,11 +119,6 @@ public class ExecutionContext {
             return this;
         }
 
-        public Builder homeDirectory() {
-            this.workingDirectory = new File(System.getProperty("user.home"));
-            return this;
-        }
-
         public Builder workingDirectory(File workingDirectory) {
             this.workingDirectory = workingDirectory;
 

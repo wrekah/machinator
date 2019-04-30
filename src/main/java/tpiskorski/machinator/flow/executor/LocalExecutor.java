@@ -23,7 +23,7 @@ public class LocalExecutor {
         File workingDirectory = executionContext.getWorkingDirectory();
 
         LOGGER.debug("Executing command {}", command);
-        Process process = processExecutor.executeIn(command, workingDirectory);
+        Process process = processExecutor.execute(command, workingDirectory);
         CommandResult result = commandResultFactory.from(process);
         LOGGER.debug("Execution successful");
 
