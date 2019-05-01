@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.command.BaseCommand;
 import tpiskorski.machinator.flow.command.CommandFactory;
 import tpiskorski.machinator.flow.command.CommandResult;
+import tpiskorski.machinator.flow.executor.CommandExecutor;
+import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.parser.VmResetResultInterpreter;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
@@ -46,20 +46,19 @@ public class VmResetJob extends QuartzJobBean {
             .build();
 
         try {
-            //todo make sure that handling locking is properly done
             CommandResult result = commandExecutor.execute(resetVm);
 
             if (vmResetResultInterpreter.isSuccess(result)) {
                 vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
-                vm.unlock();
             } else {
                 vm.setState(VirtualMachineState.POWEROFF);
-                vm.unlock();
-                throw new JobExecutionException("Fail");
+                throw new JobExecutionException(result.getError());
             }
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmResetJob job failed", e);
             throw new JobExecutionException(e);
+        } finally {
+            vm.unlock();
         }
     }
 }

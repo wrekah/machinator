@@ -8,12 +8,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.flow.command.BaseCommand;
+import tpiskorski.machinator.flow.command.Command;
+import tpiskorski.machinator.flow.command.CommandFactory;
+import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
-import tpiskorski.machinator.flow.command.*;
+import tpiskorski.machinator.flow.executor.poll.PollExecutor;
+import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
 import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 import java.io.IOException;
 
@@ -24,7 +30,9 @@ public class VmPowerOffJob extends QuartzJobBean {
     private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
 
+    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
+    private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired
     public VmPowerOffJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
@@ -50,15 +58,25 @@ public class VmPowerOffJob extends QuartzJobBean {
             .command(infoVmCommand)
             .build();
 
-        //todo issue power off, do polling with timeout until state is power off - config option
+        vm.lock();
         try {
             CommandResult result = commandExecutor.execute(powerOff);
-            result = commandExecutor.execute(infoVm);
-            ShowVmInfoUpdate update = showVmInfoParser.parse(result);
-            vm.setState(update.getState());
+
+            if (!progressCommandsInterpreter.isSuccess(result)) {
+                throw new JobExecutionException(result.getError());
+            }
+
+            pollExecutor.pollExecute(() -> {
+                ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+                return update.getState() == VirtualMachineState.POWEROFF;
+            });
+
+            vm.setState(VirtualMachineState.POWEROFF);
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmPowerOffJob job failed", e);
             throw new JobExecutionException(e);
+        } finally {
+            vm.unlock();
         }
     }
 }

@@ -8,14 +8,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.flow.command.BaseCommand;
+import tpiskorski.machinator.flow.command.Command;
+import tpiskorski.machinator.flow.command.CommandFactory;
+import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
-import tpiskorski.machinator.flow.command.*;
+import tpiskorski.machinator.flow.executor.poll.PollExecutor;
+import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
 import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +36,8 @@ public class VmDeleteJob extends QuartzJobBean {
 
     @Autowired private VirtualMachineService virtualMachineService;
 
+    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
+    private PollExecutor pollExecutor = new PollExecutor();
     private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
@@ -44,22 +52,50 @@ public class VmDeleteJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
-        //todo error handling
-        Command deleteVmCommand = commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName());
-        Command listAllVmsCommand = commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId());
-
         ExecutionContext deleteVm = ExecutionContext.builder()
             .executeOn(vm.getServer())
-            .command(deleteVmCommand)
+            .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
             .build();
 
         ExecutionContext listVms = ExecutionContext.builder()
             .executeOn(vm.getServer())
-            .command(listAllVmsCommand)
+            .command(commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId()))
+            .build();
+
+        ExecutionContext turnOff = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
+            .build();
+
+        ExecutionContext infoVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
             .build();
 
         try {
+            vm.lock();
+
+            if(vm.getState() != VirtualMachineState.POWEROFF ){
+                CommandResult result = commandExecutor.execute(turnOff);
+
+                if (!progressCommandsInterpreter.isSuccess(result)) {
+                    throw new JobExecutionException(result.getError());
+                }
+
+                pollExecutor.pollExecute(() -> {
+                    ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+                    return update.getState() == VirtualMachineState.POWEROFF;
+                });
+
+            }
+
             CommandResult result = commandExecutor.execute(deleteVm);
+            if (!progressCommandsInterpreter.isSuccess(result)) {
+                ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+                vm.setState(update.getState());
+                throw new JobExecutionException(result.getError());
+            }
+
             result = commandExecutor.execute(listVms);
             List<VirtualMachine> vms = simpleVmParser.parse(result);
             if (!vms.contains(vm)) {
@@ -67,12 +103,11 @@ public class VmDeleteJob extends QuartzJobBean {
             } else {
                 throw new JobExecutionException("Could not delete vm");
             }
-
-            ShowVmInfoUpdate update = showVmInfoParser.parse(result);
-            vm.setState(update.getState());
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmDeleteJob job failed", e);
             throw new JobExecutionException(e);
+        } finally {
+            vm.unlock();
         }
     }
 }
