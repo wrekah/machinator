@@ -59,6 +59,7 @@ public class VmActionJobListener implements JobListener {
                 job.setStatus(JobStatus.COMPLETED);
             } else {
                 job.setStatus(JobStatus.FAILED);
+                job.setErrorCause(jobException.getMessage());
             }
         }
     }
