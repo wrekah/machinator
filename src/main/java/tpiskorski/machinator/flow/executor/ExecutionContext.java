@@ -88,7 +88,7 @@ public class ExecutionContext {
 
     @Override public String toString() {
         return "ExecutionContext{" +
-            "address=" + (isLocal ? "Local Machine" : address) +
+            "address=" + (isLocal ? "local" : address) +
             ", command=" + command +
             ", workingDirectory=" + workingDirectory +
             '}';

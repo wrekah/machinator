@@ -10,7 +10,7 @@ class ExecutionContextTest extends Specification {
 
     def 'should build execution command context for local execution'() {
         given:
-        def server = new Server('Local Machine', '')
+        def server = new Server('local', '')
         def command = Mock(Command)
         def workingDir = Mock(File)
 

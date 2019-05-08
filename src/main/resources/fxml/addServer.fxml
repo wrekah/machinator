@@ -38,12 +38,12 @@
 
             </padding>
 
-            <RadioButton text="Remote" selected="true" toggleGroup="$serversToggleGroup" fx:id="remoteRadioButton">
+            <RadioButton text="remote" selected="true" toggleGroup="$serversToggleGroup" fx:id="remoteRadioButton">
                 <padding>
                     <Insets right="20"/>
                 </padding>
             </RadioButton>
-            <RadioButton text="Local Machine" toggleGroup="$serversToggleGroup" fx:id="localhostRadioButton"/>
+            <RadioButton text="local" toggleGroup="$serversToggleGroup" fx:id="localhostRadioButton"/>
 
         </HBox>
 

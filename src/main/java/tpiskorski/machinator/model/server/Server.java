@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class Server {
 
-    private static final String LOCALHOST = "Local Machine";
+    private static final String LOCALHOST = "local";
 
     private String address;
     private String port;

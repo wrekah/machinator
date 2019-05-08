@@ -81,7 +81,7 @@ public class AddServerController {
                 savedUser = userField.getText();
                 savedPassword = passwordField.getText();
 
-                address.setText("Local Machine");
+                address.setText("local");
 
                 port.clear();
                 userField.clear();

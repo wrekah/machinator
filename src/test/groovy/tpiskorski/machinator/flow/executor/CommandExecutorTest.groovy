@@ -18,7 +18,7 @@ class CommandExecutorTest extends Specification {
 
     def 'should delegate local command to local executor'() {
         given:
-        def server = new Server('Local Machine', '')
+        def server = new Server('local', '')
         def executionContext = ExecutionContext.builder()
                 .executeOn(server)
                 .build()

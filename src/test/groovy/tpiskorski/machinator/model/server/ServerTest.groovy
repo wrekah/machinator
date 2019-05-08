@@ -67,10 +67,10 @@ class ServerTest extends Specification {
 
     def 'should create localhost server'() {
         given:
-        def server = new Server('Local Machine', '')
+        def server = new Server('local', '')
 
         expect:
-        server.address == 'Local Machine'
+        server.address == 'local'
         server.serverType == ServerType.LOCAL
     }
 
@@ -88,21 +88,21 @@ class ServerTest extends Specification {
 
     def 'should get simple address'() {
         given:
-        def server1 = new Server('Local Machine', '')
+        def server1 = new Server('local', '')
         def server2 = new Server('some', '123')
 
         expect:
-        server1.getSimpleAddress() == 'Local Machine'
+        server1.getSimpleAddress() == 'local'
         server2.getSimpleAddress() == 'some:123'
     }
 
     def 'should call simple address when invoking tostring'() {
         given:
-        def server1 = new Server('Local Machine', '')
+        def server1 = new Server('local', '')
         def server2 = new Server('some', '123')
 
         expect:
-        server1.toString() == 'Local Machine'
+        server1.toString() == 'local'
         server2.toString() == 'some:123'
     }
 }
