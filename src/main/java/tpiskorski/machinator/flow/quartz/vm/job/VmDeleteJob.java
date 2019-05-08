@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.command.BaseCommand;
-import tpiskorski.machinator.flow.command.Command;
 import tpiskorski.machinator.flow.command.CommandFactory;
 import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
@@ -75,7 +74,8 @@ public class VmDeleteJob extends QuartzJobBean {
         try {
             vm.lock();
 
-            if(vm.getState() != VirtualMachineState.POWEROFF ){
+            ShowVmInfoUpdate info = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+            if (info.getState() == VirtualMachineState.RUNNING) {
                 CommandResult result = commandExecutor.execute(turnOff);
 
                 if (!progressCommandsInterpreter.isSuccess(result)) {
@@ -86,7 +86,6 @@ public class VmDeleteJob extends QuartzJobBean {
                     ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
                     return update.getState() == VirtualMachineState.POWEROFF;
                 });
-
             }
 
             CommandResult result = commandExecutor.execute(deleteVm);
