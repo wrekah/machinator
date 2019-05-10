@@ -26,10 +26,10 @@ public class ServerRefreshScheduler implements InitializingBean {
             .storeDurably()
             .build();
 
-        CronTrigger trigger = TriggerBuilder.newTrigger()
+        SimpleTrigger trigger = TriggerBuilder.newTrigger()
             .forJob(jobDetail)
             .withIdentity(jobDetail.getKey().getName())
-            .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * 1/1 * ? *"))
+            .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(5))
             .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
