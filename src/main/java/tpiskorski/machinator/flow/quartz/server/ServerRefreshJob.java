@@ -39,17 +39,9 @@ public class ServerRefreshJob extends QuartzJobBean {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
             for (Server server : serversView) {
-                if (server.tryLocking()) {
-                    try {
-                        LOGGER.info("Server refresh {}", server.getAddress());
-                        List<VirtualMachine> vms = serverRefreshService.monitor(server);
-                        serverService.refresh(server, vms);
-                    } finally {
-                        server.unlock();
-                    }
-                } else {
-                    LOGGER.info("Skipping refresh on server {} because work is in progress", server.getAddress());
-                }
+                LOGGER.info("Server refresh {}", server.getAddress());
+                List<VirtualMachine> vms = serverRefreshService.monitor(server);
+                serverService.refresh(server, vms);
             }
         } catch (Exception e) {
             LOGGER.error("Server refresh error", e);
