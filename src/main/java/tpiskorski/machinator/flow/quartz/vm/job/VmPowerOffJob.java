@@ -16,8 +16,7 @@ import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
-import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
+import tpiskorski.machinator.flow.parser.ShowVmStateParser;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
@@ -31,7 +30,7 @@ public class VmPowerOffJob extends QuartzJobBean {
     private final CommandFactory commandFactory;
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
-    private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
+    private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
     private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired
@@ -66,10 +65,7 @@ public class VmPowerOffJob extends QuartzJobBean {
                 throw new JobExecutionException(result.getError());
             }
 
-            pollExecutor.pollExecute(() -> {
-                ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
-                return update.getState() == VirtualMachineState.POWEROFF;
-            });
+            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
 
             vm.setState(VirtualMachineState.POWEROFF);
         } catch (IOException | InterruptedException e) {

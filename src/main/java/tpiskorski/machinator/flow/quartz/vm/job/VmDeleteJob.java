@@ -15,8 +15,7 @@ import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
-import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
+import tpiskorski.machinator.flow.parser.ShowVmStateParser;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
@@ -37,7 +36,8 @@ public class VmDeleteJob extends QuartzJobBean {
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private PollExecutor pollExecutor = new PollExecutor();
-    private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
+    private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
+
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
     @Autowired
@@ -73,25 +73,19 @@ public class VmDeleteJob extends QuartzJobBean {
 
         try {
             vm.lock();
-
-            ShowVmInfoUpdate info = showVmInfoParser.parse(commandExecutor.execute(infoVm));
-            if (info.getState() == VirtualMachineState.RUNNING) {
+            if (showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING) {
                 CommandResult result = commandExecutor.execute(turnOff);
 
                 if (!progressCommandsInterpreter.isSuccess(result)) {
                     throw new JobExecutionException(result.getError());
                 }
 
-                pollExecutor.pollExecute(() -> {
-                    ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
-                    return update.getState() == VirtualMachineState.POWEROFF;
-                });
+                pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
             }
 
             CommandResult result = commandExecutor.execute(deleteVm);
             if (!progressCommandsInterpreter.isSuccess(result)) {
-                ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
-                vm.setState(update.getState());
+                vm.setState(showVmStateParser.parse(commandExecutor.execute(infoVm)));
                 throw new JobExecutionException(result.getError());
             }
 
