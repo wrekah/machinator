@@ -42,32 +42,37 @@ public class VmTurnOnJob extends QuartzJobBean {
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
         vm.lock();
-
-        ExecutionContext startVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-            .build();
-
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .build();
-
         try {
-            CommandResult result = commandExecutor.execute(startVm);
-
-            if (result.isFailed()) {
-                throw new JobExecutionException(result.getError());
-            }
-
-            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING);
-
-            vm.setState(VirtualMachineState.RUNNING);
+            startVm(vm);
+            checkIfRunning(vm);
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmTurnOnJob job failed", e);
             throw new JobExecutionException(e);
         } finally {
             vm.unlock();
         }
+    }
+
+    private void startVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
+        ExecutionContext startVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
+            .build();
+
+        CommandResult result = commandExecutor.execute(startVm);
+
+        if (result.isFailed()) {
+            throw new JobExecutionException(result.getError());
+        }
+    }
+
+    private void checkIfRunning(VirtualMachine vm) throws JobExecutionException {
+        ExecutionContext infoVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
+            .build();
+
+        pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING);
+        vm.setState(VirtualMachineState.RUNNING);
     }
 }

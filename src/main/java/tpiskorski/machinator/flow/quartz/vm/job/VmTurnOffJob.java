@@ -44,31 +44,38 @@ public class VmTurnOffJob extends QuartzJobBean {
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
         vm.lock();
 
-        ExecutionContext turnOff = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
-            .build();
-
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .build();
-
         try {
-            CommandResult result = commandExecutor.execute(turnOff);
-
-            if (!progressCommandsInterpreter.isSuccess(result)) {
-                throw new JobExecutionException(result.getError());
-            }
-
-            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
-
-            vm.setState(VirtualMachineState.POWEROFF);
+            turnOffVm(vm);
+            checkIfPowerOff(vm);
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmTurnOffJob job failed", e);
             throw new JobExecutionException(e);
         } finally {
             vm.unlock();
         }
+    }
+
+    private void turnOffVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
+        ExecutionContext turnOff = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
+            .build();
+
+        CommandResult result = commandExecutor.execute(turnOff);
+
+        if (!progressCommandsInterpreter.isSuccess(result)) {
+            throw new JobExecutionException(result.getError());
+        }
+    }
+
+    private void checkIfPowerOff(VirtualMachine vm) throws JobExecutionException {
+        ExecutionContext infoVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
+            .build();
+
+        pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
+
+        vm.setState(VirtualMachineState.POWEROFF);
     }
 }

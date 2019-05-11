@@ -37,28 +37,32 @@ public class VmResetJob extends QuartzJobBean {
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
-        vm.lock();
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
-        ExecutionContext resetVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName()))
-            .build();
-
+        vm.lock();
         try {
-            CommandResult result = commandExecutor.execute(resetVm);
-
-            if (vmResetResultInterpreter.isSuccess(result)) {
-                vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
-            } else {
-                vm.setState(VirtualMachineState.POWEROFF);
-                throw new JobExecutionException(result.getError());
-            }
+            resetVm(vm);
         } catch (IOException | InterruptedException e) {
             LOGGER.error("VmResetJob job failed", e);
             throw new JobExecutionException(e);
         } finally {
             vm.unlock();
+        }
+    }
+
+    private void resetVm(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
+        ExecutionContext resetVm = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName()))
+            .build();
+
+        CommandResult result = commandExecutor.execute(resetVm);
+
+        if (vmResetResultInterpreter.isSuccess(result)) {
+            vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
+        } else {
+            vm.setState(VirtualMachineState.POWEROFF);
+            throw new JobExecutionException(result.getError());
         }
     }
 }

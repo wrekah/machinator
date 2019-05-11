@@ -51,16 +51,38 @@ public class VmDeleteJob extends QuartzJobBean {
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
         LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
 
+        vm.lock();
+        try {
+            powerOffIfRunning(vm);
+            deleteVm(vm);
+            checkIfDeleted(vm);
+        } catch (IOException | InterruptedException e) {
+            LOGGER.error("VmDeleteJob job failed", e);
+            throw new JobExecutionException(e);
+        } finally {
+            vm.unlock();
+        }
+    }
+
+    private void deleteVm(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
         ExecutionContext deleteVm = ExecutionContext.builder()
             .executeOn(vm.getServer())
             .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
             .build();
 
-        ExecutionContext listVms = ExecutionContext.builder()
+        ExecutionContext infoVm = ExecutionContext.builder()
             .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId()))
+            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
             .build();
 
+        CommandResult result = commandExecutor.execute(deleteVm);
+        if (!progressCommandsInterpreter.isSuccess(result)) {
+            vm.setState(showVmStateParser.parse(commandExecutor.execute(infoVm)));
+            throw new JobExecutionException(result.getError());
+        }
+    }
+
+    private void powerOffIfRunning(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
         ExecutionContext turnOff = ExecutionContext.builder()
             .executeOn(vm.getServer())
             .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
@@ -71,36 +93,29 @@ public class VmDeleteJob extends QuartzJobBean {
             .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
             .build();
 
-        try {
-            vm.lock();
-            if (showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING) {
-                CommandResult result = commandExecutor.execute(turnOff);
+        if (showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING) {
+            CommandResult result = commandExecutor.execute(turnOff);
 
-                if (!progressCommandsInterpreter.isSuccess(result)) {
-                    throw new JobExecutionException(result.getError());
-                }
-
-                pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
-            }
-
-            CommandResult result = commandExecutor.execute(deleteVm);
             if (!progressCommandsInterpreter.isSuccess(result)) {
-                vm.setState(showVmStateParser.parse(commandExecutor.execute(infoVm)));
                 throw new JobExecutionException(result.getError());
             }
 
-            result = commandExecutor.execute(listVms);
-            List<VirtualMachine> vms = simpleVmParser.parse(result);
-            if (!vms.contains(vm)) {
-                virtualMachineService.remove(vm);
-            } else {
-                throw new JobExecutionException("Could not delete vm");
-            }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("VmDeleteJob job failed", e);
-            throw new JobExecutionException(e);
-        } finally {
-            vm.unlock();
+            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
+        }
+    }
+
+    private void checkIfDeleted(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
+        ExecutionContext listVms = ExecutionContext.builder()
+            .executeOn(vm.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId()))
+            .build();
+
+        CommandResult result = commandExecutor.execute(listVms);
+        List<VirtualMachine> vms = simpleVmParser.parse(result);
+        if (!vms.contains(vm)) {
+            virtualMachineService.remove(vm);
+        } else {
+            throw new JobExecutionException("Could not delete vm");
         }
     }
 }
