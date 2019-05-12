@@ -46,7 +46,6 @@ public class AddVmWatchdogController {
         addButton.disableProperty().bind(
             Bindings.isNull(serverComboBox.valueProperty())
                 .or(Bindings.isNull(vmComboBox.valueProperty()))
-                .or(Bindings.isNull(backupServerComboBox.valueProperty()))
         );
 
         serverComboBox.pressedProperty().addListener((observable, oldValue, newValue) -> {
