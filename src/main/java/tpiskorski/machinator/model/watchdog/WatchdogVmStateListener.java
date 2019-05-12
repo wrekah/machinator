@@ -21,7 +21,7 @@ public class WatchdogVmStateListener implements ChangeListener<VirtualMachineSta
 
     @Override
     public void changed(ObservableValue<? extends VirtualMachineState> observable, VirtualMachineState oldValue, VirtualMachineState newValue) {
-        if (newValue == VirtualMachineState.POWEROFF) {
+        if (newValue == VirtualMachineState.POWEROFF && oldValue != VirtualMachineState.COMMAND_IN_PROGRESS) {
             LOGGER.debug("Notifying watchdog {}", watchdog);
             watchdogScheduler.schedule(watchdog);
         }

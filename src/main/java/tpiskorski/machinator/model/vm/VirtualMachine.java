@@ -39,10 +39,10 @@ public class VirtualMachine {
         setState(VirtualMachineState.COMMAND_IN_PROGRESS);
     }
 
-    public boolean tryLocking() {
+    public boolean tryLockingForRefresh() {
         boolean locked = lock.tryLock();
         if (locked) {
-            setState(VirtualMachineState.COMMAND_IN_PROGRESS);
+            setState(VirtualMachineState.REFRESH_IN_PROGRESS);
         }
         return locked;
     }
@@ -133,7 +133,7 @@ public class VirtualMachine {
             && Objects.equals(this.getId(), that.getId());
     }
 
-    public boolean deepEquals(VirtualMachine that){
+    public boolean deepEquals(VirtualMachine that) {
         return Objects.equals(this.getServer(), that.getServer())
             && Objects.equals(this.getId(), that.getId())
             && Objects.equals(this.getState(), that.getState())

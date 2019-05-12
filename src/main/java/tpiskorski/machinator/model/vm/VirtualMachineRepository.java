@@ -55,7 +55,7 @@ public class VirtualMachineRepository {
             return;
         }
 
-        boolean locked = vm.tryLocking();
+        boolean locked = vm.tryLockingForRefresh();
 
         if (locked) {
             vm.setState(virtualMachine.getState());

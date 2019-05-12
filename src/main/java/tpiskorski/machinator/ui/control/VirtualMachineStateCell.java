@@ -25,7 +25,7 @@ public class VirtualMachineStateCell implements Callback<TableColumn<VirtualMach
                     setText(null);
                     setGraphic(null);
                 } else {
-                    if (item == VirtualMachineState.COMMAND_IN_PROGRESS) {
+                    if (item == VirtualMachineState.COMMAND_IN_PROGRESS || item == VirtualMachineState.REFRESH_IN_PROGRESS) {
                         progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
                         setText(null);
                         setGraphic(progressBar);

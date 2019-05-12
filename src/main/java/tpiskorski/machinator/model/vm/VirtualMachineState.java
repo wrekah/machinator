@@ -2,6 +2,7 @@ package tpiskorski.machinator.model.vm;
 
 public enum VirtualMachineState {
     COMMAND_IN_PROGRESS,
+    REFRESH_IN_PROGRESS,
 
     ABORTED,
     RUNNING,
