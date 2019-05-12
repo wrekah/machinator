@@ -82,7 +82,7 @@ public class BackupScheduler implements InitializingBean {
         if (id != null) {
             try {
                 scheduler.triggerJob(JobKey.jobKey(id, "backups"));
-                LOGGER.info("Removed job from scheduler {}", id);
+                LOGGER.info("Triggering job now {}", id);
             } catch (SchedulerException e) {
                 LOGGER.warn("Could not add job to scheduler", e);
             }

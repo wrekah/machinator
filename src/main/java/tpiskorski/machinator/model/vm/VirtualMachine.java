@@ -133,6 +133,14 @@ public class VirtualMachine {
             && Objects.equals(this.getId(), that.getId());
     }
 
+    public boolean deepEquals(VirtualMachine that){
+        return Objects.equals(this.getServer(), that.getServer())
+            && Objects.equals(this.getId(), that.getId())
+            && Objects.equals(this.getState(), that.getState())
+            && Objects.equals(this.getCpuCores(), that.getCpuCores())
+            && Objects.equals(this.getRamMemory(), that.getRamMemory());
+    }
+
     @Override
     public String toString() {
         return getVmName();

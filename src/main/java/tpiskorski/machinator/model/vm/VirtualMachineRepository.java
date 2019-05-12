@@ -51,6 +51,10 @@ public class VirtualMachineRepository {
     public void update(VirtualMachine virtualMachine) {
         VirtualMachine vm = find(virtualMachine).get();
 
+        if (virtualMachine.deepEquals(vm)) {
+            return;
+        }
+
         boolean locked = vm.tryLocking();
 
         if (locked) {

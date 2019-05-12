@@ -1,7 +1,7 @@
 package tpiskorski.machinator.model.vm
 
-import tpiskorski.machinator.model.server.Server
 import spock.lang.Specification
+import tpiskorski.machinator.model.server.Server
 
 class VirtualMachineTest extends Specification {
 
@@ -66,5 +66,39 @@ class VirtualMachineTest extends Specification {
 
         and:
         vm != something
+    }
+
+    def 'should not be equal if all fields are compared'() {
+        given:
+        def vm1 = new VirtualMachine(server1, 'id')
+        vm1.cpuCores = 1
+        vm1.ramMemory = 1024
+        vm1.state = VirtualMachineState.POWEROFF
+
+        and:
+        def vm2 = new VirtualMachine(server1, 'id')
+        vm2.cpuCores = 1
+        vm2.ramMemory = 1024
+        vm2.state = VirtualMachineState.RUNNING
+
+        expect:
+        !vm1.deepEquals(vm2)
+    }
+
+    def 'should equal if all fields are compared'() {
+        given:
+        def vm1 = new VirtualMachine(server1, 'id')
+        vm1.cpuCores = 1
+        vm1.ramMemory = 1024
+        vm1.state = VirtualMachineState.POWEROFF
+
+        and:
+        def vm2 = new VirtualMachine(server1, 'id')
+        vm2.cpuCores = 1
+        vm2.ramMemory = 1024
+        vm2.state = VirtualMachineState.POWEROFF
+
+        expect:
+        vm1.deepEquals(vm2)
     }
 }
