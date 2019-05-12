@@ -61,4 +61,8 @@ public class Watchdog {
         return Objects.equals(this.getVirtualMachine(), that.getVirtualMachine())
             && Objects.equals(this.getWatchdogServer(), that.getWatchdogServer());
     }
+
+    public String id() {
+        return "to-implement";
+    }
 }
