@@ -14,6 +14,7 @@ open module machinator {
     requires quartz;
     requires spring.context.support;
     requires jsch;
+    requires org.controlsfx.controls;
 
     exports tpiskorski.machinator;
 }
