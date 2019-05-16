@@ -3,7 +3,9 @@ package tpiskorski.machinator.ui.controller.server;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -39,6 +41,7 @@ public class ServerController {
     @Autowired private AddServerController addServerController;
 
     private Stage addServerStage;
+    private Stage jobsStage;
 
     @FXML
     public void initialize() throws IOException {
@@ -49,6 +52,9 @@ public class ServerController {
 
         addServerStage = contextAwareSceneLoader.load("/fxml/addServer.fxml");
         addServerStage.setTitle("Adding server...");
+
+        jobsStage = contextAwareSceneLoader.load("/fxml/jobs.fxml");
+        jobsStage.setTitle("Jobs");
 
         FilteredList<Server> filterableServers = new FilteredList<>(serverService.getServers(), p -> true);
 
@@ -125,5 +131,18 @@ public class ServerController {
             addServerStage.show();
         }
         addServerController.resetFields();
+    }
+
+    @FXML
+    public void showJobs(ActionEvent event) {
+        if (jobsStage.isShowing()) {
+            jobsStage.hide();
+        } else {
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            jobsStage.setX(currentStage.getX() + currentStage.getWidth());
+            jobsStage.setY(currentStage.getY());
+            jobsStage.show();
+        }
     }
 }

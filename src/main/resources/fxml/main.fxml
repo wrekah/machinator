@@ -26,9 +26,6 @@
                 <Tab text="Watchdog">
                     <fx:include source="watchdog/watchdog.fxml"/>
                 </Tab>
-                <Tab text="Jobs">
-                    <fx:include source="jobs.fxml"/>
-                </Tab>
             </tabs>
         </TabPane>
     </center>
