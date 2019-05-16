@@ -1,12 +1,16 @@
 package tpiskorski.machinator.flow.quartz.watchdog;
 
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 
 @Service
 public class WatchdogScheduler implements InitializingBean {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WatchdogScheduler.class);
 
     private final Scheduler scheduler;
     private final WatchdogJobListener watchdogJobListener;
@@ -16,7 +20,7 @@ public class WatchdogScheduler implements InitializingBean {
         this.watchdogJobListener = watchdogJobListener;
     }
 
-    public void schedule(Watchdog watchdog) throws SchedulerException {
+    public void schedule(Watchdog watchdog) {
         JobKey jobKey = JobKey.jobKey(watchdog.toString(), "watchdogs");
 
         JobDataMap jobDataMap = new JobDataMap();
@@ -25,8 +29,14 @@ public class WatchdogScheduler implements InitializingBean {
         JobDetail job = JobBuilder.newJob(WatchdogJob.class).withIdentity(jobKey).storeDurably()
             .usingJobData(jobDataMap)
             .build();
-        scheduler.addJob(job, true);
-        scheduler.triggerJob(JobKey.jobKey(watchdog.toString(), "watchdogs"));
+
+        try {
+            scheduler.addJob(job, true);
+            scheduler.triggerJob(JobKey.jobKey(watchdog.toString(), "watchdogs"));
+            LOGGER.info("Scheduled watchdog {}", watchdog);
+        } catch (SchedulerException e) {
+            LOGGER.error("Could not add job to scheduler", e);
+        }
     }
 
     @Override public void afterPropertiesSet() throws Exception {
