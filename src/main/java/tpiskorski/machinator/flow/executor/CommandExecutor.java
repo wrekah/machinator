@@ -18,7 +18,7 @@ public class CommandExecutor {
         this.remoteExecutor = remoteExecutor;
     }
 
-    public CommandResult execute(ExecutionContext executionContext) throws IOException, InterruptedException {
+    public CommandResult execute(ExecutionContext executionContext) throws ExecutionException {
         LOGGER.debug("Executing command {}", executionContext);
         if (executionContext.isLocal()) {
             return localExecutor.execute(executionContext);

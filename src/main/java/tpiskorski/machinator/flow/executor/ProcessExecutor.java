@@ -10,13 +10,9 @@ public class ProcessExecutor {
 
     private static final int TIMEOUT = 5;
 
-    public Process execute(Command command, File directory) throws InterruptedException, IOException {
+    public Process execute(Command command, File directory) throws ExecutionException {
         ProcessBuilder builder = processBuilder(command, directory);
-
-        Process process = builder.start();
-        process.waitFor(TIMEOUT, TimeUnit.SECONDS);
-
-        return process;
+        return startProcess(builder);
     }
 
     private ProcessBuilder processBuilder(Command command, File directory) {
@@ -24,5 +20,16 @@ public class ProcessExecutor {
         builder.directory(directory);
         builder.command(command.getParts());
         return builder;
+    }
+
+    private Process startProcess(ProcessBuilder builder) throws ExecutionException {
+        Process process;
+        try {
+            process = builder.start();
+            process.waitFor(TIMEOUT, TimeUnit.SECONDS);
+        } catch (IOException | InterruptedException e) {
+            throw new ExecutionException(e);
+        }
+        return process;
     }
 }

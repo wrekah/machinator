@@ -18,7 +18,7 @@ public class LocalExecutor {
     private ProcessExecutor processExecutor = new ProcessExecutor();
     private CommandResultFactory commandResultFactory = new CommandResultFactory();
 
-    public CommandResult execute(ExecutionContext executionContext) throws IOException, InterruptedException {
+    public CommandResult execute(ExecutionContext executionContext) throws ExecutionException {
         Command command = executionContext.getCommand();
         File workingDirectory = executionContext.getWorkingDirectory();
 
