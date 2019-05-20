@@ -13,8 +13,13 @@ import tpiskorski.machinator.flow.command.CommandFactory;
 import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
+import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
+import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
+import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
+import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
+import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
@@ -35,6 +40,9 @@ public class WatchdogJob extends QuartzJobBean {
 
     private PollExecutor pollExecutor = new PollExecutor();
     private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
+    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
+    private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
+    private ScpClient scpClient = new ScpClient();
 
     @Autowired
     public WatchdogJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -67,7 +75,8 @@ public class WatchdogJob extends QuartzJobBean {
                 throw new JobExecutionException("No backup server is defined");
             }
 
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + watchdog.getVirtualMachine().getServer().getAddress() + "/" + watchdog.getVirtualMachine().getVmName());
+            Server originalServer = watchdog.getVirtualMachine().getServer();
+            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + originalServer.getAddress() + "/" + watchdog.getVirtualMachine().getVmName());
             backupLocation.mkdirs();
 
             long count = Files.list(backupLocation.toPath()).count();
@@ -76,16 +85,77 @@ public class WatchdogJob extends QuartzJobBean {
                 throw new JobExecutionException("No backups found for given vm");
             }
 
+            String backupFilePath = findLatestBackup(watchdog);
+
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
-                //import vm
-                //start vm
-                //remove from source
-            }else{
-                //scp to remote
-                //import vm
-                //start vm
-                //cleanup
-                //remove from source
+                importVm(watchdogServer, backupFilePath);
+
+                ExecutionContext startVm = ExecutionContext.builder()
+                    .executeOn(watchdogServer)
+                    .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
+                    .build();
+
+                CommandResult result = commandExecutor.execute(startVm);
+
+                if (result.isFailed()) {
+                    throw new JobExecutionException(result.getError());
+                }
+
+                ExecutionContext deleteVm = ExecutionContext.builder()
+                    .executeOn(originalServer)
+                    .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
+                    .build();
+
+
+                ExecutionContext infoVm = ExecutionContext.builder()
+                    .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
+                    .executeOn(originalServer)
+                    .build();
+
+                result = commandExecutor.execute(deleteVm);
+                if (!progressCommandsInterpreter.isSuccess(result)) {
+                    ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+                    vm.setState(update.getState());
+                    throw new JobExecutionException(result.getError());
+                }
+            } else {
+                RemoteContext remoteContext = RemoteContext.of(watchdogServer);
+
+                scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", backupFilePath + ".ova");
+                importVm(watchdogServer, backupFilePath);
+
+                ExecutionContext startVm = ExecutionContext.builder()
+                    .executeOn(watchdogServer)
+                    .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
+                    .build();
+
+                CommandResult result = commandExecutor.execute(startVm);
+
+
+                ExecutionContext cleanup = ExecutionContext.builder()
+                    .executeOn(watchdogServer)
+                    .command(commandFactory.makeWithArgs(BaseCommand.RM_FILES, "~/" + backupFilePath + ".ova"))
+                    .build();
+                CommandResult execute2 = commandExecutor.execute(cleanup);
+
+
+                ExecutionContext deleteVm = ExecutionContext.builder()
+                    .executeOn(originalServer)
+                    .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
+                    .build();
+
+
+                ExecutionContext infoVm = ExecutionContext.builder()
+                    .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
+                    .executeOn(originalServer)
+                    .build();
+
+                result = commandExecutor.execute(deleteVm);
+                if (!progressCommandsInterpreter.isSuccess(result)) {
+                    ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+                    vm.setState(update.getState());
+                    throw new JobExecutionException(result.getError());
+                }
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);
@@ -93,6 +163,20 @@ public class WatchdogJob extends QuartzJobBean {
         } finally {
             vm.unlock();
         }
+    }
+
+    //todo to implement
+    private String findLatestBackup(Watchdog watchdog) {
+        return null;
+    }
+
+    private void importVm(Server destination, String tempFileName) throws IOException, InterruptedException {
+        ExecutionContext importVm = ExecutionContext.builder()
+            .command(commandFactory.makeWithArgs(BaseCommand.IMPORT_VM, tempFileName))
+            .executeOn(destination)
+            .build();
+
+        CommandResult execute = commandExecutor.execute(importVm);
     }
 
     private void startVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
