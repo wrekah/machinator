@@ -10,16 +10,14 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.command.BaseCommand;
 import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
+import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
-
-import java.io.IOException;
 
 @Component
 public class VmTurnOffJob extends QuartzJobBean {
@@ -31,6 +29,8 @@ public class VmTurnOffJob extends QuartzJobBean {
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
     private PollExecutor pollExecutor = new PollExecutor();
+
+    @Autowired private PowerOffVmService powerOffVmService;
 
     @Autowired
     public VmTurnOffJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
@@ -45,26 +45,10 @@ public class VmTurnOffJob extends QuartzJobBean {
         vm.lock();
 
         try {
-            turnOffVm(vm);
+            powerOffVmService.powerOff(vm);
             checkIfPowerOff(vm);
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("VmTurnOffJob job failed", e);
-            throw new JobExecutionException(e);
         } finally {
             vm.unlock();
-        }
-    }
-
-    private void turnOffVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
-        ExecutionContext turnOff = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(turnOff);
-
-        if (!progressCommandsInterpreter.isSuccess(result)) {
-            throw new JobExecutionException(result.getError());
         }
     }
 

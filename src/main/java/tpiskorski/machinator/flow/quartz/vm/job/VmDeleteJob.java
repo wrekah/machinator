@@ -17,6 +17,7 @@ import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
+import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
@@ -33,6 +34,7 @@ public class VmDeleteJob extends QuartzJobBean {
     private final CommandFactory commandFactory;
 
     @Autowired private VirtualMachineService virtualMachineService;
+    @Autowired private PowerOffVmService powerOffVmService;
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private PollExecutor pollExecutor = new PollExecutor();
@@ -83,10 +85,6 @@ public class VmDeleteJob extends QuartzJobBean {
     }
 
     private void powerOffIfRunning(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext turnOff = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
-            .build();
 
         ExecutionContext infoVm = ExecutionContext.builder()
             .executeOn(vm.getServer())
@@ -94,11 +92,7 @@ public class VmDeleteJob extends QuartzJobBean {
             .build();
 
         if (showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING) {
-            CommandResult result = commandExecutor.execute(turnOff);
-
-            if (!progressCommandsInterpreter.isSuccess(result)) {
-                throw new JobExecutionException(result.getError());
-            }
+            powerOffVmService.powerOff(vm);
 
             pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
         }

@@ -1,7 +1,9 @@
 package tpiskorski.machinator.flow.parser;
 
+import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.command.CommandResult;
 
+@Component
 public class ProgressCommandsInterpreter {
 
     public boolean isSuccess(CommandResult commandResult) {

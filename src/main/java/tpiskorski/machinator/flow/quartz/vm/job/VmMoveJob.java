@@ -17,6 +17,7 @@ import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.*;
+import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
@@ -45,8 +46,8 @@ public class VmMoveJob extends QuartzJobBean {
     private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
 
-    @Autowired
-    private StartVmService startVmService;
+    @Autowired private StartVmService startVmService;
+    @Autowired private PowerOffVmService powerOffVmService;
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -166,20 +167,11 @@ public class VmMoveJob extends QuartzJobBean {
             .executeOn(source)
             .build();
 
-        ExecutionContext turnOff = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
-            .executeOn(source)
-            .build();
-
         CommandResult result = commandExecutor.execute(infoVm);
         VmInfo update = showVmInfoParser.parse(result);
 
         if (update.getState() != VirtualMachineState.POWEROFF) {
-            result = commandExecutor.execute(turnOff);
-
-            if (!progressCommandsInterpreter.isSuccess(result)) {
-                throw new JobExecutionException(result.getError());
-            }
+            powerOffVmService.powerOff(vm);
 
             pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
         }
