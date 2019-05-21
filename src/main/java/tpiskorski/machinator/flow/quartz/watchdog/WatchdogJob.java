@@ -19,6 +19,7 @@ import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
 import tpiskorski.machinator.flow.parser.ShowVmInfoUpdate;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
+import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -44,6 +45,8 @@ public class WatchdogJob extends QuartzJobBean {
     private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
     private ScpClient scpClient = new ScpClient();
 
+    @Autowired private StartVmService startVmService;
+
     @Autowired
     public WatchdogJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
         this.commandExecutor = commandExecutor;
@@ -60,7 +63,7 @@ public class WatchdogJob extends QuartzJobBean {
 
         vm.lock();
         try {
-            startVm(vm);
+            startVmService.start(vm);
             boolean isRunning = checkIfRunning(vm);
             if (isRunning) {
                 LOGGER.info("Watchdog successfully restarted vm");
@@ -90,29 +93,19 @@ public class WatchdogJob extends QuartzJobBean {
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
                 importVm(watchdogServer, backupFilePath);
 
-                ExecutionContext startVm = ExecutionContext.builder()
-                    .executeOn(watchdogServer)
-                    .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-                    .build();
-
-                CommandResult result = commandExecutor.execute(startVm);
-
-                if (result.isFailed()) {
-                    throw new JobExecutionException(result.getError());
-                }
+                startVmService.start(vm);
 
                 ExecutionContext deleteVm = ExecutionContext.builder()
                     .executeOn(originalServer)
                     .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
                     .build();
 
-
                 ExecutionContext infoVm = ExecutionContext.builder()
                     .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
                     .executeOn(originalServer)
                     .build();
 
-                result = commandExecutor.execute(deleteVm);
+                CommandResult result = commandExecutor.execute(deleteVm);
                 if (!progressCommandsInterpreter.isSuccess(result)) {
                     ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
                     vm.setState(update.getState());
@@ -124,13 +117,7 @@ public class WatchdogJob extends QuartzJobBean {
                 scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", backupFilePath + ".ova");
                 importVm(watchdogServer, backupFilePath);
 
-                ExecutionContext startVm = ExecutionContext.builder()
-                    .executeOn(watchdogServer)
-                    .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-                    .build();
-
-                CommandResult result = commandExecutor.execute(startVm);
-
+                startVmService.start(vm);
 
                 ExecutionContext cleanup = ExecutionContext.builder()
                     .executeOn(watchdogServer)
@@ -138,19 +125,17 @@ public class WatchdogJob extends QuartzJobBean {
                     .build();
                 CommandResult execute2 = commandExecutor.execute(cleanup);
 
-
                 ExecutionContext deleteVm = ExecutionContext.builder()
                     .executeOn(originalServer)
                     .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
                     .build();
-
 
                 ExecutionContext infoVm = ExecutionContext.builder()
                     .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
                     .executeOn(originalServer)
                     .build();
 
-                result = commandExecutor.execute(deleteVm);
+                CommandResult result = commandExecutor.execute(deleteVm);
                 if (!progressCommandsInterpreter.isSuccess(result)) {
                     ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
                     vm.setState(update.getState());
@@ -177,19 +162,6 @@ public class WatchdogJob extends QuartzJobBean {
             .build();
 
         CommandResult execute = commandExecutor.execute(importVm);
-    }
-
-    private void startVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
-        ExecutionContext startVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(startVm);
-
-        if (result.isFailed()) {
-            throw new JobExecutionException(result.getError());
-        }
     }
 
     private boolean checkIfRunning(VirtualMachine vm) throws JobExecutionException {

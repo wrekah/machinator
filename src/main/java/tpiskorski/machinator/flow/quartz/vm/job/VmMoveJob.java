@@ -17,6 +17,7 @@ import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.*;
+import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -43,6 +44,9 @@ public class VmMoveJob extends QuartzJobBean {
 
     private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
+
+    @Autowired
+    private StartVmService startVmService;
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -83,7 +87,10 @@ public class VmMoveJob extends QuartzJobBean {
 
             copyFromLocalToRemote(destination, backupLocation, tempFileName);
             importVm(destination, tempFileName);
-            startVm(vm, destination);
+
+            vm.setServer(destination);
+            startVmService.start(vm);
+
             deleteVm(vm, source);
             cleanup(destination, tempFilePath);
         } catch (IOException | InterruptedException | JSchException e) {
@@ -107,7 +114,10 @@ public class VmMoveJob extends QuartzJobBean {
             exportVm(vm, source, tempFileName);
             copyFromRemoteToLocal(source, backupLocation, tempFileName);
             importVm(destination, backupLocation.toString() + "/" + tempFileName);
-            startVm(vm, destination);
+
+            startVmService.start(vm);
+            vm.setServer(destination);
+
             cleanup(source, "~/" + tempFileName + ".ova");
         } catch (IOException | InterruptedException | JSchException e) {
             LOGGER.error("Backup job failed", e);
@@ -138,7 +148,8 @@ public class VmMoveJob extends QuartzJobBean {
             copyFromLocalToRemote(destination, backupLocation, tempFileName + ".ova");
 
             importVm(destination, tempFileName);
-            startVm(vm, destination);
+            vm.setServer(destination);
+            startVmService.start(vm);
             deleteVm(vm, source);
             cleanup(destination, "~/" + tempFilePath + ".ova");
         } catch (IOException | InterruptedException | JSchException e) {
@@ -172,20 +183,6 @@ public class VmMoveJob extends QuartzJobBean {
 
             pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
         }
-    }
-
-    private void startVm(VirtualMachine vm, Server destination) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext startVm = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-            .executeOn(destination)
-            .build();
-
-        CommandResult result = commandExecutor.execute(startVm);
-        if (result.isFailed()) {
-            throw new JobExecutionException(result.getError());
-        }
-
-        vm.setServer(destination);
     }
 
     private void exportVm(VirtualMachine vm, Server source, String tempFilePath) throws IOException, InterruptedException, JobExecutionException {

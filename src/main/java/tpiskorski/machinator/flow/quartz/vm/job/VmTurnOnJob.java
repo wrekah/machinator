@@ -10,15 +10,13 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.command.BaseCommand;
 import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
+import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
-
-import java.io.IOException;
 
 @Component
 public class VmTurnOnJob extends QuartzJobBean {
@@ -27,13 +25,16 @@ public class VmTurnOnJob extends QuartzJobBean {
     private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
 
+    private final StartVmService startVmService;
+
     private PollExecutor pollExecutor = new PollExecutor();
     private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
 
     @Autowired
-    public VmTurnOnJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
+    public VmTurnOnJob(CommandExecutor commandExecutor, CommandFactory commandFactory, StartVmService startVmService) {
         this.commandExecutor = commandExecutor;
         this.commandFactory = commandFactory;
+        this.startVmService = startVmService;
     }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -43,26 +44,10 @@ public class VmTurnOnJob extends QuartzJobBean {
 
         vm.lock();
         try {
-            startVm(vm);
+            startVmService.start(vm);
             checkIfRunning(vm);
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("VmTurnOnJob job failed", e);
-            throw new JobExecutionException(e);
         } finally {
             vm.unlock();
-        }
-    }
-
-    private void startVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
-        ExecutionContext startVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.START_VM, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(startVm);
-
-        if (result.isFailed()) {
-            throw new JobExecutionException(result.getError());
         }
     }
 
