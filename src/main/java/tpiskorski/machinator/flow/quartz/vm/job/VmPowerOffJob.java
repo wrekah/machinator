@@ -29,8 +29,9 @@ public class VmPowerOffJob extends QuartzJobBean {
     private final CommandFactory commandFactory;
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
-    private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
     private PollExecutor pollExecutor = new PollExecutor();
+
+    @Autowired private VmInfoService vmInfoService;
 
     @Autowired
     public VmPowerOffJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
@@ -69,12 +70,7 @@ public class VmPowerOffJob extends QuartzJobBean {
     }
 
     private void checkIfPowerOff(VirtualMachine vm) throws JobExecutionException {
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .build();
-
-        pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
+        pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
 
         vm.setState(VirtualMachineState.POWEROFF);
     }

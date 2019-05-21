@@ -19,6 +19,7 @@ import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.*;
 import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.flow.quartz.service.StartVmService;
+import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -40,14 +41,14 @@ public class VmMoveJob extends QuartzJobBean {
 
     private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
-    private ShowVmInfoParser showVmInfoParser = new ShowVmInfoParser();
-    private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
 
     private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired private StartVmService startVmService;
     @Autowired private PowerOffVmService powerOffVmService;
+    @Autowired private VmInfoService vmInfoService;
+
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -162,18 +163,14 @@ public class VmMoveJob extends QuartzJobBean {
     }
 
     private void powerOffIfRunning(Server source, VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .executeOn(source)
-            .build();
 
-        CommandResult result = commandExecutor.execute(infoVm);
-        VmInfo update = showVmInfoParser.parse(result);
 
-        if (update.getState() != VirtualMachineState.POWEROFF) {
+
+
+        if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
             powerOffVmService.powerOff(vm);
 
-            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
+            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
         }
     }
 
@@ -206,11 +203,6 @@ public class VmMoveJob extends QuartzJobBean {
     }
 
     private void deleteVm(VirtualMachine vm, Server source) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .executeOn(source)
-            .build();
-
         ExecutionContext deleteVm = ExecutionContext.builder()
             .executeOn(source)
             .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
@@ -218,8 +210,7 @@ public class VmMoveJob extends QuartzJobBean {
 
         CommandResult result = commandExecutor.execute(deleteVm);
         if (!progressCommandsInterpreter.isSuccess(result)) {
-            VmInfo update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
-            vm.setState(update.getState());
+            vm.setState(vmInfoService.state(vm));
             throw new JobExecutionException(result.getError());
         }
     }

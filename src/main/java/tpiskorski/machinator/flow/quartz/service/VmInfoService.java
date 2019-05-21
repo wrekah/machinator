@@ -12,6 +12,7 @@ import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
 import tpiskorski.machinator.flow.parser.VmInfo;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 @Service
 public class VmInfoService {
@@ -42,5 +43,10 @@ public class VmInfoService {
         LOGGER.debug("Got info on vm {}", vm);
 
         return showVmInfoParser.parse(result);
+    }
+
+    public VirtualMachineState state(VirtualMachine vm) {
+        VmInfo vmInfo = info(vm);
+        return vmInfo.getState();
     }
 }

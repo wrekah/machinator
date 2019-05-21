@@ -18,6 +18,7 @@ import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.parser.ShowVmStateParser;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
 import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
+import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
@@ -35,10 +36,10 @@ public class VmDeleteJob extends QuartzJobBean {
 
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private PowerOffVmService powerOffVmService;
+    @Autowired private VmInfoService vmInfoService;
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private PollExecutor pollExecutor = new PollExecutor();
-    private ShowVmStateParser showVmStateParser = new ShowVmStateParser();
 
     private SimpleVmParser simpleVmParser = new SimpleVmParser();
 
@@ -72,33 +73,22 @@ public class VmDeleteJob extends QuartzJobBean {
             .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
             .build();
 
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .build();
-
         CommandResult result = commandExecutor.execute(deleteVm);
         if (!progressCommandsInterpreter.isSuccess(result)) {
-            vm.setState(showVmStateParser.parse(commandExecutor.execute(infoVm)));
+            vm.setState(vmInfoService.state(vm));
             throw new JobExecutionException(result.getError());
         }
     }
 
     private void powerOffIfRunning(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
-
-        ExecutionContext infoVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.SHOW_VM_INFO, vm.getId()))
-            .build();
-
-        if (showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.RUNNING) {
+        if (vmInfoService.state(vm) == VirtualMachineState.RUNNING) {
             powerOffVmService.powerOff(vm);
 
-            pollExecutor.pollExecute(() -> showVmStateParser.parse(commandExecutor.execute(infoVm)) == VirtualMachineState.POWEROFF);
+            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
         }
     }
 
-    private void checkIfDeleted(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
+    private void checkIfDeleted(VirtualMachine vm) throws JobExecutionException {
         ExecutionContext listVms = ExecutionContext.builder()
             .executeOn(vm.getServer())
             .command(commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId()))
