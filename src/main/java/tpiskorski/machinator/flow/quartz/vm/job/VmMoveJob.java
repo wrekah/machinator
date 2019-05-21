@@ -172,7 +172,7 @@ public class VmMoveJob extends QuartzJobBean {
             .build();
 
         CommandResult result = commandExecutor.execute(infoVm);
-        ShowVmInfoUpdate update = showVmInfoParser.parse(result);
+        VmInfo update = showVmInfoParser.parse(result);
 
         if (update.getState() != VirtualMachineState.POWEROFF) {
             result = commandExecutor.execute(turnOff);
@@ -226,7 +226,7 @@ public class VmMoveJob extends QuartzJobBean {
 
         CommandResult result = commandExecutor.execute(deleteVm);
         if (!progressCommandsInterpreter.isSuccess(result)) {
-            ShowVmInfoUpdate update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
+            VmInfo update = showVmInfoParser.parse(commandExecutor.execute(infoVm));
             vm.setState(update.getState());
             throw new JobExecutionException(result.getError());
         }

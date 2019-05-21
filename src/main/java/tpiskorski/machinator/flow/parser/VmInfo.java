@@ -2,7 +2,7 @@ package tpiskorski.machinator.flow.parser;
 
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
-public class ShowVmInfoUpdate {
+public class VmInfo {
 
     private int cpus;
     private int memory;
