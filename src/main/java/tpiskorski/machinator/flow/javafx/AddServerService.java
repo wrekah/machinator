@@ -2,17 +2,18 @@ package tpiskorski.machinator.flow.javafx;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.flow.command.BaseCommand;
+import tpiskorski.machinator.flow.command.CommandFactory;
+import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
-import tpiskorski.machinator.flow.command.*;
-import tpiskorski.machinator.flow.parser.SimpleVmParser;
+import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.ui.core.PlatformThreadAction;
 import tpiskorski.machinator.ui.core.PlatformThreadUpdater;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -22,13 +23,11 @@ public class AddServerService {
     @Autowired private CommandExecutor commandExecutor;
 
     @Autowired private ServerService serverService;
-    @Autowired private VmDetailsService vmDetailsService;
 
     @Autowired private PlatformThreadUpdater platformThreadUpdater;
+    @Autowired private VmLister vmLister;
 
-    private SimpleVmParser simpleVmParser = new SimpleVmParser();
-
-    public void add(Server server) throws IOException, InterruptedException {
+    public void add(Server server) {
         ExecutionContext isVboxInstalled = ExecutionContext.builder()
             .executeOn(server)
             .command(commandFactory.make(BaseCommand.IS_VBOX_INSTALLED))
@@ -40,22 +39,7 @@ public class AddServerService {
             throw new RuntimeException(result.getError());
         }
 
-        ExecutionContext listAllVms
-            = ExecutionContext.builder()
-            .executeOn(server)
-            .command(commandFactory.make(BaseCommand.LIST_ALL_VMS))
-            .build();
-
-        result = commandExecutor.execute(listAllVms);
-
-        if (result.isFailed()) {
-            throw new RuntimeException(result.getError());
-        }
-
-        List<VirtualMachine> vms = simpleVmParser.parse(result);
-        vms.forEach(virtualMachine -> virtualMachine.setServer(server));
-        vmDetailsService.enrichVms(vms);
-
+        List<VirtualMachine> vms = vmLister.list(server);
         platformThreadUpdater.runLater(addServerAndVmsAction(server, vms));
     }
 

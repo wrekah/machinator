@@ -18,6 +18,7 @@ import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.quartz.service.CleanupService;
 import tpiskorski.machinator.flow.quartz.service.StartVmService;
+import tpiskorski.machinator.flow.quartz.service.VmImporter;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
@@ -27,7 +28,6 @@ import tpiskorski.machinator.model.vm.VirtualMachineState;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 
 public class WatchdogJob extends QuartzJobBean {
@@ -45,6 +45,7 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private StartVmService startVmService;
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
+    @Autowired private VmImporter vmImporter;
 
     @Autowired
     public WatchdogJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -90,7 +91,7 @@ public class WatchdogJob extends QuartzJobBean {
             String backupFilePath = findLatestBackup(watchdog);
 
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
-                importVm(watchdogServer, backupFilePath);
+                vmImporter.importVm(watchdogServer, backupFilePath);
 
                 startVmService.start(vm);
 
@@ -108,7 +109,7 @@ public class WatchdogJob extends QuartzJobBean {
                 RemoteContext remoteContext = RemoteContext.of(watchdogServer);
 
                 scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", backupFilePath + ".ova");
-                importVm(watchdogServer, backupFilePath);
+                vmImporter.importVm(watchdogServer, backupFilePath);
 
                 startVmService.start(vm);
                 cleanupService.cleanup(watchdogServer, "~/" + backupFilePath + ".ova");
@@ -135,15 +136,6 @@ public class WatchdogJob extends QuartzJobBean {
     //todo to implement
     private String findLatestBackup(Watchdog watchdog) {
         return null;
-    }
-
-    private void importVm(Server destination, String tempFileName) throws IOException, InterruptedException {
-        ExecutionContext importVm = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.IMPORT_VM, tempFileName))
-            .executeOn(destination)
-            .build();
-
-        CommandResult execute = commandExecutor.execute(importVm);
     }
 
     private boolean checkIfRunning(VirtualMachine vm) throws JobExecutionException {

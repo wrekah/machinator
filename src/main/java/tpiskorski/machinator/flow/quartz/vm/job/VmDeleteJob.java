@@ -15,10 +15,10 @@ import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.parser.ShowVmStateParser;
 import tpiskorski.machinator.flow.parser.SimpleVmParser;
 import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
@@ -37,6 +37,7 @@ public class VmDeleteJob extends QuartzJobBean {
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private PowerOffVmService powerOffVmService;
     @Autowired private VmInfoService vmInfoService;
+    @Autowired private VmLister vmLister;
 
     private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private PollExecutor pollExecutor = new PollExecutor();
@@ -89,13 +90,7 @@ public class VmDeleteJob extends QuartzJobBean {
     }
 
     private void checkIfDeleted(VirtualMachine vm) throws JobExecutionException {
-        ExecutionContext listVms = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.LIST_ALL_VMS, vm.getId()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(listVms);
-        List<VirtualMachine> vms = simpleVmParser.parse(result);
+        List<VirtualMachine> vms = vmLister.list(vm.getServer());
         if (!vms.contains(vm)) {
             virtualMachineService.remove(vm);
         } else {

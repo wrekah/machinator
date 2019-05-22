@@ -49,6 +49,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
+    @Autowired private VmImporter vmImporter;
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -88,7 +89,7 @@ public class VmMoveJob extends QuartzJobBean {
             exportVmService.exportVm(source, tempFilePath, vm.getVmName());
 
             copyFromLocalToRemote(destination, backupLocation, tempFileName);
-            importVm(destination, tempFileName);
+            vmImporter.importVm(destination, tempFileName);
 
             vm.setServer(destination);
             startVmService.start(vm);
@@ -116,7 +117,7 @@ public class VmMoveJob extends QuartzJobBean {
             exportVmService.exportVm(source, tempFileName, vm.getVmName());
 
             copyFromRemoteToLocal(source, backupLocation, tempFileName);
-            importVm(destination, backupLocation.toString() + "/" + tempFileName);
+            vmImporter.importVm(destination, backupLocation.toString() + "/" + tempFileName);
 
             startVmService.start(vm);
             vm.setServer(destination);
@@ -150,7 +151,8 @@ public class VmMoveJob extends QuartzJobBean {
             copyFromRemoteToLocal(source, backupLocation, tempFileName + ".ova");
             copyFromLocalToRemote(destination, backupLocation, tempFileName + ".ova");
 
-            importVm(destination, tempFileName);
+            vmImporter.importVm(destination, tempFileName);
+
             vm.setServer(destination);
             startVmService.start(vm);
             deleteVm(vm, source);
@@ -194,15 +196,6 @@ public class VmMoveJob extends QuartzJobBean {
             vm.setState(vmInfoService.state(vm));
             throw new JobExecutionException(result.getError());
         }
-    }
-
-    private void importVm(Server destination, String tempFileName) throws IOException, InterruptedException {
-        ExecutionContext importVm = ExecutionContext.builder()
-            .command(commandFactory.makeWithArgs(BaseCommand.IMPORT_VM, tempFileName))
-            .executeOn(destination)
-            .build();
-
-        CommandResult execute = commandExecutor.execute(importVm);
     }
 
     private void exportVm(Server source, VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
