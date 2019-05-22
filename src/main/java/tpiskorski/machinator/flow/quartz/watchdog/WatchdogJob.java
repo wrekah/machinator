@@ -16,6 +16,7 @@ import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
+import tpiskorski.machinator.flow.quartz.service.CleanupService;
 import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
@@ -43,6 +44,7 @@ public class WatchdogJob extends QuartzJobBean {
 
     @Autowired private StartVmService startVmService;
     @Autowired private VmInfoService vmInfoService;
+    @Autowired private CleanupService cleanupService;
 
     @Autowired
     public WatchdogJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -109,12 +111,7 @@ public class WatchdogJob extends QuartzJobBean {
                 importVm(watchdogServer, backupFilePath);
 
                 startVmService.start(vm);
-
-                ExecutionContext cleanup = ExecutionContext.builder()
-                    .executeOn(watchdogServer)
-                    .command(commandFactory.makeWithArgs(BaseCommand.RM_FILES, "~/" + backupFilePath + ".ova"))
-                    .build();
-                CommandResult execute2 = commandExecutor.execute(cleanup);
+                cleanupService.cleanup(watchdogServer, "~/" + backupFilePath + ".ova");
 
                 ExecutionContext deleteVm = ExecutionContext.builder()
                     .executeOn(originalServer)

@@ -16,7 +16,9 @@ import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
-import tpiskorski.machinator.flow.parser.*;
+import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter;
+import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
+import tpiskorski.machinator.flow.quartz.service.CleanupService;
 import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
 import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
@@ -48,7 +50,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private StartVmService startVmService;
     @Autowired private PowerOffVmService powerOffVmService;
     @Autowired private VmInfoService vmInfoService;
-
+    @Autowired private CleanupService cleanupService;
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -164,9 +166,6 @@ public class VmMoveJob extends QuartzJobBean {
 
     private void powerOffIfRunning(Server source, VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
 
-
-
-
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
             powerOffVmService.powerOff(vm);
 
@@ -193,11 +192,7 @@ public class VmMoveJob extends QuartzJobBean {
     }
 
     private void cleanup(Server destination, String tempFilePath) throws IOException, InterruptedException {
-        ExecutionContext cleanup = ExecutionContext.builder()
-            .executeOn(destination)
-            .command(commandFactory.makeWithArgs(BaseCommand.RM_FILES, "~/" + tempFilePath + ".ova"))
-            .build();
-        CommandResult execute2 = commandExecutor.execute(cleanup);
+        cleanupService.cleanup(destination, "~/" + tempFilePath + ".ova");
 
         Files.delete(Paths.get(tempFilePath + ".ova"));
     }

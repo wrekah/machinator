@@ -15,15 +15,17 @@ import tpiskorski.machinator.flow.command.CommandFactory;
 import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
+import tpiskorski.machinator.flow.executor.ExecutionException;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter;
+import tpiskorski.machinator.flow.quartz.service.BackupService;
+import tpiskorski.machinator.flow.quartz.service.CleanupService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.server.ServerType;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,6 +41,9 @@ public class BackupJob extends QuartzJobBean {
 
     private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
     private ScpClient scpClient = new ScpClient();
+
+    @Autowired private BackupService backupService;
+    @Autowired private CleanupService cleanupService;
 
     @Autowired
     public BackupJob(ConfigService configService, CommandExecutor commandExecutor, CommandFactory commandFactory) {
@@ -67,19 +72,12 @@ public class BackupJob extends QuartzJobBean {
         LOGGER.info("Backup completed for {}", backupDefinition.id());
     }
 
-    private void assertBackupLimit(BackupDefinition backupDefinition) throws JobExecutionException {
-        try {
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
-            backupLocation.mkdirs();
+    private void assertBackupLimit(BackupDefinition backupDefinition) {
+        long count = backupService.getBackupCount(backupDefinition);
 
-            long count = Files.list(backupLocation.toPath()).count();
-            if (count >= backupDefinition.getFileLimit()) {
-                LOGGER.error("Backup job failed. File limit exceeded");
-                throw new JobExecutionException("File limit exceeded");
-            }
-        } catch (IOException e) {
-            LOGGER.error("Backup job failed", e);
-            throw new JobExecutionException(e);
+        if (count >= backupDefinition.getFileLimit()) {
+            LOGGER.error("Backup job failed. File limit exceeded");
+            throw new ExecutionException("File limit exceeded");
         }
     }
 
@@ -97,33 +95,23 @@ public class BackupJob extends QuartzJobBean {
         commandExecutor.execute(exportVm);
         scpClient.copyRemoteToLocal(remoteContext, "~/", backupLocation.toString(), backupName + ".ova");
 
-        ExecutionContext cleanup = ExecutionContext.builder()
-            .executeOn(backupDefinition.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.RM_FILES, "~/" + backupName + ".ova"))
-            .build();
-
-        commandExecutor.execute(cleanup);
+        cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
     }
 
     private void doLocalBackup(BackupDefinition backupDefinition) throws JobExecutionException {
-        try {
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
-            String backupName = "backup_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-HH:mm"));
-            String backup = backupLocation + "/" + backupName;
+        File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
+        String backupName = "backup_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-HH:mm"));
+        String backup = backupLocation + "/" + backupName;
 
-            ExecutionContext exportVm = ExecutionContext.builder()
-                .executeOn(backupDefinition.getServer())
-                .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, backup, backupDefinition.getVm().getVmName()))
-                .build();
+        ExecutionContext exportVm = ExecutionContext.builder()
+            .executeOn(backupDefinition.getServer())
+            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, backup, backupDefinition.getVm().getVmName()))
+            .build();
 
-            CommandResult result = commandExecutor.execute(exportVm);
-            if (!exportVmResultInterpreter.isSuccess(result)) {
-                LOGGER.error("Backup job failed");
-                throw new JobExecutionException(result.getError());
-            }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("Backup job failed", e);
-            throw new JobExecutionException(e);
+        CommandResult result = commandExecutor.execute(exportVm);
+        if (!exportVmResultInterpreter.isSuccess(result)) {
+            LOGGER.error("Backup job failed");
+            throw new JobExecutionException(result.getError());
         }
     }
 }
