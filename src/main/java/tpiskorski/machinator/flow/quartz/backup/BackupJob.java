@@ -10,16 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.command.BaseCommand;
-import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.ExecutionException;
 import tpiskorski.machinator.flow.executor.RemoteContext;
-import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter;
 import tpiskorski.machinator.flow.quartz.service.BackupService;
 import tpiskorski.machinator.flow.quartz.service.CleanupService;
+import tpiskorski.machinator.flow.quartz.service.ExportVmService;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.server.ServerType;
@@ -34,22 +29,17 @@ public class BackupJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupJob.class);
 
-    private final CommandExecutor commandExecutor;
-    private final CommandFactory commandFactory;
-
     private final ConfigService configService;
 
-    private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
     private ScpClient scpClient = new ScpClient();
 
     @Autowired private BackupService backupService;
     @Autowired private CleanupService cleanupService;
+    @Autowired private ExportVmService exportVmService;
 
     @Autowired
-    public BackupJob(ConfigService configService, CommandExecutor commandExecutor, CommandFactory commandFactory) {
+    public BackupJob(ConfigService configService) {
         this.configService = configService;
-        this.commandExecutor = commandExecutor;
-        this.commandFactory = commandFactory;
     }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -85,14 +75,9 @@ public class BackupJob extends QuartzJobBean {
         File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
         String backupName = "backup-" + LocalDateTime.now();
 
+        exportVmService.exportVm(backupDefinition.getServer(), "~/" + backupName, backupDefinition.getVm().getVmName());
+
         RemoteContext remoteContext = RemoteContext.of(backupDefinition.getServer());
-
-        ExecutionContext exportVm = ExecutionContext.builder()
-            .executeOn(backupDefinition.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, "~/" + backupName, backupDefinition.getVm().getVmName()))
-            .build();
-
-        commandExecutor.execute(exportVm);
         scpClient.copyRemoteToLocal(remoteContext, "~/", backupLocation.toString(), backupName + ".ova");
 
         cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
@@ -103,15 +88,6 @@ public class BackupJob extends QuartzJobBean {
         String backupName = "backup_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-HH:mm"));
         String backup = backupLocation + "/" + backupName;
 
-        ExecutionContext exportVm = ExecutionContext.builder()
-            .executeOn(backupDefinition.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, backup, backupDefinition.getVm().getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(exportVm);
-        if (!exportVmResultInterpreter.isSuccess(result)) {
-            LOGGER.error("Backup job failed");
-            throw new JobExecutionException(result.getError());
-        }
+        exportVmService.exportVm(backupDefinition.getServer(), backup, backupDefinition.getVm().getVmName());
     }
 }

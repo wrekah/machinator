@@ -18,10 +18,7 @@ import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.quartz.service.CleanupService;
-import tpiskorski.machinator.flow.quartz.service.PowerOffVmService;
-import tpiskorski.machinator.flow.quartz.service.StartVmService;
-import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -51,6 +48,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private PowerOffVmService powerOffVmService;
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
+    @Autowired private ExportVmService exportVmService;
 
     @Autowired
     public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
@@ -87,7 +85,7 @@ public class VmMoveJob extends QuartzJobBean {
             String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
             String tempFilePath = backupLocation + "/" + tempFileName;
 
-            exportVm(vm, source, tempFilePath);
+            exportVmService.exportVm(source, tempFilePath, vm.getVmName());
 
             copyFromLocalToRemote(destination, backupLocation, tempFileName);
             importVm(destination, tempFileName);
@@ -115,7 +113,8 @@ public class VmMoveJob extends QuartzJobBean {
 
             String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
 
-            exportVm(vm, source, tempFileName);
+            exportVmService.exportVm(source, tempFileName, vm.getVmName());
+
             copyFromRemoteToLocal(source, backupLocation, tempFileName);
             importVm(destination, backupLocation.toString() + "/" + tempFileName);
 
@@ -173,19 +172,6 @@ public class VmMoveJob extends QuartzJobBean {
         }
     }
 
-    private void exportVm(VirtualMachine vm, Server source, String tempFilePath) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext exportVm = ExecutionContext.builder()
-            .executeOn(source)
-            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, tempFilePath, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(exportVm);
-        if (!exportVmResultInterpreter.isSuccess(result)) {
-            LOGGER.error("Backup job failed");
-            throw new JobExecutionException(result.getError());
-        }
-    }
-
     private void copyFromLocalToRemote(Server destination, File backupLocation, String tempFileName) throws JSchException, IOException {
         RemoteContext remoteContext = RemoteContext.of(destination);
         scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", tempFileName + ".ova");
@@ -226,15 +212,6 @@ public class VmMoveJob extends QuartzJobBean {
         String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
         String tempFilePath = backupLocation + "/" + tempFileName;
 
-        ExecutionContext exportVm = ExecutionContext.builder()
-            .executeOn(source)
-            .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, tempFilePath, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(exportVm);
-        if (!exportVmResultInterpreter.isSuccess(result)) {
-            LOGGER.error("Backup job failed");
-            throw new JobExecutionException(result.getError());
-        }
+        exportVmService.exportVm(source, tempFilePath, vm.getVmName());
     }
 }
