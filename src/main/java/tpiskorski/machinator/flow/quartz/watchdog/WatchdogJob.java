@@ -8,18 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.command.BaseCommand;
 import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.quartz.service.CleanupService;
-import tpiskorski.machinator.flow.quartz.service.StartVmService;
-import tpiskorski.machinator.flow.quartz.service.VmImporter;
-import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -34,8 +28,6 @@ public class WatchdogJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WatchdogJob.class);
 
-    private final CommandExecutor commandExecutor;
-    private final CommandFactory commandFactory;
     private final ConfigService configService;
 
     private PollExecutor pollExecutor = new PollExecutor();
@@ -46,11 +38,10 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
     @Autowired private VmImporter vmImporter;
+    @Autowired private VmRemover vmRemover;
 
     @Autowired
-    public WatchdogJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
-        this.commandExecutor = commandExecutor;
-        this.commandFactory = commandFactory;
+    public WatchdogJob( ConfigService configService) {
         this.configService = configService;
     }
 
@@ -92,19 +83,8 @@ public class WatchdogJob extends QuartzJobBean {
 
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
                 vmImporter.importVm(watchdogServer, backupFilePath);
-
                 startVmService.start(vm);
-
-                ExecutionContext deleteVm = ExecutionContext.builder()
-                    .executeOn(originalServer)
-                    .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
-                    .build();
-
-                CommandResult result = commandExecutor.execute(deleteVm);
-                if (!progressCommandsInterpreter.isSuccess(result)) {
-                    vm.setState(vmInfoService.state(vm));
-                    throw new JobExecutionException(result.getError());
-                }
+                vmRemover.remove(originalServer, vm.getVmName());
             } else {
                 RemoteContext remoteContext = RemoteContext.of(watchdogServer);
 
@@ -114,16 +94,7 @@ public class WatchdogJob extends QuartzJobBean {
                 startVmService.start(vm);
                 cleanupService.cleanup(watchdogServer, "~/" + backupFilePath + ".ova");
 
-                ExecutionContext deleteVm = ExecutionContext.builder()
-                    .executeOn(originalServer)
-                    .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
-                    .build();
-
-                CommandResult result = commandExecutor.execute(deleteVm);
-                if (!progressCommandsInterpreter.isSuccess(result)) {
-                    vm.setState(vmInfoService.state(vm));
-                    throw new JobExecutionException(result.getError());
-                }
+                vmRemover.remove(originalServer, vm.getVmName());
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);

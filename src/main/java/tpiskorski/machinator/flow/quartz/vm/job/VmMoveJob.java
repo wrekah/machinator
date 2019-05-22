@@ -9,15 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.command.BaseCommand;
-import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
-import tpiskorski.machinator.flow.parser.ExportVmResultInterpreter;
-import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
 import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
@@ -34,12 +27,7 @@ public class VmMoveJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmMoveJob.class);
 
-    private final CommandExecutor commandExecutor;
-    private final CommandFactory commandFactory;
     private final ConfigService configService;
-
-    private ExportVmResultInterpreter exportVmResultInterpreter = new ExportVmResultInterpreter();
-    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
 
     private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
@@ -50,11 +38,10 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
     @Autowired private VmImporter vmImporter;
+    @Autowired private VmRemover vmRemover;
 
     @Autowired
-    public VmMoveJob(CommandExecutor commandExecutor, CommandFactory commandFactory, ConfigService configService) {
-        this.commandExecutor = commandExecutor;
-        this.commandFactory = commandFactory;
+    public VmMoveJob(ConfigService configService) {
         this.configService = configService;
     }
 
@@ -93,8 +80,8 @@ public class VmMoveJob extends QuartzJobBean {
 
             vm.setServer(destination);
             startVmService.start(vm);
+            vmRemover.remove(source, vm.getVmName());
 
-            deleteVm(vm, source);
             cleanup(destination, tempFilePath);
         } catch (IOException | InterruptedException | JSchException e) {
             LOGGER.error("Backup job failed", e);
@@ -155,7 +142,7 @@ public class VmMoveJob extends QuartzJobBean {
 
             vm.setServer(destination);
             startVmService.start(vm);
-            deleteVm(vm, source);
+            vmRemover.remove(source, vm.getVmName());
             cleanup(destination, "~/" + tempFilePath + ".ova");
         } catch (IOException | InterruptedException | JSchException e) {
             LOGGER.error("Backup job failed", e);
@@ -183,19 +170,6 @@ public class VmMoveJob extends QuartzJobBean {
         cleanupService.cleanup(destination, "~/" + tempFilePath + ".ova");
 
         Files.delete(Paths.get(tempFilePath + ".ova"));
-    }
-
-    private void deleteVm(VirtualMachine vm, Server source) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext deleteVm = ExecutionContext.builder()
-            .executeOn(source)
-            .command(commandFactory.makeWithArgs(BaseCommand.DELETE_VM, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(deleteVm);
-        if (!progressCommandsInterpreter.isSuccess(result)) {
-            vm.setState(vmInfoService.state(vm));
-            throw new JobExecutionException(result.getError());
-        }
     }
 
     private void exportVm(Server source, VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
