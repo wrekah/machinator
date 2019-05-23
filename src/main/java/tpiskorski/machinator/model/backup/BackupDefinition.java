@@ -99,4 +99,8 @@ public class BackupDefinition {
     public String id() {
         return server.getAddress() + "-" + vm.getVmName();
     }
+
+    @Override public String toString() {
+        return String.format("backup_definition[%s at %s]", getVm(), getServer());
+    }
 }

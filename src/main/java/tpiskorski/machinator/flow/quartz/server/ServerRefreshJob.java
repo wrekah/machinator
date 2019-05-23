@@ -14,6 +14,8 @@ import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.ui.core.PlatformThreadAction;
+import tpiskorski.machinator.ui.core.PlatformThreadUpdater;
 
 import java.util.List;
 
@@ -26,6 +28,8 @@ public class ServerRefreshJob extends QuartzJobBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
 
     @Autowired private VmLister vmLister;
+    @Autowired private PlatformThreadUpdater platformThreadUpdater;
+
     private ServerService serverService;
 
     @Autowired
@@ -34,19 +38,24 @@ public class ServerRefreshJob extends QuartzJobBean {
     }
 
     @Override protected void executeInternal(JobExecutionContext jobExecutionContext) {
-        LOGGER.info("Servers refresh started...");
+        LOGGER.debug("Servers refresh started...");
         try {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
             for (Server server : serversView) {
                 LOGGER.info("Server refresh {}", server.getAddress());
                 List<VirtualMachine> vms = vmLister.list(server);
-
-                serverService.refresh(server, vms);
+                platformThreadUpdater.runLater(refresh(server, vms));
             }
         } catch (Exception e) {
             LOGGER.error("Server refresh error", e);
         }
-        LOGGER.info("Servers refresh finished...");
+        LOGGER.debug("Servers refresh finished...");
+    }
+
+    PlatformThreadAction refresh(Server server, List<VirtualMachine> vms) {
+        return () -> {
+            serverService.refresh(server, vms);
+        };
     }
 }

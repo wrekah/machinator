@@ -36,6 +36,15 @@ public class BackupService {
         }
     }
 
+    public void assertBackupCount(BackupDefinition backupDefinition) {
+        long count = getBackupCount(backupDefinition);
+
+        if (count >= backupDefinition.getFileLimit()) {
+            LOGGER.error("Backup job failed. File limit exceeded");
+            throw new ExecutionException("File limit exceeded");
+        }
+    }
+
     private File buildBackupLocation(BackupDefinition backupDefinition) {
         return new File(configService.getConfig().getBackupLocation() + "/" + backupDefinition.getServer().getAddress() + "/" + backupDefinition.getVm().getVmName());
     }

@@ -1,6 +1,6 @@
 package tpiskorski.machinator.flow.executor.poll;
 
-import org.quartz.JobExecutionException;
+import tpiskorski.machinator.flow.executor.ExecutionException;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +10,7 @@ public class PollExecutor {
     private static final int MAX_TRIES = 10;
     private static final int TRY_INTERVAL_IN_SECONDS = 1;
 
-    public void pollExecute(PollCommand pollCommand) throws JobExecutionException {
+    public void pollExecute(PollCommand pollCommand) {
         try {
             int tries = 0;
             boolean result = false;
@@ -20,10 +20,10 @@ public class PollExecutor {
                 tries++;
             }
             if (!result) {
-                throw new JobExecutionException("Poll command failed after max tries");
+                throw new ExecutionException("Poll command failed after max tries");
             }
         } catch (InterruptedException | IOException e) {
-            throw new JobExecutionException(e);
+            throw new ExecutionException(e);
         }
     }
 }

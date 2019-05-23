@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
-import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.quartz.service.*;
+import tpiskorski.machinator.flow.quartz.service.CleanupService;
+import tpiskorski.machinator.flow.quartz.service.VmImporter;
+import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.VmManipulator;
 import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -31,17 +31,15 @@ public class WatchdogJob extends QuartzJobBean {
     private final ConfigService configService;
 
     private PollExecutor pollExecutor = new PollExecutor();
-    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private ScpClient scpClient = new ScpClient();
 
-    @Autowired private StartVmService startVmService;
+    @Autowired private VmManipulator vmManipulator;
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
     @Autowired private VmImporter vmImporter;
-    @Autowired private VmRemover vmRemover;
 
     @Autowired
-    public WatchdogJob( ConfigService configService) {
+    public WatchdogJob(ConfigService configService) {
         this.configService = configService;
     }
 
@@ -54,7 +52,7 @@ public class WatchdogJob extends QuartzJobBean {
 
         vm.lock();
         try {
-            startVmService.start(vm);
+            vmManipulator.start(vm);
             boolean isRunning = checkIfRunning(vm);
             if (isRunning) {
                 LOGGER.info("Watchdog successfully restarted vm");
@@ -83,18 +81,18 @@ public class WatchdogJob extends QuartzJobBean {
 
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
                 vmImporter.importVm(watchdogServer, backupFilePath);
-                startVmService.start(vm);
-                vmRemover.remove(originalServer, vm.getVmName());
+                vmManipulator.start(vm);
+                vmManipulator.remove(originalServer, vm.getVmName());
             } else {
                 RemoteContext remoteContext = RemoteContext.of(watchdogServer);
 
                 scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", backupFilePath + ".ova");
                 vmImporter.importVm(watchdogServer, backupFilePath);
 
-                startVmService.start(vm);
+                vmManipulator.start(vm);
                 cleanupService.cleanup(watchdogServer, "~/" + backupFilePath + ".ova");
 
-                vmRemover.remove(originalServer, vm.getVmName());
+                vmManipulator.remove(originalServer, vm.getVmName());
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);

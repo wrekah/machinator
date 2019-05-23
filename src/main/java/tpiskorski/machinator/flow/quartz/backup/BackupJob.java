@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.executor.ExecutionException;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.quartz.service.BackupService;
 import tpiskorski.machinator.flow.quartz.service.CleanupService;
@@ -47,7 +46,7 @@ public class BackupJob extends QuartzJobBean {
         BackupDefinition backupDefinition = (BackupDefinition) mergedJobDataMap.get("backupDefinition");
         LOGGER.info("Backup started for {}", backupDefinition.id());
 
-        assertBackupLimit(backupDefinition);
+        backupService.assertBackupCount(backupDefinition);
 
         try {
             if (backupDefinition.getServer().getServerType() == ServerType.LOCAL) {
@@ -60,15 +59,6 @@ public class BackupJob extends QuartzJobBean {
         }
 
         LOGGER.info("Backup completed for {}", backupDefinition.id());
-    }
-
-    private void assertBackupLimit(BackupDefinition backupDefinition) {
-        long count = backupService.getBackupCount(backupDefinition);
-
-        if (count >= backupDefinition.getFileLimit()) {
-            LOGGER.error("Backup job failed. File limit exceeded");
-            throw new ExecutionException("File limit exceeded");
-        }
     }
 
     private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException, InterruptedException {

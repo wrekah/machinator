@@ -143,6 +143,6 @@ public class VirtualMachine {
 
     @Override
     public String toString() {
-        return getVmName();
+        return String.format("vm[%s at %s]", getVmName(), getServer());
     }
 }

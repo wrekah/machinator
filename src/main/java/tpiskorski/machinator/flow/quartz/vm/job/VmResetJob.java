@@ -8,61 +8,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.command.BaseCommand;
-import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
-import tpiskorski.machinator.flow.parser.VmResetResultInterpreter;
+import tpiskorski.machinator.flow.quartz.service.VmManipulator;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
-import java.io.IOException;
-
 @Component
 public class VmResetJob extends QuartzJobBean {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VmResetJob.class);
 
-    private final CommandExecutor commandExecutor;
-    private final CommandFactory commandFactory;
-
-    private VmResetResultInterpreter vmResetResultInterpreter = new VmResetResultInterpreter();
+    private final VmManipulator vmManipulator;
 
     @Autowired
-    public VmResetJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
-        this.commandExecutor = commandExecutor;
-        this.commandFactory = commandFactory;
+    public VmResetJob(VmManipulator vmManipulator) {
+        this.vmManipulator = vmManipulator;
     }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
-        LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
+
+        LOGGER.info("Started vm reset job for {}", vm);
 
         vm.lock();
         try {
-            resetVm(vm);
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("VmResetJob job failed", e);
-            throw new JobExecutionException(e);
+            vmManipulator.resetVm(vm);
+            vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
         } finally {
             vm.unlock();
         }
-    }
 
-    private void resetVm(VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
-        ExecutionContext resetVm = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(resetVm);
-
-        if (vmResetResultInterpreter.isSuccess(result)) {
-            vm.setState(VirtualMachineState.RUNNING_RECENTLY_RESET);
-        } else {
-            vm.setState(VirtualMachineState.POWEROFF);
-            throw new JobExecutionException(result.getError());
-        }
+        LOGGER.info("Finished vm reset job for {}", vm);
     }
 }

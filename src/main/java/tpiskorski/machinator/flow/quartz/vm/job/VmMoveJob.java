@@ -32,13 +32,11 @@ public class VmMoveJob extends QuartzJobBean {
     private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
 
-    @Autowired private StartVmService startVmService;
-    @Autowired private PowerOffVmService powerOffVmService;
+    @Autowired private VmManipulator vmManipulator;
     @Autowired private VmInfoService vmInfoService;
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
     @Autowired private VmImporter vmImporter;
-    @Autowired private VmRemover vmRemover;
 
     @Autowired
     public VmMoveJob(ConfigService configService) {
@@ -79,8 +77,8 @@ public class VmMoveJob extends QuartzJobBean {
             vmImporter.importVm(destination, tempFileName);
 
             vm.setServer(destination);
-            startVmService.start(vm);
-            vmRemover.remove(source, vm.getVmName());
+            vmManipulator.start(vm);
+            vmManipulator.remove(source, vm.getVmName());
 
             cleanup(destination, tempFilePath);
         } catch (IOException | InterruptedException | JSchException e) {
@@ -106,7 +104,7 @@ public class VmMoveJob extends QuartzJobBean {
             copyFromRemoteToLocal(source, backupLocation, tempFileName);
             vmImporter.importVm(destination, backupLocation.toString() + "/" + tempFileName);
 
-            startVmService.start(vm);
+            vmManipulator.start(vm);
             vm.setServer(destination);
 
             cleanup(source, "~/" + tempFileName + ".ova");
@@ -141,8 +139,8 @@ public class VmMoveJob extends QuartzJobBean {
             vmImporter.importVm(destination, tempFileName);
 
             vm.setServer(destination);
-            startVmService.start(vm);
-            vmRemover.remove(source, vm.getVmName());
+            vmManipulator.start(vm);
+            vmManipulator.remove(source, vm.getVmName());
             cleanup(destination, "~/" + tempFilePath + ".ova");
         } catch (IOException | InterruptedException | JSchException e) {
             LOGGER.error("Backup job failed", e);
@@ -155,7 +153,7 @@ public class VmMoveJob extends QuartzJobBean {
     private void powerOffIfRunning(Server source, VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
 
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
-            powerOffVmService.powerOff(vm);
+            vmManipulator.turnoff(vm);
 
             pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
         }

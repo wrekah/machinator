@@ -9,38 +9,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
-import tpiskorski.machinator.flow.quartz.service.StartVmService;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.VmManipulator;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 @Component
 public class VmTurnOnJob extends QuartzJobBean {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VmTurnOnJob.class);
 
-    private final StartVmService startVmService;
+    private final VmManipulator vmManipulator;
     private final VmInfoService vmInfoService;
 
     private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired
-    public VmTurnOnJob(StartVmService startVmService, VmInfoService vmInfoService) {
-        this.startVmService = startVmService;
+    public VmTurnOnJob(VmManipulator vmManipulator, VmInfoService vmInfoService) {
+        this.vmManipulator = vmManipulator;
         this.vmInfoService = vmInfoService;
     }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
-        LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
+
+        LOGGER.info("Started vm turn on job for {}", vm);
 
         vm.lock();
         try {
-            startVmService.start(vm);
+            vmManipulator.start(vm);
             pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.RUNNING);
             vm.setState(VirtualMachineState.RUNNING);
         } finally {
             vm.unlock();
         }
+
+        LOGGER.info("Finished vm turn on job for {}", vm);
     }
 }

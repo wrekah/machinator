@@ -8,70 +8,43 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.command.BaseCommand;
-import tpiskorski.machinator.flow.command.CommandFactory;
-import tpiskorski.machinator.flow.command.CommandResult;
-import tpiskorski.machinator.flow.executor.CommandExecutor;
-import tpiskorski.machinator.flow.executor.ExecutionContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
-import tpiskorski.machinator.flow.parser.ProgressCommandsInterpreter;
-import tpiskorski.machinator.flow.parser.ShowVmStateParser;
+import tpiskorski.machinator.flow.quartz.service.VmInfoService;
+import tpiskorski.machinator.flow.quartz.service.VmManipulator;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
-import java.io.IOException;
-
 @Component
 public class VmPowerOffJob extends QuartzJobBean {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VmPowerOffJob.class);
 
-    private final CommandExecutor commandExecutor;
-    private final CommandFactory commandFactory;
+    private final VmInfoService vmInfoService;
+    private final VmManipulator vmManipulator;
 
-    private ProgressCommandsInterpreter progressCommandsInterpreter = new ProgressCommandsInterpreter();
     private PollExecutor pollExecutor = new PollExecutor();
 
-    @Autowired private VmInfoService vmInfoService;
-
     @Autowired
-    public VmPowerOffJob(CommandExecutor commandExecutor, CommandFactory commandFactory) {
-        this.commandExecutor = commandExecutor;
-        this.commandFactory = commandFactory;
+    public VmPowerOffJob(VmInfoService vmInfoService, VmManipulator vmManipulator) {
+        this.vmInfoService = vmInfoService;
+        this.vmManipulator = vmManipulator;
     }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
-        LOGGER.info("Started for {}-{}", vm.getServerAddress(), vm.getVmName());
+
+        LOGGER.info("Started vm power off job for {}", vm);
 
         vm.lock();
         try {
-            powerOffVm(vm);
-            checkIfPowerOff(vm);
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("VmPowerOffJob job failed", e);
-            throw new JobExecutionException(e);
+            vmManipulator.powerOff(vm);
+            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vm.setState(VirtualMachineState.POWEROFF);
         } finally {
             vm.unlock();
         }
-    }
 
-    private void powerOffVm(VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
-        ExecutionContext powerOff = ExecutionContext.builder()
-            .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.POWER_OFF_VM, vm.getVmName()))
-            .build();
-
-        CommandResult result = commandExecutor.execute(powerOff);
-
-        if (!progressCommandsInterpreter.isSuccess(result)) {
-            throw new JobExecutionException(result.getError());
-        }
-    }
-
-    private void checkIfPowerOff(VirtualMachine vm) throws JobExecutionException {
-        pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
-
-        vm.setState(VirtualMachineState.POWEROFF);
+        LOGGER.info("Finished vm power off job for {}", vm);
     }
 }
