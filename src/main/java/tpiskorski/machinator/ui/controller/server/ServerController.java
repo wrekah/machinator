@@ -5,15 +5,19 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.model.server.Server;
@@ -25,6 +29,7 @@ import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.List;
 
 @Controller
 public class ServerController {
@@ -47,6 +52,7 @@ public class ServerController {
     public void initialize() throws IOException {
         setupInputBindings();
 
+        serverList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         serverList.setCellFactory(serverCellFactory);
         removeServerButton.disableProperty().bind(Bindings.isEmpty(serverList.getSelectionModel().getSelectedItems()));
 
@@ -117,8 +123,15 @@ public class ServerController {
         );
 
         if (confirmed) {
-            Server serverToRemove = serverList.getSelectionModel().getSelectedItem();
-            serverService.remove(serverToRemove);
+            List<Server> servers = serverList.getSelectionModel().getSelectedItems();
+            servers.forEach(serverService::remove);
+
+            Notifications.create()
+                .position(Pos.TOP_RIGHT)
+                .hideAfter(Duration.seconds(3))
+                .title("Machinator")
+                .text(String.format("Removed %s server(s)", servers.size()))
+                .show();
         }
     }
 

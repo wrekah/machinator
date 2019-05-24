@@ -62,7 +62,7 @@ public class VmMoveJob extends QuartzJobBean {
     private void moveFromLocalToRemote(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
         vm.lock();
         try {
-            powerOffIfRunning(source, vm);
+            powerOffIfRunning(vm);
             exportVm(source, vm);
 
             File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
@@ -92,7 +92,7 @@ public class VmMoveJob extends QuartzJobBean {
     private void moveFromRemoteToLocal(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
         vm.lock();
         try {
-            powerOffIfRunning(source, vm);
+            powerOffIfRunning(vm);
 
             File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
             backupLocation.mkdirs();
@@ -124,7 +124,7 @@ public class VmMoveJob extends QuartzJobBean {
     private void moveBetweenRemotes(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
         vm.lock();
         try {
-            powerOffIfRunning(source, vm);
+            powerOffIfRunning(vm);
 
             File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
             backupLocation.mkdirs();
@@ -150,8 +150,7 @@ public class VmMoveJob extends QuartzJobBean {
         }
     }
 
-    private void powerOffIfRunning(Server source, VirtualMachine vm) throws IOException, InterruptedException, JobExecutionException {
-
+    private void powerOffIfRunning(VirtualMachine vm) {
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
             vmManipulator.turnoff(vm);
 

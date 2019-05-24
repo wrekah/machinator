@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.config.ConfigService;
+import tpiskorski.machinator.flow.executor.ExecutionException;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.CleanupService;
@@ -64,7 +65,7 @@ public class WatchdogJob extends QuartzJobBean {
             Server watchdogServer = watchdog.getWatchdogServer();
             if (watchdogServer == null) {
                 LOGGER.warn("No backup server is defined");
-                throw new JobExecutionException("No backup server is defined");
+                throw new ExecutionException("No backup server is defined");
             }
 
             Server originalServer = watchdog.getVirtualMachine().getServer();
@@ -74,7 +75,7 @@ public class WatchdogJob extends QuartzJobBean {
             long count = Files.list(backupLocation.toPath()).count();
             if (count == 0) {
                 LOGGER.error("No backups found for given vm");
-                throw new JobExecutionException("No backups found for given vm");
+                throw new ExecutionException("No backups found for given vm");
             }
 
             String backupFilePath = findLatestBackup(watchdog);
