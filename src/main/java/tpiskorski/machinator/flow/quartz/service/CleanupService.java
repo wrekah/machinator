@@ -26,7 +26,7 @@ public class CleanupService {
     }
 
     public void cleanup(Server server, String filePath) throws ExecutionException {
-        LOGGER.debug("Started cleanup of {} on {}", filePath, server);
+        LOGGER.info("Started cleanup of {} on {}", filePath, server);
 
         ExecutionContext cleanup = ExecutionContext.builder()
             .executeOn(server)
@@ -35,6 +35,6 @@ public class CleanupService {
 
         commandExecutor.execute(cleanup);
 
-        LOGGER.debug("Finished cleanup of {} on {}", filePath, server);
+        LOGGER.info("Finished cleanup of {} on {}", filePath, server);
     }
 }

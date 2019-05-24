@@ -2,7 +2,6 @@ package tpiskorski.machinator.flow.quartz.vm.job;
 
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class VmResetJob extends QuartzJobBean {
         this.vmManipulator = vmManipulator;
     }
 
-    @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    @Override protected void executeInternal(JobExecutionContext context) {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         VirtualMachine vm = (VirtualMachine) mergedJobDataMap.get("vm");
 

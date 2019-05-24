@@ -1,6 +1,5 @@
 package tpiskorski.machinator.flow.quartz.service;
 
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -101,7 +100,7 @@ public class VmManipulator {
         }
     }
 
-    public void resetVm(VirtualMachine vm) throws JobExecutionException {
+    public void resetVm(VirtualMachine vm) {
         ExecutionContext resetVm = ExecutionContext.builder()
             .executeOn(vm.getServer())
             .command(commandFactory.makeWithArgs(BaseCommand.RESET_VM, vm.getVmName()))
