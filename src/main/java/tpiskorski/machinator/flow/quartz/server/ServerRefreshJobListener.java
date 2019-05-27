@@ -34,7 +34,7 @@ public class ServerRefreshJobListener implements JobListener {
 
     @Override public void jobToBeExecuted(JobExecutionContext context) {
         if (isServerRefreshJob(context)) {
-            LOGGER.info("Server refresh job is scheduled for execution {}", context.getJobDetail());
+            LOGGER.debug("Server refresh job is scheduled for execution {}", context.getJobDetail());
         }
     }
 

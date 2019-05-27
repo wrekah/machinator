@@ -57,6 +57,7 @@ public class BackupJob extends QuartzJobBean {
         exportVmService.exportVm(backupDefinition.getServer(), "~/" + backupName, backupDefinition.getVm().getVmName());
 
         RemoteContext remoteContext = RemoteContext.of(backupDefinition.getServer());
+        LOGGER.info("Backup to be put into dir {}", backupLocation);
         scpClient.copyRemoteToLocal(remoteContext, "~/", backupLocation, backupName + ".ova");
 
         cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
@@ -65,6 +66,7 @@ public class BackupJob extends QuartzJobBean {
     private void doLocalBackup(BackupDefinition backupDefinition) throws JobExecutionException {
         String backupPath = backupService.getBackupPath(backupDefinition);
 
+        LOGGER.info("Backup to be put into dir {}", backupPath);
         exportVmService.exportVm(backupDefinition.getServer(), backupPath, backupDefinition.getVm().getVmName());
     }
 }
