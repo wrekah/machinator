@@ -11,8 +11,6 @@ import tpiskorski.machinator.model.backup.BackupDefinition;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class BackupService {
@@ -54,10 +52,11 @@ public class BackupService {
     }
 
     public String getBackupPath(BackupDefinition backupDefinition) {
-        return getBackupLocation(backupDefinition) + "/" + getBackupName();
+        return getBackupLocation(backupDefinition) + "/" + getNextBackupName(backupDefinition);
     }
 
-    public String getBackupName() {
-        return "backup_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM-dd-HH:mm"));
+    public String getNextBackupName(BackupDefinition backupDefinition) {
+        long count = getBackupCount(backupDefinition);
+        return "backup_" + (count + 1);
     }
 }

@@ -52,7 +52,7 @@ public class BackupJob extends QuartzJobBean {
 
     private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException, InterruptedException {
         String backupLocation = backupService.getBackupLocation(backupDefinition).toString();
-        String backupName = backupService.getBackupName();
+        String backupName = backupService.getNextBackupName(backupDefinition);
 
         exportVmService.exportVm(backupDefinition.getServer(), "~/" + backupName, backupDefinition.getVm().getVmName());
 
