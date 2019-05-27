@@ -30,7 +30,7 @@ public class ServerRefreshJob extends QuartzJobBean {
     @Autowired private VmLister vmLister;
     @Autowired private PlatformThreadUpdater platformThreadUpdater;
 
-    private ServerService serverService;
+    private final ServerService serverService;
 
     @Autowired
     public ServerRefreshJob(@Lazy ServerService serverService) {
@@ -43,7 +43,7 @@ public class ServerRefreshJob extends QuartzJobBean {
             ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
 
             for (Server server : serversView) {
-                LOGGER.info("Server refresh {}", server.getAddress());
+                LOGGER.debug("Server refresh {}", server.getAddress());
                 List<VirtualMachine> vms = vmLister.list(server);
                 platformThreadUpdater.runLater(refresh(server, vms));
             }
@@ -53,9 +53,7 @@ public class ServerRefreshJob extends QuartzJobBean {
         LOGGER.debug("Servers refresh finished...");
     }
 
-    PlatformThreadAction refresh(Server server, List<VirtualMachine> vms) {
-        return () -> {
-            serverService.refresh(server, vms);
-        };
+    private PlatformThreadAction refresh(Server server, List<VirtualMachine> vms) {
+        return () -> serverService.refresh(server, vms);
     }
 }

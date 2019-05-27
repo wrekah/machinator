@@ -4,6 +4,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.JobListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.model.job.Job;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 
 @Component
 public class ServerRefreshJobListener implements JobListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJobListener.class);
 
     private static final String LISTENER_NAME = "ServerRefreshListener";
 
@@ -30,36 +34,41 @@ public class ServerRefreshJobListener implements JobListener {
 
     @Override public void jobToBeExecuted(JobExecutionContext context) {
         if (isServerRefreshJob(context)) {
-            JobKey key = context.getJobDetail().getKey();
-            Job job = new Job(key.getName());
-
-            job.setJobType(JobType.SERVER_REFRESH);
-            job.setDescription("Regular server refresh");
-            job.setStatus(JobStatus.IN_PROGRESS);
-            job.setStartTime(LocalDateTime.now());
-
-            jobService.add(job);
+            LOGGER.info("Server refresh job is scheduled for execution {}", context.getJobDetail());
         }
     }
 
     @Override public void jobExecutionVetoed(JobExecutionContext context) {
         if (isServerRefreshJob(context)) {
-            Job job = jobService.getLastServerRefreshJob();
-            job.setStatus(JobStatus.CANCELLED);
+            LOGGER.warn("Server refresh job was vetoed {}", context.getJobDetail());
         }
     }
 
     @Override public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
         if (isServerRefreshJob(context)) {
-            Job job = jobService.getLastServerRefreshJob();
-            job.setEndTime(LocalDateTime.now());
-            if (jobException == null) {
-                job.setStatus(JobStatus.COMPLETED);
-            } else {
-                job.setStatus(JobStatus.FAILED);
-                job.setErrorCause(jobException.getMessage());
+            if (jobException != null) {
+                LOGGER.error("Server refresh job failed  {}", context.getJobDetail());
+
+                Job job = createJob(context, jobException);
+                jobService.add(job);
             }
         }
+    }
+
+    private Job createJob(JobExecutionContext context, JobExecutionException jobException) {
+        JobKey key = context.getJobDetail().getKey();
+        Job job = new Job(key.getName());
+
+        job.setJobType(JobType.SERVER_REFRESH);
+        job.setDescription("Regular server refresh");
+
+        LocalDateTime now = LocalDateTime.now();
+        job.setStartTime(now);
+        job.setEndTime(now);
+
+        job.setStatus(JobStatus.FAILED);
+        job.setErrorCause(jobException.getMessage());
+        return job;
     }
 
     private boolean isServerRefreshJob(JobExecutionContext context) {
