@@ -11,7 +11,7 @@ class SerializableWatchdogTest extends Specification {
     def 'should create serializable watchdog from watchdog and convert it back'() {
         given:
         def server = new Server(new Credentials('user', 'password'), 'other', '321')
-        def vm = new VirtualMachine(new Server('some', '123'), 'id1')
+        def vm = new VirtualMachine(new Server(new Credentials('user', 'password'),'some', '123'), 'id1')
         def watchdog = new Watchdog(vm, server)
 
         when:

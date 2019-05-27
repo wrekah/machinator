@@ -15,4 +15,26 @@ class CredentialsTest extends Specification {
         credentials.user == user
         credentials.password == password
     }
+
+    def 'should be equal'() {
+        given:
+        def user = 'user'
+        def password = 'password'
+
+        def first = new Credentials(user, password)
+        def second = new Credentials(user, password)
+
+        expect:
+        first == second
+        first.hashCode() == second.hashCode()
+    }
+
+    def 'should be not equal'() {
+        given:
+        def first = new Credentials('user', 'pw')
+        def second = new Credentials('other user', 'pw')
+
+        expect:
+        first != second
+    }
 }

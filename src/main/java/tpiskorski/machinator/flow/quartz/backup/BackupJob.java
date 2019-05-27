@@ -43,14 +43,14 @@ public class BackupJob extends QuartzJobBean {
             } else {
                 doRemoteBackup(backupDefinition);
             }
-        } catch (JSchException | IOException | InterruptedException e) {
+        } catch (JSchException | IOException e) {
             throw new JobExecutionException(e);
         }
 
         LOGGER.info("Backup completed for {}", backupDefinition.id());
     }
 
-    private void doRemoteBackup(BackupDefinition backupDefinition) throws JobExecutionException, JSchException, IOException, InterruptedException {
+    private void doRemoteBackup(BackupDefinition backupDefinition) throws JSchException, IOException {
         String backupLocation = backupService.getBackupLocation(backupDefinition).toString();
         String backupName = backupService.getNextBackupName(backupDefinition);
 
@@ -63,7 +63,7 @@ public class BackupJob extends QuartzJobBean {
         cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
     }
 
-    private void doLocalBackup(BackupDefinition backupDefinition) throws JobExecutionException {
+    private void doLocalBackup(BackupDefinition backupDefinition) {
         String backupPath = backupService.getBackupPath(backupDefinition);
 
         LOGGER.info("Backup to be put into dir {}", backupPath);
