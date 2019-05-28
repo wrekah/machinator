@@ -2,7 +2,6 @@ package tpiskorski.machinator.config;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ public abstract class ConfigService {
 
     private final List<PropertyChangeListener> listeners = new ArrayList<>();
     protected Config config;
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         listeners.add(listener);
@@ -29,12 +27,8 @@ public abstract class ConfigService {
         config = loadConfig();
     }
 
-    public Config getConfig() {
-        if (config == null) {
-            config = loadConfig();
-            return config;
-        } else {
-            return config;
-        }
+    public synchronized Config getConfig() {
+        config = loadConfig();
+        return config;
     }
 }

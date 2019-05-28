@@ -35,6 +35,7 @@ public class ExternalDefaultingConfigService extends ConfigService {
     }
 
     @Override public void modifyConfig(Config newConfig) {
+        firePropertyChange("configChange", config, newConfig);
         externalConfigLoader.saveConfig(newConfig);
     }
 }
