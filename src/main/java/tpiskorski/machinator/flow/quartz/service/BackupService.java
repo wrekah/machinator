@@ -37,6 +37,24 @@ public class BackupService {
         }
     }
 
+    public long getBackupCount(VirtualMachine vm) {
+        try {
+            File location = getBackupLocation(vm);
+            location.mkdirs();
+
+            return Files.list(location.toPath()).count();
+        } catch (IOException e) {
+            LOGGER.error("Backup job failed", e);
+            throw new ExecutionException(e);
+        }
+    }
+
+    private File getBackupLocation(VirtualMachine vm) {
+        return new File(configService.getConfig().getBackupLocation() + "/"
+            + vm.getServer().getAddress() + "/"
+            + vm.getVmName());
+    }
+
     public void assertBackupCount(BackupDefinition backupDefinition) {
         long count = getBackupCount(backupDefinition);
 
@@ -69,5 +87,9 @@ public class BackupService {
     public String getTemporaryFilePath(VirtualMachine vm) {
         String vmName = vm.getVmName();
         return "~/temp_" + vmName + ".ova";
+    }
+
+    public String findLatestBackup(VirtualMachine vm) {
+        return null;
     }
 }

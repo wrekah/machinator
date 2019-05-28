@@ -17,9 +17,6 @@ import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 
-import java.io.File;
-import java.nio.file.Files;
-
 public class WatchdogJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WatchdogJob.class);
@@ -33,6 +30,7 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private CleanupService cleanupService;
     @Autowired private VmImporter vmImporter;
     @Autowired private CopyService copyService;
+    @Autowired private BackupService backupService;
 
     @Autowired
     public WatchdogJob(ConfigService configService) {
@@ -64,29 +62,32 @@ public class WatchdogJob extends QuartzJobBean {
             }
 
             Server originalServer = watchdog.getVirtualMachine().getServer();
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/" + originalServer.getAddress() + "/" + watchdog.getVirtualMachine().getVmName());
-            backupLocation.mkdirs();
 
-            long count = Files.list(backupLocation.toPath()).count();
-            if (count == 0) {
+            long backupCount = backupService.getBackupCount(vm);
+            if (backupCount == 0) {
                 LOGGER.error("No backups found for given vm");
                 throw new ExecutionException("No backups found for given vm");
             }
 
-            String backupFilePath = findLatestBackup(watchdog);
+            String latestBackupFilePath = backupService.findLatestBackup(vm);
 
             if (watchdogServer.getServerType() == ServerType.LOCAL) {
-                vmImporter.importVm(watchdogServer, backupFilePath);
+                vmImporter.importVm(watchdogServer, latestBackupFilePath);
                 vmManipulator.start(vm);
                 vmManipulator.remove(originalServer, vm.getVmName());
+                vm.setServer(watchdogServer);
             } else {
-                copyService.copyLocalToRemote(watchdogServer, backupLocation.toString(), backupFilePath + ".ova");
-                vmImporter.importVm(watchdogServer, backupFilePath);
+                String temporaryFilePath = backupService.getTemporaryFilePath(vm);
+
+                copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, temporaryFilePath);
+
+                vmImporter.importVm(watchdogServer, temporaryFilePath);
 
                 vmManipulator.start(vm);
-                cleanupService.cleanup(watchdogServer, "~/" + backupFilePath + ".ova");
+                cleanupService.cleanup(watchdogServer, temporaryFilePath);
 
                 vmManipulator.remove(originalServer, vm.getVmName());
+                vm.setServer(watchdogServer);
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);
@@ -94,11 +95,6 @@ public class WatchdogJob extends QuartzJobBean {
         } finally {
             vm.unlock();
         }
-    }
-
-    //todo to implement
-    private String findLatestBackup(Watchdog watchdog) {
-        return null;
     }
 
     private boolean checkIfRunning(VirtualMachine vm) throws JobExecutionException {
