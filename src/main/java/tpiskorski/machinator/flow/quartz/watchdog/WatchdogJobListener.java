@@ -53,7 +53,8 @@ public class WatchdogJobListener implements JobListener {
                 job.setStatus(JobStatus.COMPLETED);
             } else {
                 job.setStatus(JobStatus.FAILED);
-                job.setErrorCause(jobException.getMessage());
+                String unwrappedMessage = ((SchedulerException) jobException.getCause()).getUnderlyingException().getMessage();
+                job.setErrorCause(unwrappedMessage);
             }
         }
     }

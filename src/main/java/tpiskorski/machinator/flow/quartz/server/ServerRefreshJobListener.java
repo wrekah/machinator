@@ -1,9 +1,6 @@
 package tpiskorski.machinator.flow.quartz.server;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.JobListener;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +64,9 @@ public class ServerRefreshJobListener implements JobListener {
         job.setEndTime(now);
 
         job.setStatus(JobStatus.FAILED);
-        job.setErrorCause(jobException.getMessage());
+        String unwrappedMessage = ((SchedulerException) jobException.getCause()).getUnderlyingException().getMessage();
+        job.setErrorCause(unwrappedMessage);
+
         return job;
     }
 

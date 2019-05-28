@@ -1,16 +1,13 @@
 package tpiskorski.machinator.flow.quartz.vm;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.JobListener;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.flow.quartz.vm.job.*;
 import tpiskorski.machinator.model.job.Job;
 import tpiskorski.machinator.model.job.JobService;
 import tpiskorski.machinator.model.job.JobStatus;
 import tpiskorski.machinator.model.job.JobType;
-import tpiskorski.machinator.flow.quartz.vm.job.*;
 
 import java.time.LocalDateTime;
 
@@ -59,7 +56,8 @@ public class VmActionJobListener implements JobListener {
                 job.setStatus(JobStatus.COMPLETED);
             } else {
                 job.setStatus(JobStatus.FAILED);
-                job.setErrorCause(jobException.getMessage());
+                String unwrappedMessage = ((SchedulerException) jobException.getCause()).getUnderlyingException().getMessage();
+                job.setErrorCause(unwrappedMessage);
             }
         }
     }
