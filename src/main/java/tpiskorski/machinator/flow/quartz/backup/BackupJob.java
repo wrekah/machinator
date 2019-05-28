@@ -9,11 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.quartz.service.BackupService;
 import tpiskorski.machinator.flow.quartz.service.CleanupService;
+import tpiskorski.machinator.flow.quartz.service.CopyService;
 import tpiskorski.machinator.flow.quartz.service.ExportVmService;
-import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.server.ServerType;
 
@@ -24,11 +23,10 @@ public class BackupJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupJob.class);
 
-    private ScpClient scpClient = new ScpClient();
-
     @Autowired private BackupService backupService;
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
+    @Autowired private CopyService copyService;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -56,9 +54,8 @@ public class BackupJob extends QuartzJobBean {
 
         exportVmService.exportVm(backupDefinition.getServer(), "~/" + backupName, backupDefinition.getVm().getVmName());
 
-        RemoteContext remoteContext = RemoteContext.of(backupDefinition.getServer());
         LOGGER.info("Backup to be put into dir {}", backupLocation);
-        scpClient.copyRemoteToLocal(remoteContext, "~/", backupLocation, backupName + ".ova");
+        copyService.copyRemoteToLocal(backupDefinition.getServer(), "~/", backupLocation, backupName + ".ova");
 
         cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
     }

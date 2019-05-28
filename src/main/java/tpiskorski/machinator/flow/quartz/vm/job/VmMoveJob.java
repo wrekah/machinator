@@ -9,10 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import tpiskorski.machinator.config.ConfigService;
-import tpiskorski.machinator.flow.executor.RemoteContext;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.*;
-import tpiskorski.machinator.flow.ssh.ScpClient;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
@@ -29,7 +27,6 @@ public class VmMoveJob extends QuartzJobBean {
 
     private final ConfigService configService;
 
-    private ScpClient scpClient = new ScpClient();
     private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired private VmManipulator vmManipulator;
@@ -37,6 +34,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
     @Autowired private VmImporter vmImporter;
+    @Autowired private CopyService copyService;
 
     @Autowired
     public VmMoveJob(ConfigService configService) {
@@ -117,8 +115,7 @@ public class VmMoveJob extends QuartzJobBean {
     }
 
     private void copyFromRemoteToLocal(Server source, File backupLocation, String tempFileName) throws JSchException, IOException {
-        RemoteContext remoteContext = RemoteContext.of(source);
-        scpClient.copyRemoteToLocal(remoteContext, "~", backupLocation.toString(), tempFileName + ".ova");
+        copyService.copyRemoteToLocal(source, "~", backupLocation.toString(), tempFileName + ".ova");
     }
 
     private void moveBetweenRemotes(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
@@ -159,8 +156,7 @@ public class VmMoveJob extends QuartzJobBean {
     }
 
     private void copyFromLocalToRemote(Server destination, File backupLocation, String tempFileName) throws JSchException, IOException {
-        RemoteContext remoteContext = RemoteContext.of(destination);
-        scpClient.copyLocalToRemote(remoteContext, backupLocation.toString(), "~", tempFileName + ".ova");
+        copyService.copyLocalToRemote(destination, backupLocation.toString(), tempFileName + ".ova");
     }
 
     private void cleanup(Server destination, String tempFilePath) throws IOException, InterruptedException {
