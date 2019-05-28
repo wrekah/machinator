@@ -6,12 +6,14 @@ public class Config {
     private String backupLocation;
     private String sshUser;
     private String sshPassword;
+    private boolean notifications;
 
     private Config(Builder builder) {
         this.pollInterval = builder.pollInterval;
         this.backupLocation = builder.backupLocation;
         this.sshUser = builder.sshUser;
         this.sshPassword = builder.sshPassword;
+        this.notifications = builder.notifications;
     }
 
     public static Builder builder() {
@@ -24,7 +26,12 @@ public class Config {
             .backupLocation("/dev/null")
             .sshUser("root")
             .sshPassword("root")
+            .notifications(false)
             .build();
+    }
+
+    public boolean areNotificationsEnabled() {
+        return notifications;
     }
 
     public int getPollInterval() {
@@ -49,9 +56,15 @@ public class Config {
         private String backupLocation;
         private String sshUser;
         private String sshPassword;
+        private boolean notifications;
 
         public Builder pollInterval(int pollInterval) {
             this.pollInterval = pollInterval;
+            return this;
+        }
+
+        public Builder notifications(boolean notifications) {
+            this.notifications = notifications;
             return this;
         }
 

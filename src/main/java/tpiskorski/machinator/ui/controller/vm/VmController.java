@@ -19,6 +19,7 @@ import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
+import tpiskorski.machinator.ui.control.NotificationFactory;
 import tpiskorski.machinator.ui.control.VirtualMachineRowFactory;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class VmController {
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private VirtualMachineRowFactory virtualMachineRowFactory;
     @Autowired private VmActionScheduler vmActionScheduler;
+    @Autowired private NotificationFactory notificationFactory;
 
     @FXML private TableView<VirtualMachine> virtualMachines;
 
@@ -92,12 +94,7 @@ public class VmController {
             List<VirtualMachine> selectedVm = virtualMachines.getSelectionModel().getSelectedItems();
             selectedVm.forEach(vmActionScheduler::scheduleTurnOn);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Scheduled %s vm(s) for turn on", selectedVm.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for turn on", selectedVm.size()));
         }
     }
 
@@ -112,12 +109,7 @@ public class VmController {
             List<VirtualMachine> selectedVm = virtualMachines.getSelectionModel().getSelectedItems();
             selectedVm.forEach(vmActionScheduler::scheduleTurnOff);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Scheduled %s vm(s) for turn off", selectedVm.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for turn off", selectedVm.size()));
         }
     }
 
@@ -132,12 +124,7 @@ public class VmController {
             List<VirtualMachine> selectedVm = virtualMachines.getSelectionModel().getSelectedItems();
             selectedVm.forEach(vmActionScheduler::schedulePowerOff);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Scheduled %s vm(s) for power off", selectedVm.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for power off", selectedVm.size()));
         }
     }
 
@@ -152,12 +139,7 @@ public class VmController {
             List<VirtualMachine> selectedVm = virtualMachines.getSelectionModel().getSelectedItems();
             selectedVm.forEach(vmActionScheduler::scheduleReset);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Scheduled %s vm(s) for reset", selectedVm.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for reset", selectedVm.size()));
         }
     }
 
@@ -172,12 +154,7 @@ public class VmController {
             List<VirtualMachine> selectedVm = virtualMachines.getSelectionModel().getSelectedItems();
             selectedVm.forEach(vmActionScheduler::scheduleDelete);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Scheduled %s vm(s) for delete", selectedVm.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for delete", selectedVm.size()));
         }
     }
 }

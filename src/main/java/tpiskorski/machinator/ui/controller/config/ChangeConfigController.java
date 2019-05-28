@@ -1,5 +1,6 @@
 package tpiskorski.machinator.ui.controller.config;
 
+import javafx.scene.control.CheckBox;
 import tpiskorski.machinator.config.Config;
 import tpiskorski.machinator.config.ConfigService;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ public class ChangeConfigController {
     @FXML private TextField backupLocation;
     @FXML private TextField sshUser;
     @FXML private TextField sshPassword;
+    @FXML private CheckBox notificationCheckbox;
 
     @Autowired public ChangeConfigController(ConfigService configService) {
         this.configService = configService;
@@ -31,6 +33,7 @@ public class ChangeConfigController {
         backupLocation.setText(config.getBackupLocation());
         sshUser.setText(config.getSshUser());
         sshPassword.setText(config.getSshPassword());
+        notificationCheckbox.setSelected(config.areNotificationsEnabled());
     }
 
     public void saveConfig() {
@@ -39,6 +42,7 @@ public class ChangeConfigController {
             .pollInterval(Integer.parseInt(pollInterval.getText()))
             .sshUser(sshUser.getText())
             .sshPassword(sshPassword.getText())
+            .notifications(notificationCheckbox.isSelected())
             .build();
 
         configService.modifyConfig(newConfig);

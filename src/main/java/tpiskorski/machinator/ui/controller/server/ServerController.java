@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
+import tpiskorski.machinator.ui.control.NotificationFactory;
 import tpiskorski.machinator.ui.control.ServerCellFactory;
 import tpiskorski.machinator.ui.controller.vm.VmController;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
@@ -44,6 +45,7 @@ public class ServerController {
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
     @Autowired private VmController vmController;
     @Autowired private AddServerController addServerController;
+    @Autowired private NotificationFactory notificationFactory;
 
     private Stage addServerStage;
     private Stage jobsStage;
@@ -126,12 +128,7 @@ public class ServerController {
             List<Server> servers = serverList.getSelectionModel().getSelectedItems();
             servers.forEach(serverService::remove);
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
-                .hideAfter(Duration.seconds(3))
-                .title("Machinator")
-                .text(String.format("Removed %s server(s)", servers.size()))
-                .show();
+            notificationFactory.createAndShow(String.format("Removed %s server(s)", servers.size()));
         }
     }
 
