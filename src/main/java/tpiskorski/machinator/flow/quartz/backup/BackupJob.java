@@ -14,7 +14,9 @@ import tpiskorski.machinator.flow.quartz.service.CleanupService;
 import tpiskorski.machinator.flow.quartz.service.CopyService;
 import tpiskorski.machinator.flow.quartz.service.ExportVmService;
 import tpiskorski.machinator.model.backup.BackupDefinition;
+import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
+import tpiskorski.machinator.model.vm.VirtualMachine;
 
 import java.io.IOException;
 
@@ -48,22 +50,28 @@ public class BackupJob extends QuartzJobBean {
         LOGGER.info("Backup completed for {}", backupDefinition.id());
     }
 
-    private void doRemoteBackup(BackupDefinition backupDefinition) throws JSchException, IOException {
-        String backupLocation = backupService.getBackupLocation(backupDefinition).toString();
-        String backupName = backupService.getNextBackupName(backupDefinition);
-
-        exportVmService.exportVm(backupDefinition.getServer(), "~/" + backupName, backupDefinition.getVm().getVmName());
-
-        LOGGER.info("Backup to be put into dir {}", backupLocation);
-        copyService.copyRemoteToLocal(backupDefinition.getServer(), "~/", backupLocation, backupName + ".ova");
-
-        cleanupService.cleanup(backupDefinition.getServer(), "~/" + backupName + ".ova");
-    }
-
     private void doLocalBackup(BackupDefinition backupDefinition) {
         String backupPath = backupService.getBackupPath(backupDefinition);
 
         LOGGER.info("Backup to be put into dir {}", backupPath);
-        exportVmService.exportVm(backupDefinition.getServer(), backupPath, backupDefinition.getVm().getVmName());
+
+        Server server = backupDefinition.getServer();
+        VirtualMachine vm = backupDefinition.getVm();
+
+        exportVmService.exportVm(server, backupPath, vm.getVmName());
+    }
+
+    private void doRemoteBackup(BackupDefinition backupDefinition) throws JSchException, IOException {
+        Server server = backupDefinition.getServer();
+        VirtualMachine vm = backupDefinition.getVm();
+
+        String temporaryFilePath = backupService.getTemporaryFilePath(backupDefinition);
+        exportVmService.exportVm(server, temporaryFilePath, vm.getVmName());
+
+        String backupPath = backupService.getBackupPath(backupDefinition);
+        LOGGER.info("Backup to be put into dir {}", backupPath);
+        copyService.copyRemoteToLocal(server, temporaryFilePath, backupPath);
+
+        cleanupService.cleanup(server, temporaryFilePath);
     }
 }

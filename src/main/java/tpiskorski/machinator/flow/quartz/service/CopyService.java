@@ -13,10 +13,10 @@ public class CopyService {
 
     private ScpClient scpClient = new ScpClient();
 
-    public void copyRemoteToLocal(Server server, String s, String backupLocation, String backupName) throws IOException, JSchException {
+    public void copyRemoteToLocal(Server server, String from, String to) throws IOException, JSchException {
         RemoteContext remoteContext = RemoteContext.of(server);
 
-        scpClient.copyRemoteToLocal(remoteContext, "~/", backupLocation, backupName + ".ova");
+        scpClient.copyRemoteToLocal(remoteContext, from, to);
     }
 
     public void copyLocalToRemote(Server server, String backupLocation, String tempFileNAme) throws IOException, JSchException {

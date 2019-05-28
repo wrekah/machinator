@@ -1,7 +1,6 @@
 package tpiskorski.machinator.flow.ssh;
 
 import com.jcraft.jsch.*;
-import tpiskorski.machinator.flow.ssh.PasswordOnlyUserInfo;
 import tpiskorski.machinator.flow.executor.RemoteContext;
 
 import java.io.*;
@@ -24,10 +23,10 @@ public class ScpClient {
         return session;
     }
 
-    public void copyRemoteToLocal(RemoteContext remoteContext, String from, String to, String file) throws JSchException, IOException {
+    public void copyRemoteToLocal(RemoteContext remoteContext, String from, String to) throws JSchException, IOException {
         Session session = prepareSession(remoteContext);
         session.connect();
-        copyRemoteToLocal(session, from, to, file);
+        copyRemoteToLocal(session, from, to);
     }
 
     public void copyLocalToRemote(RemoteContext remoteContext, String from, String to, String file) throws JSchException, IOException {
@@ -115,8 +114,7 @@ public class ScpClient {
         session.disconnect();
     }
 
-    private void copyRemoteToLocal(Session session, String from, String to, String fileName) throws JSchException, IOException {
-        from = from + File.separator + fileName;
+    private void copyRemoteToLocal(Session session, String from, String to) throws JSchException, IOException {
         String prefix = null;
 
         if (new File(to).isDirectory()) {
@@ -212,7 +210,7 @@ public class ScpClient {
         session.disconnect();
     }
 
-     private int checkAck(InputStream in) throws IOException {
+    private int checkAck(InputStream in) throws IOException {
         int b = in.read();
         // b may be 0 for success,
         //          1 for error,

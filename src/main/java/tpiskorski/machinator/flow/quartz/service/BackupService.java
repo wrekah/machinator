@@ -57,6 +57,11 @@ public class BackupService {
 
     public String getNextBackupName(BackupDefinition backupDefinition) {
         long count = getBackupCount(backupDefinition);
-        return "backup_" + (count + 1);
+        return "backup_" + (count + 1) + ".ova";
+    }
+
+    public String getTemporaryFilePath(BackupDefinition backupDefinition) {
+        String vmName = backupDefinition.getVm().getVmName();
+        return "~/temp_" + vmName + ".ova";
     }
 }
