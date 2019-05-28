@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.server.Server;
@@ -16,16 +15,11 @@ import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class VmMoveJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmMoveJob.class);
-
-    private final ConfigService configService;
 
     private PollExecutor pollExecutor = new PollExecutor();
 
@@ -35,11 +29,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private ExportVmService exportVmService;
     @Autowired private VmImporter vmImporter;
     @Autowired private CopyService copyService;
-
-    @Autowired
-    public VmMoveJob(ConfigService configService) {
-        this.configService = configService;
-    }
+    @Autowired private BackupService backupService;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -57,29 +47,24 @@ public class VmMoveJob extends QuartzJobBean {
         }
     }
 
-    private void moveFromLocalToRemote(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
+    private void moveFromLocalToRemote(VirtualMachine vm, Server local, Server remote) throws JobExecutionException {
         vm.lock();
         try {
             powerOffIfRunning(vm);
-            exportVm(source, vm);
 
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
-            backupLocation.mkdirs();
+            String temporaryFilePath = backupService.getTemporaryFilePath(vm);
+            exportVmService.exportVm(local, temporaryFilePath, vm.getVmName());
+            copyService.copyLocalToRemote(remote, temporaryFilePath, temporaryFilePath);
+            vmImporter.importVm(remote, temporaryFilePath);
 
-            String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
-            String tempFilePath = backupLocation + "/" + tempFileName;
+            vmManipulator.remove(local, vm.getVmName());
 
-            exportVmService.exportVm(source, tempFilePath, vm.getVmName());
-
-            copyFromLocalToRemote(destination, backupLocation, tempFileName);
-            vmImporter.importVm(destination, tempFileName);
-
-            vm.setServer(destination);
+            vm.setServer(remote);
             vmManipulator.start(vm);
-            vmManipulator.remove(source, vm.getVmName());
 
-            cleanup(destination, tempFilePath);
-        } catch (IOException | InterruptedException | JSchException e) {
+            cleanupService.cleanup(remote, temporaryFilePath);
+            cleanupService.cleanup(local, temporaryFilePath);
+        } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);
         } finally {
@@ -87,26 +72,24 @@ public class VmMoveJob extends QuartzJobBean {
         }
     }
 
-    private void moveFromRemoteToLocal(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
+    private void moveFromRemoteToLocal(VirtualMachine vm, Server remote, Server local) throws JobExecutionException {
         vm.lock();
         try {
             powerOffIfRunning(vm);
 
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
-            backupLocation.mkdirs();
+            String temporaryFilePath = backupService.getTemporaryFilePath(vm);
+            exportVmService.exportVm(remote, temporaryFilePath, vm.getVmName());
+            copyService.copyRemoteToLocal(remote, temporaryFilePath, temporaryFilePath);
+            vmImporter.importVm(local, temporaryFilePath);
 
-            String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
+            vmManipulator.remove(remote, vm.getVmName());
 
-            exportVmService.exportVm(source, tempFileName, vm.getVmName());
-
-            copyFromRemoteToLocal(source, backupLocation, tempFileName);
-            vmImporter.importVm(destination, backupLocation.toString() + "/" + tempFileName);
-
+            vm.setServer(local);
             vmManipulator.start(vm);
-            vm.setServer(destination);
 
-            cleanup(source, "~/" + tempFileName + ".ova");
-        } catch (IOException | InterruptedException | JSchException e) {
+            cleanupService.cleanup(remote, temporaryFilePath);
+            cleanupService.cleanup(local, temporaryFilePath);
+        } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);
         } finally {
@@ -114,32 +97,27 @@ public class VmMoveJob extends QuartzJobBean {
         }
     }
 
-    private void copyFromRemoteToLocal(Server source, File backupLocation, String tempFileName) throws JSchException, IOException {
-        copyService.copyRemoteToLocal(source, "~", backupLocation.toString(), tempFileName + ".ova");
-    }
-
-    private void moveBetweenRemotes(VirtualMachine vm, Server source, Server destination) throws JobExecutionException {
+    private void moveBetweenRemotes(VirtualMachine vm, Server fromRemote, Server toRemote) throws JobExecutionException {
         vm.lock();
         try {
             powerOffIfRunning(vm);
 
-            File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
-            backupLocation.mkdirs();
+            String temporaryFilePath = backupService.getTemporaryFilePath(vm);
 
-            String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
-            String tempFilePath = "~" + "/" + tempFileName;
+            exportVmService.exportVm(fromRemote, temporaryFilePath, vm.getVmName());
+            copyService.copyRemoteToLocal(fromRemote, temporaryFilePath, temporaryFilePath);
 
-            exportVm(source, vm);
-            copyFromRemoteToLocal(source, backupLocation, tempFileName + ".ova");
-            copyFromLocalToRemote(destination, backupLocation, tempFileName + ".ova");
+            copyService.copyLocalToRemote(toRemote, temporaryFilePath, temporaryFilePath);
+            vmImporter.importVm(toRemote, temporaryFilePath);
 
-            vmImporter.importVm(destination, tempFileName);
-
-            vm.setServer(destination);
+            vm.setServer(toRemote);
             vmManipulator.start(vm);
-            vmManipulator.remove(source, vm.getVmName());
-            cleanup(destination, "~/" + tempFilePath + ".ova");
-        } catch (IOException | InterruptedException | JSchException e) {
+            vmManipulator.remove(fromRemote, vm.getVmName());
+
+            cleanupService.cleanup(fromRemote, temporaryFilePath);
+            cleanupService.cleanup(Server.local(), temporaryFilePath);
+            cleanupService.cleanup(toRemote, temporaryFilePath);
+        } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);
         } finally {
@@ -153,25 +131,5 @@ public class VmMoveJob extends QuartzJobBean {
 
             pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
         }
-    }
-
-    private void copyFromLocalToRemote(Server destination, File backupLocation, String tempFileName) throws JSchException, IOException {
-        copyService.copyLocalToRemote(destination, backupLocation.toString(), tempFileName + ".ova");
-    }
-
-    private void cleanup(Server destination, String tempFilePath) throws IOException, InterruptedException {
-        cleanupService.cleanup(destination, "~/" + tempFilePath + ".ova");
-
-        Files.delete(Paths.get(tempFilePath + ".ova"));
-    }
-
-    private void exportVm(Server source, VirtualMachine vm) throws JobExecutionException, IOException, InterruptedException {
-        File backupLocation = new File(configService.getConfig().getBackupLocation() + "/tmp");
-        backupLocation.mkdirs();
-
-        String tempFileName = "temp_" + vm.getServerAddress() + "_" + vm.getVmName();
-        String tempFilePath = backupLocation + "/" + tempFileName;
-
-        exportVmService.exportVm(source, tempFilePath, vm.getVmName());
     }
 }

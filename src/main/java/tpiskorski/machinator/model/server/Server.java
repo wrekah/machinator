@@ -35,6 +35,10 @@ public class Server {
         }
     }
 
+    public static Server local() {
+        return new Server("local", "");
+    }
+
     static Callback<Server, Observable[]> extractor() {
         return (Server server) -> new Observable[]{server.serverStateProperty()};
     }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.flow.executor.ExecutionException;
 import tpiskorski.machinator.model.backup.BackupDefinition;
+import tpiskorski.machinator.model.vm.VirtualMachine;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +63,11 @@ public class BackupService {
 
     public String getTemporaryFilePath(BackupDefinition backupDefinition) {
         String vmName = backupDefinition.getVm().getVmName();
+        return "~/temp_" + vmName + ".ova";
+    }
+
+    public String getTemporaryFilePath(VirtualMachine vm) {
+        String vmName = vm.getVmName();
         return "~/temp_" + vmName + ".ova";
     }
 }
