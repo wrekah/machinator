@@ -22,6 +22,6 @@ public class CopyService {
     public void copyLocalToRemote(Server server, String backupLocation, String tempFileNAme) throws IOException, JSchException {
         RemoteContext remoteContext = RemoteContext.of(server);
 
-        scpClient.copyLocalToRemote(remoteContext, backupLocation, "~", tempFileNAme);
+        scpClient.copyLocalToRemote(remoteContext, backupLocation,  tempFileNAme);
     }
 }

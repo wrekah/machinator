@@ -29,15 +29,14 @@ public class ScpClient {
         copyRemoteToLocal(session, from, to);
     }
 
-    public void copyLocalToRemote(RemoteContext remoteContext, String from, String to, String file) throws JSchException, IOException {
+    public void copyLocalToRemote(RemoteContext remoteContext, String from, String to) throws JSchException, IOException {
         Session session = prepareSession(remoteContext);
         session.connect();
-        copyLocalToRemote(session, from, to, file);
+        copyLocalToRemote(session, from, to);
     }
 
-    private void copyLocalToRemote(Session session, String from, String to, String fileName) throws JSchException, IOException {
+    private void copyLocalToRemote(Session session, String from, String to) throws JSchException, IOException {
         boolean ptimestamp = true;
-        from = from + File.separator + fileName;
 
         // exec 'scp -t rfile' remotely
         String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + to;

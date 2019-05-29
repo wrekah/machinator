@@ -5,8 +5,8 @@ public enum BaseCommand {
     IS_VBOX_INSTALLED("VBoxManage --version"),
     SHOW_VM_INFO("VBoxManage showvminfo --machinereadable \"%s\""),
 
-    EXPORT_VM("VBoxManage export --ovf20 --output \"%s.ova\" \"%s\""),
-    IMPORT_VM("VBoxManage import %s.ova"),
+    EXPORT_VM("VBoxManage export --ovf20 --output \"%s\" \"%s\""),
+    IMPORT_VM("VBoxManage import \"%s\""),
     DELETE_VM("VBoxManage unregistervm --delete \"%s\""),
 
     START_VM("VBoxManage startvm --type headless \"%s\""),
