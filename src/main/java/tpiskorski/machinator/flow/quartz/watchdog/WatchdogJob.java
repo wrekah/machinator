@@ -77,14 +77,14 @@ public class WatchdogJob extends QuartzJobBean {
                 vmManipulator.remove(originalServer, vm.getVmName());
                 vm.setServer(watchdogServer);
             } else {
-                String temporaryFilePath = backupService.getTemporaryFilePath(vm);
+                String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
 
-                copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, temporaryFilePath);
+                copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
 
-                vmImporter.importVm(watchdogServer, temporaryFilePath);
+                vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
 
                 vmManipulator.start(vm);
-                cleanupService.cleanup(watchdogServer, temporaryFilePath);
+                cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
 
                 vmManipulator.remove(originalServer, vm.getVmName());
                 vm.setServer(watchdogServer);

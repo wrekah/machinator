@@ -79,17 +79,18 @@ public class BackupService {
         return "backup_" + (count + 1) + ".ova";
     }
 
-    public String getTemporaryFilePath(BackupDefinition backupDefinition) {
-        String vmName = backupDefinition.getVm().getVmName();
-        return "~/temp_" + vmName + ".ova";
-    }
-
-    public String getTemporaryFilePath(VirtualMachine vm) {
+    public String getRemoteTemporaryFilePath(VirtualMachine vm) {
         String vmName = vm.getVmName();
         return "~/temp_" + vmName + ".ova";
     }
 
+    public String getLocalTemporaryFilePath(VirtualMachine vm) {
+        String vmName = vm.getVmName();
+        return System.getProperty("user.home") + File.separator + "temp_" + vmName + ".ova";
+    }
+
     public String findLatestBackup(VirtualMachine vm) {
+        //todo implement
         return null;
     }
 }

@@ -65,13 +65,13 @@ public class BackupJob extends QuartzJobBean {
         Server server = backupDefinition.getServer();
         VirtualMachine vm = backupDefinition.getVm();
 
-        String temporaryFilePath = backupService.getTemporaryFilePath(backupDefinition);
-        exportVmService.exportVm(server, temporaryFilePath, vm.getVmName());
+        String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
+        exportVmService.exportVm(server, remoteTemporaryFilePath, vm.getVmName());
 
         String backupPath = backupService.getBackupPath(backupDefinition);
         LOGGER.info("Backup to be put into dir {}", backupPath);
-        copyService.copyRemoteToLocal(server, temporaryFilePath, backupPath);
+        copyService.copyRemoteToLocal(server, remoteTemporaryFilePath, backupPath);
 
-        cleanupService.cleanup(server, temporaryFilePath);
+        cleanupService.cleanup(server, remoteTemporaryFilePath);
     }
 }
