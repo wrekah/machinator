@@ -18,7 +18,7 @@ public class VirtualMachine {
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
     private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
-
+    private VirtualMachineType type;
     private Lock lock = new ReentrantLock();
 
     public VirtualMachine() {
@@ -32,6 +32,14 @@ public class VirtualMachine {
 
     static Callback<VirtualMachine, Observable[]> extractor() {
         return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty()};
+    }
+
+    public VirtualMachineType getType() {
+        return type;
+    }
+
+    public void setType(VirtualMachineType type) {
+        this.type = type;
     }
 
     public void lock() {

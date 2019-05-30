@@ -13,7 +13,9 @@ import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
+import tpiskorski.machinator.model.vm.VirtualMachineType;
 
 import java.io.IOException;
 
@@ -30,6 +32,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private VmImporter vmImporter;
     @Autowired private CopyService copyService;
     @Autowired private BackupService backupService;
+    @Autowired private VirtualMachineService virtualMachineService;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -38,6 +41,16 @@ public class VmMoveJob extends QuartzJobBean {
         Server source = vm.getServer();
         Server destination = (Server) mergedJobDataMap.get("destination");
 
+        VirtualMachine placeholder = new VirtualMachine();
+        placeholder.setServer(destination);
+        placeholder.setVmName(vm.getVmName());
+        placeholder.setCpuCores(vm.getCpuCores());
+        placeholder.setRamMemory(vm.getRamMemory());
+        placeholder.setType(VirtualMachineType.PLACEHOLDER);
+        virtualMachineService.add(placeholder);
+
+        placeholder.lock();
+
         if (source.getServerType() == ServerType.LOCAL && destination.getServerType() == ServerType.REMOTE) {
             moveFromLocalToRemote(vm, source, destination);
         } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.LOCAL) {
@@ -45,6 +58,8 @@ public class VmMoveJob extends QuartzJobBean {
         } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.REMOTE) {
             moveBetweenRemotes(vm, source, destination);
         }
+
+        placeholder.unlock();
     }
 
     private void moveFromLocalToRemote(VirtualMachine vm, Server local, Server remote) throws JobExecutionException {

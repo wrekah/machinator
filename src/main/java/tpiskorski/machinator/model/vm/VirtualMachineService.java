@@ -84,6 +84,7 @@ public class VirtualMachineService {
     private List<VirtualMachine> getVmsThatMissingInRefresh(Server server, List<VirtualMachine> vms) {
         return virtualMachineRepository.getVms().stream()
             .filter(virtualMachine -> virtualMachine.getServer().equals(server))
+            .filter(virtualMachine -> virtualMachine.getType() == VirtualMachineType.REGULAR)
             .filter(not(new HashSet<>(vms)::contains))
             .collect(Collectors.toList());
     }
