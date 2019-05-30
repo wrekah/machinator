@@ -29,21 +29,15 @@ public class BackupService {
     }
 
     public long getBackupCount(BackupDefinition backupDefinition) {
-        try {
-            File location = getBackupLocation(backupDefinition);
-            location.mkdirs();
-
-            return Files.list(location.toPath()).count();
-        } catch (IOException e) {
-            LOGGER.error("Backup job failed", e);
-            throw new ExecutionException(e);
-        }
+        return getBackupCount(backupDefinition.getVm());
     }
 
     public long getBackupCount(VirtualMachine vm) {
         try {
             File location = getBackupLocation(vm);
-            location.mkdirs();
+            if (location.mkdirs()) {
+                throw new ExecutionException(String.format("Could not create directory %s", location));
+            }
 
             return Files.list(location.toPath()).count();
         } catch (IOException e) {
