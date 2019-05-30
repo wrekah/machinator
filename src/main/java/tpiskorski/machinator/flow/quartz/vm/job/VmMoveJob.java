@@ -55,18 +55,23 @@ public class VmMoveJob extends QuartzJobBean {
             String localTemporaryFilePath = backupService.getLocalTemporaryFilePath(vm);
             String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
 
-            exportVmService.exportVm(local, localTemporaryFilePath, vm.getVmName());
+            try {
+                cleanupService.cleanup(remote, remoteTemporaryFilePath);
+                cleanupService.cleanup(local, localTemporaryFilePath);
 
-            copyService.copyLocalToRemote(remote, localTemporaryFilePath, remoteTemporaryFilePath);
-            vmImporter.importVm(remote, remoteTemporaryFilePath);
+                exportVmService.exportVm(local, localTemporaryFilePath, vm.getVmName());
 
-            vmManipulator.remove(local, vm.getVmName());
+                copyService.copyLocalToRemote(remote, localTemporaryFilePath, remoteTemporaryFilePath);
+                vmImporter.importVm(remote, remoteTemporaryFilePath);
 
-            vm.setServer(remote);
-            vmManipulator.start(vm);
+                vmManipulator.remove(local, vm.getVmName());
 
-            cleanupService.cleanup(remote, remoteTemporaryFilePath);
-            cleanupService.cleanup(local, localTemporaryFilePath);
+                vm.setServer(remote);
+                vmManipulator.start(vm);
+            } finally {
+                cleanupService.cleanup(remote, remoteTemporaryFilePath);
+                cleanupService.cleanup(local, localTemporaryFilePath);
+            }
         } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);
@@ -83,17 +88,22 @@ public class VmMoveJob extends QuartzJobBean {
             String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
             String localTemporaryFilePath = backupService.getLocalTemporaryFilePath(vm);
 
-            exportVmService.exportVm(remote, remoteTemporaryFilePath, vm.getVmName());
-            copyService.copyRemoteToLocal(remote, remoteTemporaryFilePath, localTemporaryFilePath);
-            vmImporter.importVm(local, localTemporaryFilePath);
+            try {
+                cleanupService.cleanup(remote, remoteTemporaryFilePath);
+                cleanupService.cleanup(local, localTemporaryFilePath);
 
-            vmManipulator.remove(remote, vm.getVmName());
+                exportVmService.exportVm(remote, remoteTemporaryFilePath, vm.getVmName());
+                copyService.copyRemoteToLocal(remote, remoteTemporaryFilePath, localTemporaryFilePath);
+                vmImporter.importVm(local, localTemporaryFilePath);
 
-            vm.setServer(local);
-            vmManipulator.start(vm);
+                vmManipulator.remove(remote, vm.getVmName());
 
-            cleanupService.cleanup(remote, remoteTemporaryFilePath);
-            cleanupService.cleanup(local, localTemporaryFilePath);
+                vm.setServer(local);
+                vmManipulator.start(vm);
+            } finally {
+                cleanupService.cleanup(remote, remoteTemporaryFilePath);
+                cleanupService.cleanup(local, localTemporaryFilePath);
+            }
         } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);
@@ -110,19 +120,25 @@ public class VmMoveJob extends QuartzJobBean {
             String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
             String localTemporaryFilePath = backupService.getLocalTemporaryFilePath(vm);
 
-            exportVmService.exportVm(fromRemote, remoteTemporaryFilePath, vm.getVmName());
-            copyService.copyRemoteToLocal(fromRemote, remoteTemporaryFilePath, localTemporaryFilePath);
+            try {
+                cleanupService.cleanup(fromRemote, remoteTemporaryFilePath);
+                cleanupService.cleanup(Server.local(), localTemporaryFilePath);
+                cleanupService.cleanup(toRemote, remoteTemporaryFilePath);
 
-            copyService.copyLocalToRemote(toRemote, localTemporaryFilePath, remoteTemporaryFilePath);
-            vmImporter.importVm(toRemote, remoteTemporaryFilePath);
+                exportVmService.exportVm(fromRemote, remoteTemporaryFilePath, vm.getVmName());
+                copyService.copyRemoteToLocal(fromRemote, remoteTemporaryFilePath, localTemporaryFilePath);
 
-            vm.setServer(toRemote);
-            vmManipulator.start(vm);
-            vmManipulator.remove(fromRemote, vm.getVmName());
+                copyService.copyLocalToRemote(toRemote, localTemporaryFilePath, remoteTemporaryFilePath);
+                vmImporter.importVm(toRemote, remoteTemporaryFilePath);
 
-            cleanupService.cleanup(fromRemote, remoteTemporaryFilePath);
-            cleanupService.cleanup(Server.local(), localTemporaryFilePath);
-            cleanupService.cleanup(toRemote, remoteTemporaryFilePath);
+                vm.setServer(toRemote);
+                vmManipulator.start(vm);
+                vmManipulator.remove(fromRemote, vm.getVmName());
+            } finally {
+                cleanupService.cleanup(fromRemote, remoteTemporaryFilePath);
+                cleanupService.cleanup(Server.local(), localTemporaryFilePath);
+                cleanupService.cleanup(toRemote, remoteTemporaryFilePath);
+            }
         } catch (IOException | JSchException e) {
             LOGGER.error("Backup job failed", e);
             throw new JobExecutionException(e);

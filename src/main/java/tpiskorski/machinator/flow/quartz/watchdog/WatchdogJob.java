@@ -21,8 +21,6 @@ public class WatchdogJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WatchdogJob.class);
 
-    private final ConfigService configService;
-
     private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired private VmManipulator vmManipulator;
@@ -31,11 +29,6 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private VmImporter vmImporter;
     @Autowired private CopyService copyService;
     @Autowired private BackupService backupService;
-
-    @Autowired
-    public WatchdogJob(ConfigService configService) {
-        this.configService = configService;
-    }
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -79,15 +72,19 @@ public class WatchdogJob extends QuartzJobBean {
             } else {
                 String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
 
-                copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
+                try {
+                    cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                    copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
 
-                vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
+                    vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
 
-                vmManipulator.start(vm);
-                cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                    vmManipulator.start(vm);
 
-                vmManipulator.remove(originalServer, vm.getVmName());
-                vm.setServer(watchdogServer);
+                    vmManipulator.remove(originalServer, vm.getVmName());
+                    vm.setServer(watchdogServer);
+                } finally {
+                    cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                }
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);
