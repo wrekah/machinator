@@ -17,6 +17,7 @@ public class Server {
     private ServerType serverType;
 
     private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
+    private String vboxVersion;
 
     public Server(Credentials credentials, String address, String port) {
         this(address, port);
@@ -41,6 +42,14 @@ public class Server {
 
     static Callback<Server, Observable[]> extractor() {
         return (Server server) -> new Observable[]{server.serverStateProperty()};
+    }
+
+    public String getVboxVersion() {
+        return vboxVersion;
+    }
+
+    public void setVboxVersion(String vboxVersion) {
+        this.vboxVersion = vboxVersion;
     }
 
     public Credentials getCredentials() {

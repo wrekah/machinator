@@ -1,9 +1,6 @@
 package tpiskorski.machinator.ui.control;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -23,7 +20,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerCellFactory.class);
 
-  private final VmActionScheduler vmActionScheduler;
+    private final VmActionScheduler vmActionScheduler;
     private final LocalDragContainer localDragContainer;
 
     private final Image OK = new Image("/icon/success.png");
@@ -46,6 +43,7 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
                 if (bln || server == null || server.getAddress() == null) {
                     setText(null);
                     setGraphic(null);
+                    setTooltip(null);
                 } else {
                     ImageView imageView = new ImageView();
 
@@ -63,6 +61,12 @@ public class ServerCellFactory implements Callback<ListView<Server>, ListCell<Se
 
                     setGraphic(imageView);
                     setText(server.getSimpleAddress());
+
+                    String vboxVersion = server.getVboxVersion();
+                    if (vboxVersion != null) {
+                        Tooltip tooltip = new Tooltip("VirtualBox version: " + vboxVersion);
+                        setTooltip(tooltip);
+                    }
                 }
             }
         };
