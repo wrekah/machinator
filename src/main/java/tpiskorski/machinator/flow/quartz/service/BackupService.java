@@ -12,6 +12,9 @@ import tpiskorski.machinator.model.vm.VirtualMachine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.Optional;
 
 @Service
 public class BackupService {
@@ -89,8 +92,13 @@ public class BackupService {
         return System.getProperty("user.home") + File.separator + "temp_" + vmName + ".ova";
     }
 
-    public String findLatestBackup(VirtualMachine vm) {
-        //todo implement
-        return null;
+    public String findLatestBackup(VirtualMachine vm) throws IOException {
+        File location = getBackupLocation(vm);
+
+        Optional<Path> latestBackup = Files.list(location.toPath())
+            .filter(Files::isRegularFile)
+            .max(Comparator.comparingLong(f -> f.toFile().lastModified()));
+
+        return latestBackup.get().toString();
     }
 }
