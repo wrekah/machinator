@@ -27,7 +27,6 @@ public class AddServerController {
     private final AddServerJavafxService addServerJavafxService;
 
     @FXML private Alert serverExistsAlert;
-    @FXML private Alert noConnectivityServerAlert;
     @FXML private Alert cancelledServerAlert;
     @FXML private RadioButton remoteRadioButton;
     @FXML private RadioButton localhostRadioButton;
