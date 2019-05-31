@@ -41,4 +41,9 @@ public class ServerService {
     public boolean contains(Server server) {
         return serverRepository.contains(server);
     }
+
+    public void unreachable(Server server) {
+        server.setServerState(ServerState.NOT_REACHABLE);
+        virtualMachineService.unreachable(server);
+    }
 }

@@ -100,4 +100,16 @@ public class VirtualMachineService {
     private void update(VirtualMachine virtualMachine) {
         virtualMachineRepository.update(virtualMachine);
     }
+
+    public void unreachable(Server server) {
+        List<VirtualMachine> vms = virtualMachineRepository.getVms().stream()
+            .filter(virtualMachine -> virtualMachine.getServer().equals(server))
+            .collect(Collectors.toList());
+
+        vms.forEach(this::unreachable);
+    }
+
+    private void unreachable(VirtualMachine virtualMachine) {
+        virtualMachine.setState(VirtualMachineState.NODE_NOT_REACHABLE);
+    }
 }

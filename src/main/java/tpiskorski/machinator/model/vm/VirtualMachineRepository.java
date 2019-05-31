@@ -65,7 +65,7 @@ public class VirtualMachineRepository {
 
             vm.unlock();
         } else {
-            LOGGER.info("Skipping {} vm because work is in progress", vm.getId());
+            LOGGER.debug("Skipping {} vm because work is in progress", vm.getId());
         }
     }
 }

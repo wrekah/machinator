@@ -9,7 +9,8 @@ public enum VirtualMachineState {
     RUNNING_RECENTLY_RESET,
     SAVED,
     POWEROFF,
-    UNREACHABLE;
+    UNREACHABLE,
+    NODE_NOT_REACHABLE;
 
     public static VirtualMachineState parse(String vmState) {
         if (vmState.equals("\"poweroff\"")) {
