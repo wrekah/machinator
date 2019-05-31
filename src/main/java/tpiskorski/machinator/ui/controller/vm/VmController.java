@@ -76,7 +76,11 @@ public class VmController {
         return Bindings.createBooleanBinding(() -> {
             boolean disableChangeType = false;
             VirtualMachine vm = virtualMachines.getSelectionModel().getSelectedItem();
-            if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE || vm.getState() == VirtualMachineState.COMMAND_IN_PROGRESS) {
+
+            if (vm == null || vm.getState() == VirtualMachineState.UNREACHABLE ||
+                vm.getState() == VirtualMachineState.COMMAND_IN_PROGRESS ||
+                vm.getState() == VirtualMachineState.NODE_NOT_REACHABLE) {
+
                 disableChangeType = true;
             }
             return disableChangeType;
