@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.flow.quartz.watchdog.WatchdogScheduler;
+import tpiskorski.machinator.model.watchdog.listener.WatchdogListeners;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class WatchdogService {
     private final WatchdogRepository watchdogRepository;
     private final WatchdogScheduler watchdogScheduler;
 
-    private Map<Watchdog, WatchdogVmStateListener> watchdogToListener = new HashMap<>();
+    private Map<Watchdog, WatchdogListeners> watchdogToListeners = new HashMap<>();
 
     @Autowired public WatchdogService(WatchdogRepository watchdogRepository, WatchdogScheduler watchdogScheduler) {
         this.watchdogRepository = watchdogRepository;
@@ -37,18 +38,17 @@ public class WatchdogService {
         if (!watchdogToActivate.isActive()) {
             watchdogToActivate.setActive(true);
 
-            WatchdogVmStateListener listener = new WatchdogVmStateListener(watchdogToActivate, watchdogScheduler);
-
-            watchdogToActivate.getVirtualMachine().stateProperty().addListener(listener);
-            watchdogToListener.put(watchdogToActivate, listener);
+            WatchdogListeners listeners = new WatchdogListeners(watchdogToActivate, watchdogScheduler);
+            watchdogToListeners.put(watchdogToActivate, listeners);
+            listeners.activate();
         }
     }
 
     public void deactivate(Watchdog watchdogToActivate) {
         if (watchdogToActivate.isActive()) {
             watchdogToActivate.setActive(false);
-            WatchdogVmStateListener listener = watchdogToListener.get(watchdogToActivate);
-            watchdogToActivate.getVirtualMachine().stateProperty().removeListener(listener);
+            WatchdogListeners listeners = watchdogToListeners.get(watchdogToActivate);
+            listeners.deactivate();
         }
     }
 
