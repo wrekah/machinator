@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -19,7 +20,7 @@ public class JobService {
         return jobRepository.getJobsList();
     }
 
-    public void add(Job job) {
+    public synchronized void add(Job job) {
         jobRepository.add(job);
     }
 
@@ -42,5 +43,13 @@ public class JobService {
 
     public void clear() {
         jobRepository.clear();
+    }
+
+    public synchronized void update(Job job, JobStatus completed) {
+        job.setStatus(completed);
+    }
+
+    public synchronized void updateEndTime(Job job, LocalDateTime endTime) {
+        job.setEndTime(endTime);
     }
 }

@@ -43,7 +43,7 @@ public class VmActionJobListener implements JobListener {
     @Override public void jobExecutionVetoed(JobExecutionContext context) {
         if (isVmActionJob(context)) {
             Job job = jobService.getLastServerRefreshJob();
-            job.setStatus(JobStatus.CANCELLED);
+            jobService.update(job, JobStatus.CANCELLED);
         }
     }
 
@@ -51,11 +51,12 @@ public class VmActionJobListener implements JobListener {
         if (isVmActionJob(context)) {
             JobKey key = context.getJobDetail().getKey();
             Job job = jobService.get(key.getName());
-            job.setEndTime(LocalDateTime.now());
+            jobService.updateEndTime(job, LocalDateTime.now());
             if (jobException == null) {
-                job.setStatus(JobStatus.COMPLETED);
+                jobService.update(job, JobStatus.COMPLETED);
             } else {
-                job.setStatus(JobStatus.FAILED);
+                jobService.update(job, JobStatus.FAILED);
+
                 String unwrappedMessage = ((SchedulerException) jobException.getCause()).getUnderlyingException().getMessage();
                 job.setErrorCause(unwrappedMessage);
             }

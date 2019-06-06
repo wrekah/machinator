@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.flow.quartz.vm.job.*;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.vm.VirtualMachine;
-import tpiskorski.machinator.flow.quartz.vm.job.*;
 
 import java.util.UUID;
 
@@ -27,12 +27,16 @@ public class VmActionScheduler implements InitializingBean {
         this.scheduler = scheduler;
     }
 
+    public synchronized UUID getRandomUUID() {
+        return UUID.randomUUID();
+    }
+
     public void scheduleTurnOn(VirtualMachine vm) {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmTurnOnJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -56,7 +60,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmPowerOffJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -80,7 +84,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmTurnOffJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -104,7 +108,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmResetJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -128,7 +132,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("vm", vm);
 
         JobDetail jobDetail = JobBuilder.newJob(VmDeleteJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -153,7 +157,7 @@ public class VmActionScheduler implements InitializingBean {
         jobDataMap.put("destination", destination);
 
         JobDetail jobDetail = JobBuilder.newJob(VmMoveJob.class)
-            .withIdentity(UUID.randomUUID().toString(), "vmAction")
+            .withIdentity(getRandomUUID().toString(), "vmAction")
             .usingJobData(jobDataMap)
             .storeDurably()
             .build();
@@ -170,7 +174,6 @@ public class VmActionScheduler implements InitializingBean {
         } catch (SchedulerException e) {
             LOGGER.warn("Could not add job to scheduler", e);
         }
-
     }
 
     @Override public void afterPropertiesSet() throws Exception {
