@@ -15,23 +15,8 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-    public void stopJob(Job job) {
-        job.setStatus(JobStatus.STOPPED);
-    }
-
-    public void stopAllJobs() {
-        for (Job job : jobRepository.getJobsList()) {
-            stopJob(job);
-        }
-    }
-
     public ObservableList<Job> getJobs() {
         return jobRepository.getJobsList();
-    }
-
-    public boolean allCompleted() {
-        return jobRepository.getJobsList().stream()
-            .noneMatch(job -> job.getStatus() == JobStatus.IN_PROGRESS);
     }
 
     public void add(Job job) {
@@ -53,5 +38,9 @@ public class JobService {
 
     public Job getLast(String id) {
         return jobRepository.getLastById(id);
+    }
+
+    public void clear() {
+        jobRepository.clear();
     }
 }

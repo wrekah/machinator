@@ -69,38 +69,4 @@ class JobServiceModuleTest extends Specification {
         then:
         service.getJobs() == [job1]
     }
-
-    def 'should stop job'() {
-        given:
-        def job1 = new Job('job1')
-        def job2 = new Job('job2')
-
-        when:
-        service.add(job1)
-        service.add(job2)
-
-        and:
-        service.stopJob(job1)
-
-        then:
-        job1.status == JobStatus.STOPPED
-        job2.status != JobStatus.STOPPED
-    }
-
-    def 'should stop all jobs'() {
-        given:
-        def job1 = new Job('job1')
-        def job2 = new Job('job2')
-
-        when:
-        service.add(job1)
-        service.add(job2)
-
-        and:
-        service.stopAllJobs()
-
-        then:
-        job1.status == JobStatus.STOPPED
-        job2.status == JobStatus.STOPPED
-    }
 }

@@ -5,7 +5,10 @@ import javafx.collections.ObservableList;
 import org.springframework.stereotype.Repository;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Repository
 class JobRepository {
@@ -30,7 +33,7 @@ class JobRepository {
             .findFirst();
     }
 
-    public Job getLastById(String id){
+    public Job getLastById(String id) {
         return jobObservableList.stream()
             .filter(job -> job.getId().equals(id))
             .filter(job -> job.getStatus() == JobStatus.IN_PROGRESS)
@@ -44,5 +47,13 @@ class JobRepository {
             .filter(job -> job.getStatus() == JobStatus.IN_PROGRESS)
             .max(Comparator.comparing(Job::getStartTime))
             .get();
+    }
+
+    public void clear() {
+        List<Job> toRemove = jobObservableList.stream()
+            .filter(Predicate.not(job -> job.getStatus() == JobStatus.IN_PROGRESS))
+            .collect(Collectors.toList());
+
+        jobObservableList.removeAll(toRemove);
     }
 }
