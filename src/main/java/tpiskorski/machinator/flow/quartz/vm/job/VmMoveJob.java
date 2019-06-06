@@ -15,7 +15,6 @@ import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
-import tpiskorski.machinator.model.vm.VirtualMachineType;
 
 import java.io.IOException;
 
@@ -41,12 +40,7 @@ public class VmMoveJob extends QuartzJobBean {
         Server source = vm.getServer();
         Server destination = (Server) mergedJobDataMap.get("destination");
 
-        VirtualMachine placeholder = new VirtualMachine();
-        placeholder.setServer(destination);
-        placeholder.setVmName(vm.getVmName());
-        placeholder.setCpuCores(vm.getCpuCores());
-        placeholder.setRamMemory(vm.getRamMemory());
-        placeholder.setType(VirtualMachineType.PLACEHOLDER);
+        VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, destination);
         virtualMachineService.add(placeholder);
 
         placeholder.lock();

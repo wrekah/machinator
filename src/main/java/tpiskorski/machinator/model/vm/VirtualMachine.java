@@ -30,6 +30,16 @@ public class VirtualMachine {
         setState(VirtualMachineState.UNREACHABLE);
     }
 
+    public static VirtualMachine placeholderFor(VirtualMachine vm, Server destination) {
+        VirtualMachine placeholder = new VirtualMachine();
+        placeholder.setServer(destination);
+        placeholder.setVmName(vm.getVmName());
+        placeholder.setCpuCores(vm.getCpuCores());
+        placeholder.setRamMemory(vm.getRamMemory());
+        placeholder.setType(VirtualMachineType.PLACEHOLDER);
+        return placeholder;
+    }
+
     static Callback<VirtualMachine, Observable[]> extractor() {
         return (VirtualMachine vm) -> new Observable[]{vm.vmNameProperty(), vm.cpuCoresProperty(), vm.ramMemoryProperty()};
     }
