@@ -35,7 +35,7 @@ public class BackupService {
     public long getBackupCount(VirtualMachine vm) {
         try {
             File location = getBackupLocation(vm);
-            if (location.mkdirs()) {
+            if (!location.isDirectory() && !location.mkdirs()) {
                 throw new ExecutionException(String.format("Could not create directory %s", location));
             }
 
