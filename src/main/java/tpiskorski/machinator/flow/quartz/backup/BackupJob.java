@@ -9,14 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.quartz.service.BackupService;
-import tpiskorski.machinator.flow.quartz.service.CleanupService;
-import tpiskorski.machinator.flow.quartz.service.CopyService;
-import tpiskorski.machinator.flow.quartz.service.ExportVmService;
+import tpiskorski.machinator.flow.executor.poll.PollExecutor;
+import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineState;
 
 import java.io.IOException;
 
@@ -29,6 +28,9 @@ public class BackupJob extends QuartzJobBean {
     @Autowired private CleanupService cleanupService;
     @Autowired private ExportVmService exportVmService;
     @Autowired private CopyService copyService;
+    @Autowired private VmManipulator vmManipulator;
+    @Autowired private VmInfoService vmInfoService;
+    private PollExecutor pollExecutor = new PollExecutor();
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -37,6 +39,29 @@ public class BackupJob extends QuartzJobBean {
 
         backupService.assertBackupCount(backupDefinition);
 
+        VirtualMachine vm = backupDefinition.getVm();
+
+        vm.lock();
+        try {
+            powerOffIfRunning(vm);
+            doBackup(backupDefinition);
+            vmManipulator.start(vm);
+        } finally {
+            vm.unlock();
+        }
+
+        LOGGER.info("Backup completed for {}", backupDefinition.id());
+    }
+
+    private void powerOffIfRunning(VirtualMachine vm) {
+        if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
+            vmManipulator.turnoff(vm);
+
+            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+        }
+    }
+
+    private void doBackup(BackupDefinition backupDefinition) throws JobExecutionException {
         try {
             if (backupDefinition.getServer().getServerType() == ServerType.LOCAL) {
                 doLocalBackup(backupDefinition);
@@ -46,8 +71,6 @@ public class BackupJob extends QuartzJobBean {
         } catch (JSchException | IOException e) {
             throw new JobExecutionException(e);
         }
-
-        LOGGER.info("Backup completed for {}", backupDefinition.id());
     }
 
     private void doLocalBackup(BackupDefinition backupDefinition) {
@@ -69,7 +92,6 @@ public class BackupJob extends QuartzJobBean {
 
         try {
             cleanupService.cleanup(server, remoteTemporaryFilePath);
-
             exportVmService.exportVm(server, remoteTemporaryFilePath, vm.getVmName());
 
             String backupPath = backupService.getBackupPath(backupDefinition);
