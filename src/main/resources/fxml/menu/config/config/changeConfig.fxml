@@ -12,22 +12,16 @@
           GridPane.columnIndex="0" GridPane.rowIndex="0"
           GridPane.columnSpan="2"/>
 
-    <Label text="SSH user:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    <TextField fx:id="sshUser" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <Label text="Poll interval:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <TextField fx:id="pollInterval" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-    <Label text="SSH password:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-    <TextField fx:id="sshPassword" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <Label text="Backup location:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <TextField fx:id="backupLocation" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-    <Label text="Poll interval:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-    <TextField fx:id="pollInterval" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <Label text="Notifications:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <CheckBox fx:id="notificationCheckbox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-    <Label text="Backup location:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-    <TextField fx:id="backupLocation" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-
-    <Label text="Notifications:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-    <CheckBox fx:id="notificationCheckbox" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-
-    <HBox spacing="5" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="6">
+    <HBox spacing="5" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="4">
         <GridPane.margin>
             <Insets top="5"/>
         </GridPane.margin>

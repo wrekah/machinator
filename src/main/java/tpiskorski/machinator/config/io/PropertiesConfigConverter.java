@@ -9,8 +9,6 @@ public class PropertiesConfigConverter {
         return Config.builder()
             .backupLocation(properties.getProperty("backup.location"))
             .pollInterval(Integer.parseInt(properties.getProperty("poll.interval")))
-            .sshUser(properties.getProperty("ssh.user"))
-            .sshPassword(properties.getProperty("ssh.password"))
             .build();
     }
 
@@ -19,8 +17,6 @@ public class PropertiesConfigConverter {
 
         properties.setProperty("backup.location", config.getBackupLocation());
         properties.setProperty("poll.interval", String.valueOf(config.getPollInterval()));
-        properties.setProperty("ssh.user", config.getSshUser());
-        properties.setProperty("ssh.password", config.getSshPassword());
 
         return properties;
     }

@@ -18,8 +18,6 @@ public class ChangeConfigController {
 
     @FXML private TextField pollInterval;
     @FXML private TextField backupLocation;
-    @FXML private TextField sshUser;
-    @FXML private TextField sshPassword;
     @FXML private CheckBox notificationCheckbox;
 
     @Autowired public ChangeConfigController(ConfigService configService) {
@@ -31,8 +29,6 @@ public class ChangeConfigController {
 
         pollInterval.setText("" + config.getPollInterval());
         backupLocation.setText(config.getBackupLocation());
-        sshUser.setText(config.getSshUser());
-        sshPassword.setText(config.getSshPassword());
         notificationCheckbox.setSelected(config.areNotificationsEnabled());
     }
 
@@ -40,8 +36,6 @@ public class ChangeConfigController {
         Config newConfig = Config.builder()
             .backupLocation(backupLocation.getText())
             .pollInterval(Integer.parseInt(pollInterval.getText()))
-            .sshUser(sshUser.getText())
-            .sshPassword(sshPassword.getText())
             .notifications(notificationCheckbox.isSelected())
             .build();
 
