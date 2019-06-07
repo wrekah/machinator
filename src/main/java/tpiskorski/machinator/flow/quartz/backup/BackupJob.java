@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.server.Server;
@@ -30,7 +29,6 @@ public class BackupJob extends QuartzJobBean {
     @Autowired private CopyService copyService;
     @Autowired private VmManipulator vmManipulator;
     @Autowired private VmInfoService vmInfoService;
-    private PollExecutor pollExecutor = new PollExecutor();
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -56,8 +54,7 @@ public class BackupJob extends QuartzJobBean {
     private void powerOffIfRunning(VirtualMachine vm) {
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
             vmManipulator.turnoff(vm);
-
-            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
         }
     }
 

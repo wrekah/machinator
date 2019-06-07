@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import tpiskorski.machinator.flow.executor.ExecutionException;
-import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.flow.quartz.service.VmManipulator;
@@ -27,8 +26,6 @@ public class VmDeleteJob extends QuartzJobBean {
     @Autowired private VirtualMachineService virtualMachineService;
     @Autowired private VmInfoService vmInfoService;
     @Autowired private VmLister vmLister;
-
-    private PollExecutor pollExecutor = new PollExecutor();
 
     @Override protected void executeInternal(JobExecutionContext context) {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -51,7 +48,7 @@ public class VmDeleteJob extends QuartzJobBean {
     private void turnOffIfRunning(VirtualMachine vm) {
         if (vmInfoService.state(vm) == VirtualMachineState.RUNNING) {
             vmManipulator.turnoff(vm);
-            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
         }
     }
 

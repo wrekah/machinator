@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.flow.quartz.service.VmManipulator;
 import tpiskorski.machinator.model.vm.VirtualMachine;
@@ -20,8 +19,6 @@ public class VmPowerOffJob extends QuartzJobBean {
 
     private final VmInfoService vmInfoService;
     private final VmManipulator vmManipulator;
-
-    private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired
     public VmPowerOffJob(VmInfoService vmInfoService, VmManipulator vmManipulator) {
@@ -38,7 +35,7 @@ public class VmPowerOffJob extends QuartzJobBean {
         vm.lock();
         try {
             vmManipulator.powerOff(vm);
-            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
             vm.setState(VirtualMachineState.POWEROFF);
         } finally {
             vm.unlock();

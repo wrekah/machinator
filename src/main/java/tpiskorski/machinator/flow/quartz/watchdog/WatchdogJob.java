@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.flow.executor.ExecutionException;
-import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -20,8 +18,6 @@ import tpiskorski.machinator.model.watchdog.Watchdog;
 public class WatchdogJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WatchdogJob.class);
-
-    private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired private VmManipulator vmManipulator;
     @Autowired private VmInfoService vmInfoService;
@@ -94,8 +90,8 @@ public class WatchdogJob extends QuartzJobBean {
         }
     }
 
-    private boolean checkIfRunning(VirtualMachine vm) throws JobExecutionException {
-        pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.RUNNING);
+    private boolean checkIfRunning(VirtualMachine vm) {
+        vmInfoService.pollState(vm, VirtualMachineState.RUNNING);
         vm.setState(VirtualMachineState.RUNNING);
         return true;
     }

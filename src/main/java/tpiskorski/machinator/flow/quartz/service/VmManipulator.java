@@ -100,6 +100,7 @@ public class VmManipulator {
         }
     }
 
+    //if running
     public void resetVm(VirtualMachine vm) {
         ExecutionContext resetVm = ExecutionContext.builder()
             .executeOn(vm.getServer())

@@ -21,8 +21,6 @@ public class VmTurnOffJob extends QuartzJobBean {
     private final VmManipulator vmManipulator;
     private final VmInfoService vmInfoService;
 
-    private PollExecutor pollExecutor = new PollExecutor();
-
     @Autowired
     public VmTurnOffJob(VmManipulator vmManipulator, VmInfoService vmInfoService) {
         this.vmManipulator = vmManipulator;
@@ -38,7 +36,7 @@ public class VmTurnOffJob extends QuartzJobBean {
         vm.lock();
         try {
             vmManipulator.turnoff(vm);
-            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
             vm.setState(VirtualMachineState.POWEROFF);
         } finally {
             vm.unlock();

@@ -9,6 +9,7 @@ import tpiskorski.machinator.flow.command.CommandFactory;
 import tpiskorski.machinator.flow.command.CommandResult;
 import tpiskorski.machinator.flow.executor.CommandExecutor;
 import tpiskorski.machinator.flow.executor.ExecutionContext;
+import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.parser.ShowVmInfoParser;
 import tpiskorski.machinator.flow.parser.VmInfo;
 import tpiskorski.machinator.model.vm.VirtualMachine;
@@ -22,6 +23,8 @@ public class VmInfoService {
     private final CommandExecutor commandExecutor;
     private final CommandFactory commandFactory;
     private final ShowVmInfoParser showVmInfoParser;
+
+    private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired
     public VmInfoService(CommandExecutor commandExecutor, CommandFactory commandFactory, ShowVmInfoParser showVmInfoParser) {
@@ -48,5 +51,9 @@ public class VmInfoService {
     public VirtualMachineState state(VirtualMachine vm) {
         VmInfo vmInfo = info(vm);
         return vmInfo.getState();
+    }
+
+    public void pollState(VirtualMachine vm, VirtualMachineState state) {
+        pollExecutor.pollExecute(() -> state(vm) == state);
     }
 }

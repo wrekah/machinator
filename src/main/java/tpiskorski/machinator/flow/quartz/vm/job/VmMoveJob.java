@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import tpiskorski.machinator.flow.executor.poll.PollExecutor;
 import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
@@ -21,8 +20,6 @@ import java.io.IOException;
 public class VmMoveJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VmMoveJob.class);
-
-    private PollExecutor pollExecutor = new PollExecutor();
 
     @Autowired private VmManipulator vmManipulator;
     @Autowired private VmInfoService vmInfoService;
@@ -160,7 +157,7 @@ public class VmMoveJob extends QuartzJobBean {
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
             vmManipulator.turnoff(vm);
 
-            pollExecutor.pollExecute(() -> vmInfoService.state(vm) == VirtualMachineState.POWEROFF);
+            vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
         }
     }
 }
