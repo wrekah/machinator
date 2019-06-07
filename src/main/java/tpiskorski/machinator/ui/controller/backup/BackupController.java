@@ -16,6 +16,7 @@ import tpiskorski.machinator.config.Config;
 import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.model.backup.BackupDefinition;
 import tpiskorski.machinator.model.backup.BackupDefinitionService;
+import tpiskorski.machinator.ui.control.BackupTableRow;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
@@ -55,6 +56,7 @@ public class BackupController {
                 contextMenu.show(backupsTableView, t.getScreenX(), t.getScreenY());
             }
         });
+        backupsTableView.setRowFactory((tableview) -> new BackupTableRow());
 
         backupLocation.setText(configService.getConfig().getBackupLocation());
         configService.addPropertyChangeListener(evt -> {

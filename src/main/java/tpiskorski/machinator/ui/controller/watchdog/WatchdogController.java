@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 import tpiskorski.machinator.model.watchdog.WatchdogService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
+import tpiskorski.machinator.ui.control.TooltipTableRow;
+import tpiskorski.machinator.ui.control.WatchdogTableRow;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
 import java.io.IOException;
@@ -40,6 +42,7 @@ public class WatchdogController {
 
     @FXML
     public void initialize() throws IOException {
+        watchdogTableView.setRowFactory((tableView) -> new WatchdogTableRow());
         watchdogTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
             if (t.getButton() == MouseButton.SECONDARY) {
                 Watchdog selectedItem = watchdogTableView.getSelectionModel().getSelectedItem();
