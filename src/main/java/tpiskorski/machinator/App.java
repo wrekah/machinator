@@ -10,8 +10,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import tpiskorski.machinator.spring.BeanDefinitions;
+import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.lifecycle.ShutdownService;
+import tpiskorski.machinator.spring.BeanDefinitions;
+import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
 
 import java.io.IOException;
 
@@ -56,6 +58,13 @@ public class App extends javafx.application.Application {
         setShutdownHooks(stage);
 
         stage.setScene(scene);
+        stage.setOnShown(event -> {
+            ConfigService configService = springContext.getBean(ConfigService.class);
+
+            if (configService.getConfig().getBackupLocation().equals("/dev/null")) {
+                ConfirmationAlertFactory.createAndShow("Your backup location is set to /dev/null. Please change it in File->Config menu.", "Machinator");
+            }
+        });
         stage.show();
     }
 
