@@ -6,12 +6,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.flow.quartz.vm.VmActionScheduler;
@@ -66,10 +63,10 @@ public class VmController {
         BooleanBinding selectedUnreachableVm = createUnreachableVmBinding();
 
         removeVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        resetVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        turnOnVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        resetVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        turnOnVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.RUNNING)));
     }
 
     private BooleanBinding createUnreachableVmBinding() {
@@ -82,6 +79,22 @@ public class VmController {
                 vm.getState() == VirtualMachineState.NODE_NOT_REACHABLE) {
 
                 disableChangeType = true;
+            }
+            return disableChangeType;
+        }, virtualMachines.getSelectionModel().selectedItemProperty());
+    }
+
+    private BooleanBinding disableIfAny(VirtualMachineState state) {
+        return Bindings.createBooleanBinding(() -> {
+            boolean disableChangeType = false;
+
+            ObservableList<VirtualMachine> selectedItems = virtualMachines.getSelectionModel().getSelectedItems();
+
+            for (VirtualMachine selectedItem : selectedItems) {
+                if (selectedItem.getState() == state) {
+                    disableChangeType = true;
+                    return disableChangeType;
+                }
             }
             return disableChangeType;
         }, virtualMachines.getSelectionModel().selectedItemProperty());
