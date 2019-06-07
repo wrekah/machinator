@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 import tpiskorski.machinator.model.watchdog.WatchdogService;
 import tpiskorski.machinator.ui.control.ConfirmationAlertFactory;
-import tpiskorski.machinator.ui.control.TooltipTableRow;
 import tpiskorski.machinator.ui.control.WatchdogTableRow;
 import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
 
@@ -31,8 +30,10 @@ public class WatchdogController {
     @FXML private Button unwatchVmButton;
 
     private Stage addVmWatchdogStage;
+
     @FXML private ContextMenu contextMenu;
     @FXML private MenuItem dynamicMenuItem;
+    @FXML private Button dynamicButton;
 
     @Autowired
     public WatchdogController(ContextAwareSceneLoader contextAwareSceneLoader, WatchdogService watchdogService) {
@@ -58,10 +59,22 @@ public class WatchdogController {
             }
         });
 
+        dynamicButton.setOnAction(event -> {
+            Watchdog selectedItem = watchdogTableView.getSelectionModel().getSelectedItem();
+            if (selectedItem.isActive()) {
+                dynamicButton.setText("Deactivate");
+                deactivate(event);
+            } else {
+                dynamicButton.setText("Activate");
+                activate(event);
+            }
+        });
+
         addVmWatchdogStage = contextAwareSceneLoader.loadPopup("/fxml/watchdog/addVmWatchdog.fxml");
         addVmWatchdogStage.setTitle("Adding vm watchdog...");
 
         unwatchVmButton.disableProperty().bind(Bindings.isEmpty(watchdogTableView.getSelectionModel().getSelectedItems()));
+        dynamicButton.disableProperty().bind(Bindings.isEmpty(watchdogTableView.getSelectionModel().getSelectedItems()));
 
         watchdogTableView.setItems(watchdogService.getWatchdogs());
     }

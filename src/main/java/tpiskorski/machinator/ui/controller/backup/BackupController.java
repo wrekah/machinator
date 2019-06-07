@@ -37,6 +37,7 @@ public class BackupController {
     @FXML private ContextMenu contextMenu;
     @FXML private MenuItem dynamicMenuItem;
     @FXML private Button triggerNowButton;
+    @FXML private Button dynamicButton;
 
     private Stage addServerStage;
 
@@ -56,6 +57,18 @@ public class BackupController {
                 contextMenu.show(backupsTableView, t.getScreenX(), t.getScreenY());
             }
         });
+
+        dynamicButton.setOnAction(event -> {
+            BackupDefinition selectedItem = backupsTableView.getSelectionModel().getSelectedItem();
+            if (selectedItem.isActive()) {
+                dynamicButton.setText("Deactivate");
+                deactivate(event);
+            } else {
+                dynamicButton.setText("Activate");
+                activate(event);
+            }
+        });
+
         backupsTableView.setRowFactory((tableview) -> new BackupTableRow());
 
         backupLocation.setText(configService.getConfig().getBackupLocation());
@@ -66,6 +79,7 @@ public class BackupController {
 
         removeVmButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
         triggerNowButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
+        dynamicButton.disableProperty().bind(Bindings.isEmpty(backupsTableView.getSelectionModel().getSelectedItems()));
 
         addServerStage = contextAwareSceneLoader.loadPopup("/fxml/backup/addVmBackup.fxml");
         addServerStage.setTitle("Adding backup...");
@@ -85,7 +99,8 @@ public class BackupController {
         }
     }
 
-    private void activate(ActionEvent actionEvent) {
+    @FXML
+    public void activate(ActionEvent actionEvent) {
         boolean confirmed = ConfirmationAlertFactory.createAndAsk(
             "Do you really want to activate this backup?",
             "Backup"
