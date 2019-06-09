@@ -9,6 +9,7 @@ public abstract class StateManager {
     protected ObjectRestorer objectRestorer = new ObjectRestorer();
 
     public abstract String getPersistResourceFileName();
+    public abstract PersistenceType getPersistenceType();
 
     public abstract void persist();
     public abstract void restore();

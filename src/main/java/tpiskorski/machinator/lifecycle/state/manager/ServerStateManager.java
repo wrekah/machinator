@@ -27,6 +27,10 @@ public class ServerStateManager extends StateManager {
         return "./data/servers.dat";
     }
 
+    @Override public PersistenceType getPersistenceType() {
+        return PersistenceType.SERVER;
+    }
+
     @Override public void persist() {
         LOGGER.info("Starting servers persistence");
 

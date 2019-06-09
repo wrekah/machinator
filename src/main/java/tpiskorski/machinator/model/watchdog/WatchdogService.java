@@ -4,6 +4,8 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.flow.quartz.watchdog.WatchdogScheduler;
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler;
+import tpiskorski.machinator.lifecycle.state.manager.PersistenceType;
 import tpiskorski.machinator.model.watchdog.listener.WatchdogListeners;
 
 import java.util.HashMap;
@@ -14,16 +16,20 @@ public class WatchdogService {
 
     private final WatchdogRepository watchdogRepository;
     private final WatchdogScheduler watchdogScheduler;
+    private final PersistScheduler persistScheduler;
 
     private Map<Watchdog, WatchdogListeners> watchdogToListeners = new HashMap<>();
 
-    @Autowired public WatchdogService(WatchdogRepository watchdogRepository, WatchdogScheduler watchdogScheduler) {
+    @Autowired
+    public WatchdogService(WatchdogRepository watchdogRepository, WatchdogScheduler watchdogScheduler, PersistScheduler persistScheduler) {
         this.watchdogRepository = watchdogRepository;
         this.watchdogScheduler = watchdogScheduler;
+        this.persistScheduler = persistScheduler;
     }
 
     public void add(Watchdog watchdog) {
         watchdogRepository.add(watchdog);
+        persistScheduler.schedulePersistence(PersistenceType.WATCHDOG);
     }
 
     public ObservableList<Watchdog> getWatchdogs() {

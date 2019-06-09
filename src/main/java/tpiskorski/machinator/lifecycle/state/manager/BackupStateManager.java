@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.model.backup.BackupDefinitionService;
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableBackupDefinition;
+import tpiskorski.machinator.model.backup.BackupDefinitionService;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +25,10 @@ public class BackupStateManager extends StateManager {
 
     @Override public String getPersistResourceFileName() {
         return "data/backups.dat";
+    }
+
+    @Override public PersistenceType getPersistenceType() {
+        return PersistenceType.BACKUP_DEFINITION;
     }
 
     @Override public void persist() {

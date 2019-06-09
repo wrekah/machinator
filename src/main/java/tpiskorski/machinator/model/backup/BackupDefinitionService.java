@@ -4,17 +4,21 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tpiskorski.machinator.flow.quartz.backup.BackupScheduler;
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler;
+import tpiskorski.machinator.lifecycle.state.manager.PersistenceType;
 
 @Service
 public class BackupDefinitionService {
 
     private final BackupDefinitionRepository backupDefinitionRepository;
     private final BackupScheduler backupScheduler;
+    private final PersistScheduler persistScheduler;
 
     @Autowired
-    public BackupDefinitionService(BackupDefinitionRepository backupDefinitionRepository, BackupScheduler backupScheduler) {
+    public BackupDefinitionService(BackupDefinitionRepository backupDefinitionRepository, BackupScheduler backupScheduler, PersistScheduler persistScheduler) {
         this.backupDefinitionRepository = backupDefinitionRepository;
         this.backupScheduler = backupScheduler;
+        this.persistScheduler = persistScheduler;
     }
 
     public ObservableList<BackupDefinition> getBackups() {
@@ -23,6 +27,7 @@ public class BackupDefinitionService {
 
     public void add(BackupDefinition backupDefinition) {
         backupDefinitionRepository.add(backupDefinition);
+        persistScheduler.schedulePersistence(PersistenceType.BACKUP_DEFINITION);
     }
 
     public void remove(BackupDefinition backupDefinition) {

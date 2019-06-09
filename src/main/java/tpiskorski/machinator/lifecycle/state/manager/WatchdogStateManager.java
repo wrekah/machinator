@@ -27,6 +27,10 @@ public class WatchdogStateManager extends StateManager {
         return "data/watchdogs.dat";
     }
 
+    @Override public PersistenceType getPersistenceType() {
+        return PersistenceType.WATCHDOG;
+    }
+
     @Override public void persist() {
         LOGGER.info("Starting servers persistence");
 
