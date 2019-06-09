@@ -12,14 +12,22 @@
           GridPane.columnIndex="0" GridPane.rowIndex="0"
           GridPane.columnSpan="2"/>
 
-    <Label text="Poll interval:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    <TextField fx:id="pollInterval" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <Label text="Server refresh:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <TextField fx:id="pollInterval" promptText="seconds" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <tooltip>
+            <Tooltip text="Value in seconds indicating how often automatic server refresh will be performed"/>
+        </tooltip>
+    </TextField>
 
     <Label text="Backup location:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
     <TextField fx:id="backupLocation" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
     <Label text="Notifications:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-    <CheckBox fx:id="notificationCheckbox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <CheckBox fx:id="notificationCheckbox" GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <tooltip>
+            <Tooltip text="Some desktop envs are not supported"/>
+        </tooltip>
+    </CheckBox>
 
     <HBox spacing="5" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="4">
         <GridPane.margin>

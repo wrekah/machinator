@@ -16,7 +16,7 @@ public abstract class ConfigService implements InitializingBean {
         listeners.add(listener);
     }
 
-    protected void firePropertyChange(String property, Object oldValue, Object newValue) {
+    void firePropertyChange(String property, Config oldValue, Config newValue) {
         for (PropertyChangeListener listener : listeners) {
             listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
         }

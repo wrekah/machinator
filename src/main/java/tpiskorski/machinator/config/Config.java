@@ -24,6 +24,14 @@ public class Config {
             .build();
     }
 
+    public static Config copy(Config old) {
+        return builder()
+            .pollInterval(old.getPollInterval())
+            .backupLocation(old.getBackupLocation())
+            .notifications(old.areNotificationsEnabled())
+            .build();
+    }
+
     public boolean areNotificationsEnabled() {
         return notifications;
     }

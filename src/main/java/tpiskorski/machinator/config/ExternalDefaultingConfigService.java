@@ -1,12 +1,12 @@
 package tpiskorski.machinator.config;
 
-import tpiskorski.machinator.config.io.ExternalConfigLoader;
-import tpiskorski.machinator.config.io.InternalConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.config.io.ExternalConfigLoader;
+import tpiskorski.machinator.config.io.InternalConfigLoader;
 
 @Profile("!dev")
 @Service
@@ -35,7 +35,8 @@ public class ExternalDefaultingConfigService extends ConfigService {
     }
 
     @Override public void modifyConfig(Config newConfig) {
-        firePropertyChange("configChange", config, newConfig);
+        Config old = Config.copy(config);
         externalConfigLoader.saveConfig(newConfig);
+        firePropertyChange("configChange", old, newConfig);
     }
 }

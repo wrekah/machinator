@@ -1,9 +1,9 @@
 package tpiskorski.machinator.config;
 
-import tpiskorski.machinator.config.io.InternalConfigLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import tpiskorski.machinator.config.io.InternalConfigLoader;
 
 @Profile("dev")
 @Component
@@ -20,7 +20,8 @@ public class InMemoryConfigService extends ConfigService {
     }
 
     @Override public void modifyConfig(Config newConfig) {
-        firePropertyChange("configChange", config, newConfig);
+        Config old = Config.copy(config);
         config = newConfig;
+        firePropertyChange("configChange", old, newConfig);
     }
 }
