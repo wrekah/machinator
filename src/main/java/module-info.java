@@ -15,6 +15,8 @@ open module machinator {
     requires spring.context.support;
     requires jsch;
     requires org.controlsfx.controls;
+    requires javafx.web;
+    requires markdown4j;
 
     exports tpiskorski.machinator;
 }

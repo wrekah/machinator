@@ -51,7 +51,11 @@
     </center>
     <bottom>
         <HBox alignment="CENTER">
-            <Button text="Clear" tooltip="Clears finished jobs" fx:id="clearButton" onAction="#clearJobs"/>
+            <Button text="Clear" fx:id="clearButton" onAction="#clearJobs">
+                <tooltip>
+                    <Tooltip text="Clears finished jobs"/>
+                </tooltip>
+            </Button>
         </HBox>
     </bottom>
 
