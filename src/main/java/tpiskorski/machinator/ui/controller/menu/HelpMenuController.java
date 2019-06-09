@@ -1,46 +1,23 @@
 package tpiskorski.machinator.ui.controller.menu;
 
+import javafx.application.HostServices;
 import javafx.fxml.FXML;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-import org.markdown4j.Markdown4jProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import tpiskorski.machinator.ui.core.ContextAwareSceneLoader;
-
-import java.io.IOException;
-import java.nio.file.Files;
 
 @Controller
 public class HelpMenuController {
 
-    @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
+    private final HostServices hostServices;
 
-    @Autowired private HelpViewerController helpViewerController;
+    @Value("${project.github.url") private String repositoryUrl;
 
-    private Stage containerWindow;
-
-    @FXML
-    public void initialize() throws IOException {
-        containerWindow = contextAwareSceneLoader.loadPopup("/fxml/menu/config/helpViewer.fxml");
-
-        WebView webView = new WebView();
-        ClassPathResource mainFxml = new ClassPathResource("README.md");
-        byte[] buff = Files.readAllBytes(mainFxml.getFile().toPath());
-        String content = new String(buff);
-
-        webView.getEngine().loadContent(new Markdown4jProcessor().process(content));
-        helpViewerController.setContent(webView);
+    public HelpMenuController(HostServices hostServices) {
+        this.hostServices = hostServices;
     }
 
     @FXML
-    public void displayHelp() {
-
-        if (containerWindow.isShowing()) {
-            containerWindow.hide();
-        } else {
-            containerWindow.show();
-        }
+    public void openLinkToRepository() {
+        hostServices.showDocument(repositoryUrl);
     }
 }

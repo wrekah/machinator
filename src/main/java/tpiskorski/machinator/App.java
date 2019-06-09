@@ -1,5 +1,6 @@
 package tpiskorski.machinator;
 
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -7,6 +8,7 @@ import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -37,9 +39,15 @@ public class App extends javafx.application.Application {
         }
     }
 
+    @Bean
+    public HostServices hostServices() {
+        return getHostServices();
+    }
+
     @Override
     public void init() throws Exception {
         SpringApplicationBuilder builder = new SpringApplicationBuilder(App.class);
+
         springContext = builder.headless(false).run();
 
         fxmlLoader = new FXMLLoader();
