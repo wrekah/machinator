@@ -53,7 +53,7 @@ public class BackupJob extends QuartzJobBean {
 
     private void powerOffIfRunning(VirtualMachine vm) {
         if (vmInfoService.state(vm) != VirtualMachineState.POWEROFF) {
-            vmManipulator.turnoff(vm);
+            vmManipulator.powerOff(vm);
             vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
         }
     }

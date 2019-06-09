@@ -71,11 +71,11 @@ public class VmManipulator {
         LOGGER.debug("Started vm {}", vm);
     }
 
-    public void turnoff(VirtualMachine vm) {
+    public void powerOff(VirtualMachine vm) {
         LOGGER.debug("Powering off vm {}", vm);
         ExecutionContext turnOff = ExecutionContext.builder()
             .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.TURN_OFF, vm.getVmName()))
+            .command(commandFactory.makeWithArgs(BaseCommand.POWER_OFF, vm.getVmName()))
             .build();
 
         CommandResult result = commandExecutor.execute(turnOff);
@@ -87,10 +87,10 @@ public class VmManipulator {
         LOGGER.debug("Powered off vm {}", vm);
     }
 
-    public void powerOff(VirtualMachine vm) {
+    public void acpiShutdown(VirtualMachine vm) {
         ExecutionContext powerOff = ExecutionContext.builder()
             .executeOn(vm.getServer())
-            .command(commandFactory.makeWithArgs(BaseCommand.POWER_OFF_VM, vm.getVmName()))
+            .command(commandFactory.makeWithArgs(BaseCommand.ACPI_SHUTDOWN, vm.getVmName()))
             .build();
 
         CommandResult result = commandExecutor.execute(powerOff);

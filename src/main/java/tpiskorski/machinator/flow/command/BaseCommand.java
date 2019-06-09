@@ -10,9 +10,9 @@ public enum BaseCommand {
     DELETE_VM("VBoxManage unregistervm --delete \"%s\""),
 
     START_VM("VBoxManage startvm --type headless \"%s\""),
-    POWER_OFF_VM("VBoxManage controlvm \"%s\" acpipowerbutton"),
     RESET_VM("VBoxManage controlvm \"%s\" reset"),
-    TURN_OFF("VBoxManage controlvm \"%s\" poweroff"),
+    ACPI_SHUTDOWN("VBoxManage controlvm \"%s\" acpipowerbutton"),
+    POWER_OFF("VBoxManage controlvm \"%s\" poweroff"),
 
     RM_FILES("rm -rf %s");
 

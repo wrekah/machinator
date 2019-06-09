@@ -47,7 +47,7 @@ public class VmDeleteJob extends QuartzJobBean {
 
     private void turnOffIfRunning(VirtualMachine vm) {
         if (vmInfoService.state(vm) == VirtualMachineState.RUNNING) {
-            vmManipulator.turnoff(vm);
+            vmManipulator.powerOff(vm);
             vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
         }
     }

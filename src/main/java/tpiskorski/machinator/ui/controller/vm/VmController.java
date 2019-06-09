@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.flow.quartz.vm.VmActionScheduler;
@@ -31,11 +33,11 @@ public class VmController {
 
     @FXML private TableView<VirtualMachine> virtualMachines;
 
-    @FXML private Button removeVmButton;
-    @FXML private Button resetVmButton;
-    @FXML private Button powerOffVmButton;
-    @FXML private Button turnOffVmButton;
-    @FXML private Button turnOnVmButton;
+    @FXML private Button deleteButton;
+    @FXML private Button resetButton;
+    @FXML private Button acpiShutdownButton;
+    @FXML private Button powerOffButton;
+    @FXML private Button turnOnButton;
 
     private FilteredList<VirtualMachine> filterableVirtualMachines;
 
@@ -62,11 +64,11 @@ public class VmController {
         ObservableList<VirtualMachine> selectedItems = virtualMachines.getSelectionModel().getSelectedItems();
         BooleanBinding selectedUnreachableVm = createUnreachableVmBinding();
 
-        removeVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        resetVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        powerOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        turnOffVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        turnOnVmButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.RUNNING)));
+        deleteButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
+        resetButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        acpiShutdownButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        powerOffButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        turnOnButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.RUNNING)));
     }
 
     private BooleanBinding createUnreachableVmBinding() {
@@ -116,9 +118,9 @@ public class VmController {
     }
 
     @FXML
-    public void turnOffVm() {
+    public void powerOffVm() {
         boolean confirmed = ConfirmationAlertFactory.createAndAsk(
-            "Do you really want to turn off this vm(s)?",
+            "Do you really want to power off this vm(s)?",
             "VM"
         );
 
@@ -131,9 +133,9 @@ public class VmController {
     }
 
     @FXML
-    public void powerOffVm() {
+    public void acpiShutdownVm() {
         boolean confirmed = ConfirmationAlertFactory.createAndAsk(
-            "Do you really want to power off this vm(s)?",
+            "Do you really want to acpi shutdown this vm(s)?",
             "VM"
         );
 

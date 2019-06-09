@@ -6,11 +6,11 @@
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="tpiskorski.machinator.ui.controller.vm.VmController">
 
     <HBox alignment="CENTER">
-        <Button text="Turn on vm" fx:id="turnOnVmButton" onAction="#turnOnVm"/>
-        <Button text="Turn off vm" fx:id="turnOffVmButton" onAction="#turnOffVm"/>
-        <Button text="Power off vm" fx:id="powerOffVmButton" onAction="#powerOffVm"/>
-        <Button text="Reset vm" fx:id="resetVmButton" onAction="#resetVm"/>
-        <Button text="Delete vm" fx:id="removeVmButton" onAction="#deleteVm"/>
+        <Button text="Turn on vm" fx:id="turnOnButton" onAction="#turnOnVm"/>
+        <Button text="Turn off vm" fx:id="powerOffButton" onAction="#powerOffVm"/>
+        <Button text="Power off vm" fx:id="acpiShutdownButton" onAction="#acpiShutdownVm"/>
+        <Button text="Reset vm" fx:id="resetButton" onAction="#resetVm"/>
+        <Button text="Delete vm" fx:id="deleteButton" onAction="#deleteVm"/>
     </HBox>
 
     <TableView VBox.vgrow="ALWAYS" fx:id="virtualMachines">

@@ -34,7 +34,7 @@ public class VmPowerOffJob extends QuartzJobBean {
 
         vm.lock();
         try {
-            vmManipulator.powerOff(vm);
+            vmManipulator.acpiShutdown(vm);
             vmInfoService.pollState(vm, VirtualMachineState.POWEROFF);
             vm.setState(VirtualMachineState.POWEROFF);
         } finally {
