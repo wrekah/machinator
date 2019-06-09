@@ -1,0 +1,16 @@
+<?import javafx.scene.control.Alert?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<Menu xmlns:fx="http://javafx.com/fxml" text="Config"
+      fx:controller="tpiskorski.machinator.ui.controller.menu.ConfigMenuController">
+
+    <fx:define>
+        <Alert fx:id="reloadAlert" alertType="INFORMATION" title="Configuration" contentText="Configuration reloaded!"
+               headerText=""/>
+    </fx:define>
+
+    <MenuItem text="Config..." onAction="#configWindow"/>
+    <MenuItem text="Reload config" onAction="#reloadConfig"/>
+
+
+</Menu>

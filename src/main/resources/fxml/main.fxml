@@ -5,6 +5,7 @@
     <top>
         <MenuBar>
             <fx:include source="menu/config/fileMenu.fxml"/>
+            <fx:include source="menu/config/configMenu.fxml"/>
         </MenuBar>
     </top>
     <center>
