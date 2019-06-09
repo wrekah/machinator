@@ -1,11 +1,13 @@
 package tpiskorski.machinator.config;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ConfigService {
+public abstract class ConfigService implements InitializingBean {
 
     private final List<PropertyChangeListener> listeners = new ArrayList<>();
     protected Config config;
@@ -28,7 +30,10 @@ public abstract class ConfigService {
     }
 
     public synchronized Config getConfig() {
-        config = loadConfig();
         return config;
+    }
+
+    @Override public void afterPropertiesSet() {
+        config = loadConfig();
     }
 }
