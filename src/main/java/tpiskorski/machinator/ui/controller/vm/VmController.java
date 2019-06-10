@@ -9,8 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.flow.quartz.vm.VmActionScheduler;
@@ -61,14 +59,18 @@ public class VmController {
     }
 
     private void setupDisableBindings() {
-        ObservableList<VirtualMachine> selectedItems = virtualMachines.getSelectionModel().getSelectedItems();
+        BooleanBinding nothingSelected = createNothingSelectedBinding();
         BooleanBinding selectedUnreachableVm = createUnreachableVmBinding();
 
-        deleteButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm));
-        resetButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        acpiShutdownButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        powerOffButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
-        turnOnButton.disableProperty().bind(Bindings.isEmpty(selectedItems).or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.RUNNING)));
+        deleteButton.disableProperty().bind(nothingSelected.or(selectedUnreachableVm));
+        resetButton.disableProperty().bind(nothingSelected.or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        acpiShutdownButton.disableProperty().bind(nothingSelected.or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        powerOffButton.disableProperty().bind(nothingSelected.or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.POWEROFF)));
+        turnOnButton.disableProperty().bind(nothingSelected.or(selectedUnreachableVm).or(disableIfAny(VirtualMachineState.RUNNING)));
+    }
+
+    private BooleanBinding createNothingSelectedBinding() {
+        return Bindings.createBooleanBinding(() -> virtualMachines.getSelectionModel().getSelectedItems().isEmpty(), virtualMachines.getSelectionModel().getSelectedItems());
     }
 
     private BooleanBinding createUnreachableVmBinding() {
@@ -83,7 +85,7 @@ public class VmController {
                 disableChangeType = true;
             }
             return disableChangeType;
-        }, virtualMachines.getSelectionModel().selectedItemProperty());
+        }, virtualMachines.getSelectionModel().getSelectedItems());
     }
 
     private BooleanBinding disableIfAny(VirtualMachineState state) {
@@ -99,7 +101,7 @@ public class VmController {
                 }
             }
             return disableChangeType;
-        }, virtualMachines.getSelectionModel().selectedItemProperty());
+        }, virtualMachines.getSelectionModel().getSelectedItems());
     }
 
     @FXML
@@ -114,6 +116,7 @@ public class VmController {
             selectedVm.forEach(vmActionScheduler::scheduleTurnOn);
 
             notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for turn on", selectedVm.size()));
+            virtualMachines.getSelectionModel().clearSelection();
         }
     }
 
@@ -129,6 +132,7 @@ public class VmController {
             selectedVm.forEach(vmActionScheduler::scheduleTurnOff);
 
             notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for turn off", selectedVm.size()));
+            virtualMachines.getSelectionModel().clearSelection();
         }
     }
 
@@ -144,6 +148,7 @@ public class VmController {
             selectedVm.forEach(vmActionScheduler::schedulePowerOff);
 
             notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for power off", selectedVm.size()));
+            virtualMachines.getSelectionModel().clearSelection();
         }
     }
 
@@ -159,6 +164,7 @@ public class VmController {
             selectedVm.forEach(vmActionScheduler::scheduleReset);
 
             notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for reset", selectedVm.size()));
+            virtualMachines.getSelectionModel().clearSelection();
         }
     }
 
@@ -174,6 +180,7 @@ public class VmController {
             selectedVm.forEach(vmActionScheduler::scheduleDelete);
 
             notificationFactory.createAndShow(String.format("Scheduled %s vm(s) for delete", selectedVm.size()));
+            virtualMachines.getSelectionModel().clearSelection();
         }
     }
 }
