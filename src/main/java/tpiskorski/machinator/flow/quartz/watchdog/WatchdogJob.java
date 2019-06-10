@@ -12,6 +12,7 @@ import tpiskorski.machinator.flow.quartz.service.*;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerType;
 import tpiskorski.machinator.model.vm.VirtualMachine;
+import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 import tpiskorski.machinator.model.watchdog.Watchdog;
 
@@ -25,6 +26,7 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private VmImporter vmImporter;
     @Autowired private CopyService copyService;
     @Autowired private BackupService backupService;
+    @Autowired private VirtualMachineService virtualMachineService;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -60,27 +62,36 @@ public class WatchdogJob extends QuartzJobBean {
 
             String latestBackupFilePath = backupService.findLatestBackup(vm);
 
-            if (watchdogServer.getServerType() == ServerType.LOCAL) {
-                vmImporter.importVm(watchdogServer, latestBackupFilePath);
-                vmManipulator.start(vm);
-                vmManipulator.remove(originalServer, vm.getVmName());
-                vm.setServer(watchdogServer);
-            } else {
-                String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
+            VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, watchdogServer);
+            virtualMachineService.add(placeholder);
 
-                try {
-                    cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
-                    copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
+            placeholder.lock();
+            try {
+                if (watchdogServer.getServerType() == ServerType.LOCAL) {
 
-                    vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
-
+                    vmImporter.importVm(watchdogServer, latestBackupFilePath);
                     vmManipulator.start(vm);
-
                     vmManipulator.remove(originalServer, vm.getVmName());
                     vm.setServer(watchdogServer);
-                } finally {
-                    cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                } else {
+                    String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
+
+                    try {
+                        cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                        copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
+
+                        vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
+
+                        vmManipulator.start(vm);
+
+                        vmManipulator.remove(originalServer, vm.getVmName());
+                        vm.setServer(watchdogServer);
+                    } finally {
+                        cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                    }
                 }
+            } finally {
+                placeholder.unlock();
             }
         } catch (Exception e) {
             LOGGER.error("Watchdog job failed", e);
