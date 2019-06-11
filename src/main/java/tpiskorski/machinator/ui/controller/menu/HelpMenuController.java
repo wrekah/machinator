@@ -10,7 +10,7 @@ public class HelpMenuController {
 
     private final HostServices hostServices;
 
-    @Value("${project.github.url") private String repositoryUrl;
+    @Value("${project.github.url}") private String repositoryUrl;
 
     public HelpMenuController(HostServices hostServices) {
         this.hostServices = hostServices;
