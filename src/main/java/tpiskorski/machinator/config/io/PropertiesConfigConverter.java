@@ -9,6 +9,7 @@ public class PropertiesConfigConverter {
         return Config.builder()
             .backupLocation(properties.getProperty("backup.location"))
             .pollInterval(Integer.parseInt(properties.getProperty("poll.interval")))
+            .notifications(Boolean.valueOf(properties.getProperty("notifications.enabled")))
             .build();
     }
 
@@ -17,6 +18,7 @@ public class PropertiesConfigConverter {
 
         properties.setProperty("backup.location", config.getBackupLocation());
         properties.setProperty("poll.interval", String.valueOf(config.getPollInterval()));
+        properties.setProperty("notifications.enabled", String.valueOf(config.areNotificationsEnabled()));
 
         return properties;
     }
