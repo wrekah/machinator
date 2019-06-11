@@ -5,47 +5,48 @@ import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
-import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableServer
+import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableVirtualMachine
 import tpiskorski.machinator.model.server.Credentials
 import tpiskorski.machinator.model.server.Server
-import tpiskorski.machinator.model.server.ServerService
+import tpiskorski.machinator.model.vm.VirtualMachine
+import tpiskorski.machinator.model.vm.VirtualMachineService
 
-class ServerStateManagerTest extends Specification {
+class VirtualMachineStateManagerTest extends Specification {
 
-    def serverService = Mock(ServerService)
+    def virtualMachineService = Mock(VirtualMachineService)
 
     def objectPersister = Mock(ObjectPersister)
     def objectRestorer = Mock(ObjectRestorer)
 
-    @Subject persister = new ServerStateManager(serverService)
+    @Subject persister = new VirtualMachineStateManager(virtualMachineService)
 
     def setup() {
         persister.objectPersister = objectPersister
         persister.objectRestorer = objectRestorer
     }
 
-    def 'should persist servers state'() {
+    def 'should persist vms state'() {
         given:
-        def servers = createServers()
+        def vms = createVms()
 
         when:
         persister.persist()
 
         then:
-        1 * serverService.getServers() >> servers
+        1 * virtualMachineService.getVms() >> vms
         1 * objectPersister.persist(_, _)
     }
 
-    def 'should restore servers state'() {
+    def 'should restore vms state'() {
         given:
-        def servers = createSerializableServers()
+        def vms = createSerializableVms()
 
         when:
         persister.restore()
 
         then:
-        1 * objectRestorer.restore(_) >> servers
-        3 * serverService.add(_)
+        1 * objectRestorer.restore(_) >> vms
+        3 * virtualMachineService.add(_)
     }
 
     def 'should not restore anything if io exception is thrown'() {
@@ -66,15 +67,18 @@ class ServerStateManagerTest extends Specification {
         0 * _
     }
 
-    def createServers() {
+    def createVms() {
+        def server1 = new Server(new Credentials("user", "pw"), 'some', '123')
+        def server2 = new Server(Credentials.none(), 'other', '321')
+
         [
-                new Server(new Credentials("user", "pw"),'some', '123'),
-                new Server(new Credentials("user", "pw"),'some', '321'),
-                new Server(Credentials.none(),'other', '123')
+                new VirtualMachine(server1, 'id1'),
+                new VirtualMachine(server2, 'id1'),
+                new VirtualMachine(server1, 'id2')
         ] as ObservableList
     }
 
-    def createSerializableServers() {
-        createServers().collect { new SerializableServer(it) }
+    def createSerializableVms() {
+        createVms().collect { new SerializableVirtualMachine(it) }
     }
 }

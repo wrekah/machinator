@@ -12,6 +12,10 @@ public class Credentials {
         this.password = password;
     }
 
+    public static Credentials none() {
+        return new Credentials("not needed", "not needed");
+    }
+
     public String getUser() {
         return user;
     }

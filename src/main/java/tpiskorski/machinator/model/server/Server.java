@@ -37,7 +37,7 @@ public class Server {
     }
 
     public static Server local() {
-        return new Server("local", "");
+        return new Server(Credentials.none(), "local", "");
     }
 
     static Callback<Server, Observable[]> extractor() {

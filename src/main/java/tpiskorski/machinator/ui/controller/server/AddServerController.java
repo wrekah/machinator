@@ -111,7 +111,7 @@ public class AddServerController {
             Credentials credentials = new Credentials(userField.getText(), passwordField.getText());
             server = new Server(credentials, address.getText(), port.getText());
         } else {
-            server = new Server(address.getText(), port.getText());
+            server = new Server(Credentials.none(), address.getText(), port.getText());
         }
 
         if (serverService.contains(server)) {

@@ -57,7 +57,7 @@ public class BackupStateManager extends StateManager {
             restoredBackups.stream()
                 .map(SerializableBackupDefinition::toBackup)
                 .collect(Collectors.toList())
-                .forEach(backupDefinitionService::add);
+                .forEach(backupDefinitionService::put);
 
             LOGGER.info("Backups state restored");
         } catch (IOException | ClassNotFoundException ex) {

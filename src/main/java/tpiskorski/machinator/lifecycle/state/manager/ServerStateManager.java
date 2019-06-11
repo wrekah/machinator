@@ -57,7 +57,7 @@ public class ServerStateManager extends StateManager {
             restoredServers.stream()
                 .map(SerializableServer::toServer)
                 .collect(Collectors.toList())
-                .forEach(serverService::add);
+                .forEach(serverService::put);
 
             LOGGER.info("Servers state restored");
         } catch (IOException | ClassNotFoundException ex) {

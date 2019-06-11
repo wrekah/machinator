@@ -57,7 +57,7 @@ public class WatchdogStateManager extends StateManager {
             restoredWatchdogs.stream()
                 .map(SerializableWatchdog::toWatchdog)
                 .collect(Collectors.toList())
-                .forEach(watchdogService::add);
+                .forEach(watchdogService::put);
 
             LOGGER.info("Watchdogs state restored");
         } catch (IOException | ClassNotFoundException ex) {

@@ -3,6 +3,8 @@ package tpiskorski.machinator.model.vm;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler;
+import tpiskorski.machinator.lifecycle.state.manager.PersistenceType;
 import tpiskorski.machinator.model.server.Server;
 
 import java.util.HashSet;
@@ -16,12 +18,20 @@ import static java.util.function.Predicate.not;
 public class VirtualMachineService {
 
     private final VirtualMachineRepository virtualMachineRepository;
+    private final PersistScheduler persistScheduler;
 
-    @Autowired public VirtualMachineService(VirtualMachineRepository virtualMachineRepository) {
+    @Autowired
+    public VirtualMachineService(VirtualMachineRepository virtualMachineRepository, PersistScheduler persistScheduler) {
         this.virtualMachineRepository = virtualMachineRepository;
+        this.persistScheduler = persistScheduler;
     }
 
     public void add(VirtualMachine vm) {
+        virtualMachineRepository.add(vm);
+        persistScheduler.schedulePersistence(PersistenceType.VIRTUAL_MACHINE);
+    }
+
+    public void put(VirtualMachine vm){
         virtualMachineRepository.add(vm);
     }
 

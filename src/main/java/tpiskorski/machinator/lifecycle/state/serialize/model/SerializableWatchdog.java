@@ -13,10 +13,15 @@ public class SerializableWatchdog implements Serializable {
 
     public SerializableWatchdog(Watchdog watchdog) {
         this.serializableVirtualMachine = new SerializableVirtualMachine(watchdog.getVirtualMachine());
-        this.serializableWatchdogServer = new SerializableServer(watchdog.getWatchdogServer());
+
+        if (watchdog.getWatchdogServer() != null) {
+            this.serializableWatchdogServer = new SerializableServer(watchdog.getWatchdogServer());
+        } else {
+            this.serializableWatchdogServer = null;
+        }
     }
 
     public Watchdog toWatchdog() {
-        return new Watchdog(serializableVirtualMachine.toVirtualMachine(), serializableWatchdogServer.toServer());
+        return new Watchdog(serializableVirtualMachine.toVirtualMachine(), serializableWatchdogServer != null ? serializableWatchdogServer.toServer()  : null);
     }
 }

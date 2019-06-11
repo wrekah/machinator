@@ -6,6 +6,7 @@ import spock.lang.Subject
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectPersister
 import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableWatchdog
+import tpiskorski.machinator.model.server.Credentials
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.watchdog.Watchdog
@@ -67,7 +68,7 @@ class WatchdogStateManagerTest extends Specification {
         0 * _
     }
 
-    def 'should not persist anything if exception is thrown'(){
+    def 'should not persist anything if exception is thrown'() {
         given:
         def watchdogs = createWatchdogs()
 
@@ -80,9 +81,9 @@ class WatchdogStateManagerTest extends Specification {
     }
 
     def createWatchdogs() {
-        def server1 = new Server('some', '123')
-        def server2 = new Server('some', '321')
-        def server3 = new Server('other', '123')
+        def server1 = new Server(new Credentials("user", "pw"), 'some', '123')
+        def server2 = new Server(new Credentials("user", "pw"), 'some', '321')
+        def server3 = new Server(Credentials.none(), 'other', '123')
 
         def vm1 = new VirtualMachine(server1, 'id1')
         def vm2 = new VirtualMachine(server2, 'id1')

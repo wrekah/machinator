@@ -9,7 +9,7 @@ class VirtualMachineServiceTest extends Specification {
 
     def virtualMachineRepository = Mock(VirtualMachineRepository)
 
-    @Subject service = new VirtualMachineService(virtualMachineRepository)
+    @Subject service = new VirtualMachineService(virtualMachineRepository, persistScheduler)
 
     def 'should add vm'() {
         given:

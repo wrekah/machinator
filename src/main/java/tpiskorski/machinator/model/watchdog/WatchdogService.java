@@ -32,6 +32,10 @@ public class WatchdogService {
         persistScheduler.schedulePersistence(PersistenceType.WATCHDOG);
     }
 
+    public void put(Watchdog watchdog) {
+        watchdogRepository.add(watchdog);
+    }
+
     public ObservableList<Watchdog> getWatchdogs() {
         return watchdogRepository.getWatchdogs();
     }

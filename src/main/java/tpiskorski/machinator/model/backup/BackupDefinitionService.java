@@ -30,6 +30,10 @@ public class BackupDefinitionService {
         persistScheduler.schedulePersistence(PersistenceType.BACKUP_DEFINITION);
     }
 
+    public void put(BackupDefinition backupDefinition) {
+        backupDefinitionRepository.add(backupDefinition);
+    }
+
     public void remove(BackupDefinition backupDefinition) {
         backupDefinitionRepository.remove(backupDefinition);
     }

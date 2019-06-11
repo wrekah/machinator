@@ -8,6 +8,7 @@ import tpiskorski.machinator.lifecycle.state.serialize.io.ObjectRestorer
 import tpiskorski.machinator.lifecycle.state.serialize.model.SerializableBackupDefinition
 import tpiskorski.machinator.model.backup.BackupDefinition
 import tpiskorski.machinator.model.backup.BackupDefinitionService
+import tpiskorski.machinator.model.server.Credentials
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.vm.VirtualMachine
 
@@ -68,8 +69,8 @@ class BackupDefinitionStateManagerTest extends Specification {
     }
 
     def createBackups() {
-        def server1 = new Server('some', '123')
-        def server2 = new Server('other', '321')
+        def server1 = new Server(new Credentials("user", "pw"), 'some', '123')
+        def server2 = new Server(new Credentials("user", "pw"), 'other', '321')
 
         def vm1 = new VirtualMachine(server1, 'id1')
         def vm2 = new VirtualMachine(server2, 'id1')

@@ -10,7 +10,7 @@ class ServerServiceModuleTest extends Specification {
 
     def serverRepository = new ServerRepository()
     def virtualMachineRepository = new VirtualMachineRepository()
-    def virtualMachineService = new VirtualMachineService(virtualMachineRepository)
+    def virtualMachineService = new VirtualMachineService(virtualMachineRepository, persistScheduler)
 
     @Subject service = new ServerService(serverRepository, virtualMachineService)
 

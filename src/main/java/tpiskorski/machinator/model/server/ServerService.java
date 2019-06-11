@@ -38,6 +38,10 @@ public class ServerService {
         persistScheduler.schedulePersistence(PersistenceType.SERVER);
     }
 
+    public void put(Server server) {
+        serverRepository.add(server);
+    }
+
     public void refresh(Server server, List<VirtualMachine> vms) {
         server.setServerState(ServerState.REACHABLE);
         virtualMachineService.refresh(server, vms);

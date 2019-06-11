@@ -10,7 +10,7 @@ class VirtualMachineServiceModuleTest extends Specification {
 
     def virtualMachineRepository = new VirtualMachineRepository()
 
-    @Subject service = new VirtualMachineService(virtualMachineRepository)
+    @Subject service = new VirtualMachineService(virtualMachineRepository, persistScheduler)
 
     @Shared Server server1, server2, non_existent_server
     @Shared VirtualMachine vm1, vm2, vm3
