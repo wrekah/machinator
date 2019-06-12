@@ -30,6 +30,8 @@ public class ExportVmService {
     }
 
     public void exportVm(Server server, String exportPath, String vmName) {
+        LOGGER.info("Starting vm exporting of {} on {} to {}", vmName, server, exportPath);
+
         ExecutionContext exportVm = ExecutionContext.builder()
             .executeOn(server)
             .command(commandFactory.makeWithArgs(BaseCommand.EXPORT_VM, exportPath, vmName))
@@ -41,5 +43,6 @@ public class ExportVmService {
             LOGGER.error("Exporting vm {} on server {} to file {} failed", vmName, server, exportPath);
             throw new ExecutionException(result.getError());
         }
+        LOGGER.info("Finished vm exporting");
     }
 }
