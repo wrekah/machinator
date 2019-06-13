@@ -13,7 +13,6 @@ public class Watchdog {
 
     private VirtualMachine virtualMachine;
     private Server watchdogServer;
-
     private BooleanProperty active = new SimpleBooleanProperty();
 
     public Watchdog(VirtualMachine virtualMachine, Server watchdogServer) {
@@ -46,6 +45,10 @@ public class Watchdog {
 
     public Server getWatchdogServer() {
         return watchdogServer;
+    }
+
+    public void setWatchdogServer(Server watchdogServer) {
+        this.watchdogServer = watchdogServer;
     }
 
     @Override public int hashCode() {

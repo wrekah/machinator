@@ -126,4 +126,8 @@ public class VirtualMachineService {
     private void unreachable(VirtualMachine virtualMachine) {
         virtualMachine.setState(VirtualMachineState.NODE_NOT_REACHABLE);
     }
+
+    public void persist() {
+        persistScheduler.schedulePersistence(PersistenceType.VIRTUAL_MACHINE);
+    }
 }

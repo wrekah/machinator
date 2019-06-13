@@ -81,6 +81,7 @@ public class VmMoveJob extends QuartzJobBean {
                 vm.setId(newId);
 
                 vmManipulator.start(vm);
+                virtualMachineService.persist();
             } finally {
                 cleanupService.cleanup(remote, remoteTemporaryFilePath);
                 cleanupService.cleanup(local, localTemporaryFilePath);
@@ -116,6 +117,7 @@ public class VmMoveJob extends QuartzJobBean {
                 vm.setId(newId);
 
                 vmManipulator.start(vm);
+                virtualMachineService.persist();
             } finally {
                 cleanupService.cleanup(remote, remoteTemporaryFilePath);
                 cleanupService.cleanup(local, localTemporaryFilePath);
@@ -156,9 +158,13 @@ public class VmMoveJob extends QuartzJobBean {
                 copyService.copyLocalToRemote(toRemote, localTemporaryFilePath, remoteTemporaryFilePath);
                 vmImporter.importVm(toRemote, remoteTemporaryFilePath);
 
-                vm.setServer(toRemote);
-                vmManipulator.start(vm);
                 vmManipulator.remove(fromRemote, vm.getVmName());
+                vm.setServer(toRemote);
+                String newId = getNewId(toRemote, vm.getVmName());
+                vm.setId(newId);
+
+                vmManipulator.start(vm);
+                virtualMachineService.persist();
             } finally {
                 cleanupService.cleanup(fromRemote, remoteTemporaryFilePath);
                 cleanupService.cleanup(Server.local(), localTemporaryFilePath);

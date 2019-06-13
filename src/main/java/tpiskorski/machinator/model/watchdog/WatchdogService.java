@@ -65,4 +65,8 @@ public class WatchdogService {
     public boolean contains(Watchdog watchdog) {
         return watchdogRepository.contains(watchdog);
     }
+
+    public void exhaust(Watchdog watchdog) {
+        watchdog.setWatchdogServer(null);
+    }
 }

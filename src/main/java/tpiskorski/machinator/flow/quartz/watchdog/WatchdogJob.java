@@ -15,6 +15,7 @@ import tpiskorski.machinator.model.vm.VirtualMachine;
 import tpiskorski.machinator.model.vm.VirtualMachineService;
 import tpiskorski.machinator.model.vm.VirtualMachineState;
 import tpiskorski.machinator.model.watchdog.Watchdog;
+import tpiskorski.machinator.model.watchdog.WatchdogService;
 
 public class WatchdogJob extends QuartzJobBean {
 
@@ -27,6 +28,8 @@ public class WatchdogJob extends QuartzJobBean {
     @Autowired private CopyService copyService;
     @Autowired private BackupService backupService;
     @Autowired private VirtualMachineService virtualMachineService;
+    @Autowired private VmLister vmLister;
+    @Autowired private WatchdogService watchdogService;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -70,9 +73,16 @@ public class WatchdogJob extends QuartzJobBean {
                 if (watchdogServer.getServerType() == ServerType.LOCAL) {
 
                     vmImporter.importVm(watchdogServer, latestBackupFilePath);
-                    vmManipulator.start(vm);
+
                     vmManipulator.remove(originalServer, vm.getVmName());
                     vm.setServer(watchdogServer);
+                    String newId = getNewId(watchdogServer, vm.getVmName());
+                    vm.setId(newId);
+
+                    vmManipulator.start(vm);
+                    virtualMachineService.persist();
+                    watchdogService.exhaust(watchdog);
+
                 } else {
                     String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
 
@@ -82,15 +92,21 @@ public class WatchdogJob extends QuartzJobBean {
 
                         vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
 
-                        vmManipulator.start(vm);
-
                         vmManipulator.remove(originalServer, vm.getVmName());
                         vm.setServer(watchdogServer);
+                        String newId = getNewId(watchdogServer, vm.getVmName());
+                        vm.setId(newId);
+
+                        vmManipulator.start(vm);
+                        virtualMachineService.persist();
+
+                        watchdogService.exhaust(watchdog);
                     } finally {
                         cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
                     }
                 }
             } finally {
+                virtualMachineService.remove(placeholder);
                 placeholder.unlock();
             }
         } catch (Exception e) {
@@ -99,6 +115,15 @@ public class WatchdogJob extends QuartzJobBean {
         } finally {
             vm.unlock();
         }
+    }
+
+    private String getNewId(Server server, String vmName) {
+        VirtualMachine virtualMachine = vmLister.simpleList(server).stream()
+            .filter(it -> it.getVmName().equals(vmName))
+            .findFirst()
+            .orElseThrow();
+
+        return virtualMachine.getId();
     }
 
     private boolean checkIfRunning(VirtualMachine vm) {
