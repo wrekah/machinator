@@ -30,6 +30,12 @@ public class VmLister {
     }
 
     public List<VirtualMachine> list(Server server) {
+        List<VirtualMachine> vms = simpleList(server);
+        vmDetailsService.enrichVms(vms);
+        return vms;
+    }
+
+    public List<VirtualMachine> simpleList(Server server) {
         ExecutionContext listAllVms = ExecutionContext.builder()
             .executeOn(server)
             .command(commandFactory.make(BaseCommand.LIST_ALL_VMS))
@@ -43,8 +49,6 @@ public class VmLister {
 
         List<VirtualMachine> vms = simpleVmParser.parse(result);
         vms.forEach(virtualMachine -> virtualMachine.setServer(server));
-        vmDetailsService.enrichVms(vms);
-
         return vms;
     }
 }

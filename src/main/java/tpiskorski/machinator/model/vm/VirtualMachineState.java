@@ -7,10 +7,12 @@ public enum VirtualMachineState {
     ABORTED,
     RUNNING,
     RUNNING_RECENTLY_RESET,
+    WAITING_FOR_REFRESH,
     SAVED,
     POWEROFF,
     UNREACHABLE,
-    NODE_NOT_REACHABLE;
+    NODE_NOT_REACHABLE,
+    COULD_NOT_PARSE;
 
     public static VirtualMachineState parse(String vmState) {
         if (vmState.equals("\"poweroff\"")) {

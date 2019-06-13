@@ -18,7 +18,7 @@ public class VirtualMachine {
     private IntegerProperty cpuCores = new SimpleIntegerProperty();
     private IntegerProperty ramMemory = new SimpleIntegerProperty();
     private ObjectProperty<VirtualMachineState> state = new SimpleObjectProperty<>();
-    private VirtualMachineType type;
+    private VirtualMachineType type = VirtualMachineType.REGULAR;
     private Lock lock = new ReentrantLock();
 
     public VirtualMachine() {
@@ -66,6 +66,9 @@ public class VirtualMachine {
     }
 
     public void unlock() {
+        if (getState() == VirtualMachineState.COMMAND_IN_PROGRESS || getState() == VirtualMachineState.REFRESH_IN_PROGRESS) {
+            setState(VirtualMachineState.WAITING_FOR_REFRESH);
+        }
         lock.unlock();
     }
 

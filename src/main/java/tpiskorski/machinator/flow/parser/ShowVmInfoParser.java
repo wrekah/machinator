@@ -17,9 +17,9 @@ public class ShowVmInfoParser {
 
         Properties properties = loadProperties(std);
 
-        int cpus = Integer.parseInt(properties.getProperty("cpus"));
-        int memory = Integer.parseInt(properties.getProperty("memory"));
-        VirtualMachineState state = VirtualMachineState.parse(properties.getProperty("VMState"));
+        int cpus = parseInt(properties, "cpus");
+        int memory = parseInt(properties, "memory");
+        VirtualMachineState state = getVmState(properties);
 
         VmInfo vmInfo = new VmInfo();
         vmInfo.setCpus(cpus);
@@ -27,6 +27,22 @@ public class ShowVmInfoParser {
         vmInfo.setState(state);
 
         return vmInfo;
+    }
+
+    private VirtualMachineState getVmState(Properties properties) {
+        try {
+            return VirtualMachineState.parse(properties.getProperty("VMState"));
+        } catch (Exception e) {
+            return VirtualMachineState.COULD_NOT_PARSE;
+        }
+    }
+
+    private int parseInt(Properties properties, String cpus) {
+        try {
+            return Integer.parseInt(properties.getProperty(cpus));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private Properties loadProperties(String std) {

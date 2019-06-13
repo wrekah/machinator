@@ -31,7 +31,7 @@ public class VirtualMachineService {
         persistScheduler.schedulePersistence(PersistenceType.VIRTUAL_MACHINE);
     }
 
-    public void put(VirtualMachine vm){
+    public void put(VirtualMachine vm) {
         virtualMachineRepository.add(vm);
     }
 
@@ -57,7 +57,7 @@ public class VirtualMachineService {
         return virtualMachineRepository.getVms(server);
     }
 
-    public void remove(VirtualMachine vmToRemove) {
+    public synchronized void remove(VirtualMachine vmToRemove) {
         virtualMachineRepository.remove(vmToRemove);
     }
 
@@ -100,6 +100,10 @@ public class VirtualMachineService {
     }
 
     private void refresh(VirtualMachine virtualMachine) {
+        if (virtualMachineRepository.existsPlaceholder(virtualMachine)) {
+            return;
+        }
+
         if (virtualMachineRepository.contains(virtualMachine)) {
             update(virtualMachine);
         } else {

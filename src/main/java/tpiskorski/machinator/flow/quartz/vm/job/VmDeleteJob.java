@@ -53,7 +53,7 @@ public class VmDeleteJob extends QuartzJobBean {
     }
 
     private void checkIfDeleted(VirtualMachine vm) {
-        List<VirtualMachine> vms = vmLister.list(vm.getServer());
+        List<VirtualMachine> vms = vmLister.simpleList(vm.getServer());
         if (!vms.contains(vm)) {
             virtualMachineService.remove(vm);
         } else {

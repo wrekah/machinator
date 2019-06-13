@@ -68,4 +68,17 @@ public class VirtualMachineRepository {
             LOGGER.debug("Skipping {} vm because work is in progress", vm.getId());
         }
     }
+
+    public boolean existsPlaceholder(VirtualMachine virtualMachine) {
+        Server server = virtualMachine.getServer();
+        String vmName = virtualMachine.getVmName();
+
+        return  vmObservableList.stream()
+            .filter(vm -> vm.getServer().equals(server))
+            .filter(vm-> vm.getVmName().equals(vmName))
+            .filter(vm->vm.getType() == VirtualMachineType.PLACEHOLDER)
+            .findAny().isPresent();
+
+
+    }
 }

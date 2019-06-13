@@ -29,6 +29,7 @@ public class VmMoveJob extends QuartzJobBean {
     @Autowired private CopyService copyService;
     @Autowired private BackupService backupService;
     @Autowired private VirtualMachineService virtualMachineService;
+    @Autowired private VmLister vmLister;
 
     @Override protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
@@ -38,19 +39,22 @@ public class VmMoveJob extends QuartzJobBean {
         Server destination = (Server) mergedJobDataMap.get("destination");
 
         VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, destination);
-        virtualMachineService.add(placeholder);
+        virtualMachineService.put(placeholder);
 
         placeholder.lock();
+        try {
 
-        if (source.getServerType() == ServerType.LOCAL && destination.getServerType() == ServerType.REMOTE) {
-            moveFromLocalToRemote(vm, source, destination);
-        } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.LOCAL) {
-            moveFromRemoteToLocal(vm, source, destination);
-        } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.REMOTE) {
-            moveBetweenRemotes(vm, source, destination);
+            if (source.getServerType() == ServerType.LOCAL && destination.getServerType() == ServerType.REMOTE) {
+                moveFromLocalToRemote(vm, source, destination);
+            } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.LOCAL) {
+                moveFromRemoteToLocal(vm, source, destination);
+            } else if (source.getServerType() == ServerType.REMOTE && destination.getServerType() == ServerType.REMOTE) {
+                moveBetweenRemotes(vm, source, destination);
+            }
+        } finally {
+            virtualMachineService.remove(placeholder);
+            placeholder.unlock();
         }
-
-        placeholder.unlock();
     }
 
     private void moveFromLocalToRemote(VirtualMachine vm, Server local, Server remote) throws JobExecutionException {
@@ -73,6 +77,9 @@ public class VmMoveJob extends QuartzJobBean {
                 vmManipulator.remove(local, vm.getVmName());
 
                 vm.setServer(remote);
+                String newId = getNewId(remote, vm.getVmName());
+                vm.setId(newId);
+
                 vmManipulator.start(vm);
             } finally {
                 cleanupService.cleanup(remote, remoteTemporaryFilePath);
@@ -105,6 +112,9 @@ public class VmMoveJob extends QuartzJobBean {
                 vmManipulator.remove(remote, vm.getVmName());
 
                 vm.setServer(local);
+                String newId = getNewId(local, vm.getVmName());
+                vm.setId(newId);
+
                 vmManipulator.start(vm);
             } finally {
                 cleanupService.cleanup(remote, remoteTemporaryFilePath);
@@ -116,6 +126,15 @@ public class VmMoveJob extends QuartzJobBean {
         } finally {
             vm.unlock();
         }
+    }
+
+    private String getNewId(Server server, String vmName) {
+        VirtualMachine virtualMachine = vmLister.simpleList(server).stream()
+            .filter(it -> it.getVmName().equals(vmName))
+            .findFirst()
+            .orElseThrow();
+
+        return virtualMachine.getId();
     }
 
     private void moveBetweenRemotes(VirtualMachine vm, Server fromRemote, Server toRemote) throws JobExecutionException {
