@@ -37,7 +37,11 @@ public class WatchdogJob extends QuartzJobBean {
         LOGGER.info("Watchdog started for {}", watchdog.id());
 
         VirtualMachine vm = watchdog.getVirtualMachine();
+        Server source = vm.getServer();
+        Server destination = watchdog.getWatchdogServer();
 
+        source.lock();
+        destination.lock();
         vm.lock();
         try {
             vmManipulator.start(vm);
@@ -49,8 +53,7 @@ public class WatchdogJob extends QuartzJobBean {
 
             LOGGER.warn("Watchdog was not able to restart vm.");
 
-            Server watchdogServer = watchdog.getWatchdogServer();
-            if (watchdogServer == null) {
+            if (destination == null) {
                 LOGGER.warn("No backup server is defined");
                 throw new ExecutionException("No backup server is defined");
             }
@@ -65,36 +68,34 @@ public class WatchdogJob extends QuartzJobBean {
 
             String latestBackupFilePath = backupService.findLatestBackup(vm);
 
-            VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, watchdogServer);
-            virtualMachineService.add(placeholder);
-
+            VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, destination);
             placeholder.lock();
+            virtualMachineService.add(placeholder);
             try {
-                if (watchdogServer.getServerType() == ServerType.LOCAL) {
+                if (destination.getServerType() == ServerType.LOCAL) {
 
-                    vmImporter.importVm(watchdogServer, latestBackupFilePath);
+                    vmImporter.importVm(destination, latestBackupFilePath);
 
                     vmManipulator.remove(originalServer, vm.getVmName());
-                    vm.setServer(watchdogServer);
-                    String newId = getNewId(watchdogServer, vm.getVmName());
+                    vm.setServer(destination);
+                    String newId = getNewId(destination, vm.getVmName());
                     vm.setId(newId);
 
                     vmManipulator.start(vm);
                     virtualMachineService.persist();
                     watchdogService.exhaust(watchdog);
-
                 } else {
                     String remoteTemporaryFilePath = backupService.getRemoteTemporaryFilePath(vm);
 
                     try {
-                        cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
-                        copyService.copyLocalToRemote(watchdogServer, latestBackupFilePath, remoteTemporaryFilePath);
+                        cleanupService.cleanup(destination, remoteTemporaryFilePath);
+                        copyService.copyLocalToRemote(destination, latestBackupFilePath, remoteTemporaryFilePath);
 
-                        vmImporter.importVm(watchdogServer, remoteTemporaryFilePath);
+                        vmImporter.importVm(destination, remoteTemporaryFilePath);
 
                         vmManipulator.remove(originalServer, vm.getVmName());
-                        vm.setServer(watchdogServer);
-                        String newId = getNewId(watchdogServer, vm.getVmName());
+                        vm.setServer(destination);
+                        String newId = getNewId(destination, vm.getVmName());
                         vm.setId(newId);
 
                         vmManipulator.start(vm);
@@ -102,7 +103,7 @@ public class WatchdogJob extends QuartzJobBean {
 
                         watchdogService.exhaust(watchdog);
                     } finally {
-                        cleanupService.cleanup(watchdogServer, remoteTemporaryFilePath);
+                        cleanupService.cleanup(destination, remoteTemporaryFilePath);
                     }
                 }
             } finally {
@@ -114,6 +115,8 @@ public class WatchdogJob extends QuartzJobBean {
             throw new JobExecutionException(e);
         } finally {
             vm.unlock();
+            source.unlock();
+            destination.unlock();
         }
     }
 

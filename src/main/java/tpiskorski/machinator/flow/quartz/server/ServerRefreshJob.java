@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
@@ -42,13 +41,22 @@ public class ServerRefreshJob extends QuartzJobBean {
 
         ObservableList<Server> serversView = FXCollections.observableArrayList(serverService.getServers());
         for (Server server : serversView) {
-            try {
-                LOGGER.debug("Server refresh {}", server.getAddress());
-                List<VirtualMachine> vms = vmLister.list(server);
-                platformThreadUpdater.runLater(refresh(server, vms));
-            } catch (Exception e) {
-                platformThreadUpdater.runLater(unreachable(server));
-                LOGGER.error("Server refresh error", e);
+            if (server.tryLockingForRefresh()) {
+                try {
+                    try {
+                        LOGGER.debug("Server refresh {}", server.getAddress());
+                        List<VirtualMachine> vms = vmLister.list(server);
+                        platformThreadUpdater.runLater(refresh(server, vms));
+                    } catch (Exception e) {
+                        platformThreadUpdater.runLater(unreachable(server));
+                        LOGGER.error("Server refresh error", e);
+                    }
+                } finally {
+                    server.unlock();
+                }
+            }else{
+                LOGGER.debug("Skipping {} server because work is in progress", server);
+
             }
         }
 

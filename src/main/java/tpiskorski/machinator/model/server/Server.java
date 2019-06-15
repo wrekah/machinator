@@ -6,6 +6,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Callback;
 
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
 
@@ -18,6 +20,8 @@ public class Server {
 
     private ObjectProperty<ServerState> serverState = new SimpleObjectProperty<>();
     private String vboxVersion;
+
+    private Lock lock = new ReentrantLock();
 
     public Server(Credentials credentials, String address, String port) {
         this(address, port);
@@ -42,6 +46,18 @@ public class Server {
 
     static Callback<Server, Observable[]> extractor() {
         return (Server server) -> new Observable[]{server.serverStateProperty()};
+    }
+
+    public void lock() {
+        lock.lock();
+    }
+
+    public boolean tryLockingForRefresh() {
+        return lock.tryLock();
+    }
+
+    public void unlock() {
+        lock.unlock();
     }
 
     public String getVboxVersion() {

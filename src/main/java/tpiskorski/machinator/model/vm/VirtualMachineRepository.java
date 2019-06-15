@@ -58,12 +58,15 @@ public class VirtualMachineRepository {
         boolean locked = vm.tryLockingForRefresh();
 
         if (locked) {
-            vm.setState(virtualMachine.getState());
-            vm.setCpuCores(virtualMachine.getCpuCores());
-            vm.setRamMemory(virtualMachine.getRamMemory());
-            vm.setVmName(virtualMachine.getVmName());
 
-            vm.unlock();
+            try {
+                vm.setState(virtualMachine.getState());
+                vm.setCpuCores(virtualMachine.getCpuCores());
+                vm.setRamMemory(virtualMachine.getRamMemory());
+                vm.setVmName(virtualMachine.getVmName());
+            } finally {
+                vm.unlock();
+            }
         } else {
             LOGGER.debug("Skipping {} vm because work is in progress", vm.getId());
         }
@@ -73,12 +76,10 @@ public class VirtualMachineRepository {
         Server server = virtualMachine.getServer();
         String vmName = virtualMachine.getVmName();
 
-        return  vmObservableList.stream()
+        return vmObservableList.stream()
             .filter(vm -> vm.getServer().equals(server))
-            .filter(vm-> vm.getVmName().equals(vmName))
-            .filter(vm->vm.getType() == VirtualMachineType.PLACEHOLDER)
+            .filter(vm -> vm.getVmName().equals(vmName))
+            .filter(vm -> vm.getType() == VirtualMachineType.PLACEHOLDER)
             .findAny().isPresent();
-
-
     }
 }

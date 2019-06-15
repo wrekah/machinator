@@ -42,6 +42,8 @@ public class VmMoveJob extends QuartzJobBean {
         virtualMachineService.put(placeholder);
 
         placeholder.lock();
+        source.lock();
+        destination.lock();
         try {
 
             if (source.getServerType() == ServerType.LOCAL && destination.getServerType() == ServerType.REMOTE) {
@@ -54,6 +56,8 @@ public class VmMoveJob extends QuartzJobBean {
         } finally {
             virtualMachineService.remove(placeholder);
             placeholder.unlock();
+            source.unlock();
+            destination.unlock();
         }
     }
 
