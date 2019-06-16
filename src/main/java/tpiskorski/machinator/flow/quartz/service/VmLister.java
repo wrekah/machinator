@@ -31,8 +31,7 @@ public class VmLister {
 
     public List<VirtualMachine> list(Server server) {
         List<VirtualMachine> vms = simpleList(server);
-        vmDetailsService.enrichVms(vms);
-        return vms;
+        return vmDetailsService.detailedVms(vms);
     }
 
     public List<VirtualMachine> simpleList(Server server) {

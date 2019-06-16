@@ -8,6 +8,10 @@ public class VmInfo {
     private int memory;
     private VirtualMachineState state;
 
+    public static VmInfo empty() {
+        return null;
+    }
+
     public int getCpus() {
         return cpus;
     }

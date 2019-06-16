@@ -6,6 +6,7 @@ import tpiskorski.machinator.flow.parser.VmInfo;
 import tpiskorski.machinator.flow.quartz.service.VmInfoService;
 import tpiskorski.machinator.model.vm.VirtualMachine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,13 +19,28 @@ public class VmDetailsService {
         this.vmInfoService = vmInfoService;
     }
 
-    public void enrichVms(List<VirtualMachine> vms) {
-        for (VirtualMachine vm : vms) {
-            VmInfo update = vmInfoService.info(vm);
+    public List<VirtualMachine> detailedVms(List<VirtualMachine> vms) {
 
-            vm.setCpuCores(update.getCpus());
-            vm.setRamMemory(update.getMemory());
-            vm.setState(update.getState());
+        List<VirtualMachine> toReturn = new ArrayList<>();
+        for (VirtualMachine vm : vms) {
+            VmInfo update = getInfo(vm);
+            if (update != null) {
+
+                vm.setCpuCores(update.getCpus());
+                vm.setRamMemory(update.getMemory());
+                vm.setState(update.getState());
+
+                toReturn.add(vm);
+            }
+        }
+        return toReturn;
+    }
+
+    private VmInfo getInfo(VirtualMachine vm) {
+        try {
+            return vmInfoService.info(vm);
+        } catch (Exception e) {
+            return VmInfo.empty();
         }
     }
 }
