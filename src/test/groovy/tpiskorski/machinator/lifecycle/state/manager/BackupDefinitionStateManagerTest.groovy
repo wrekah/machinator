@@ -47,7 +47,7 @@ class BackupDefinitionStateManagerTest extends Specification {
 
         then:
         1 * objectRestorer.restore(_) >> watchdogs
-        3 * backupService.add(_)
+        3 * backupService.put(_)
     }
 
     def 'should not restore anything if io exception is thrown'() {

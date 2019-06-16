@@ -46,7 +46,7 @@ class VirtualMachineStateManagerTest extends Specification {
 
         then:
         1 * objectRestorer.restore(_) >> vms
-        3 * virtualMachineService.add(_)
+        3 * virtualMachineService.put(_)
     }
 
     def 'should not restore anything if io exception is thrown'() {

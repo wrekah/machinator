@@ -13,4 +13,16 @@ class ConfigTest extends Specification {
             assert config."${property.key}" != null
         }
     }
+
+    def 'should copy config'() {
+        given:
+        def config = Config.createDefault()
+
+        when:
+        def copy = Config.copy(config)
+
+        then:
+        config.getBackupLocation() == copy.getBackupLocation()
+        config.getPollInterval() == copy.getPollInterval()
+    }
 }

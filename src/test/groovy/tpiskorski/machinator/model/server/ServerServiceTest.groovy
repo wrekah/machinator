@@ -2,6 +2,8 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
+import tpiskorski.machinator.lifecycle.state.manager.PersistenceType
 import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineService
 
@@ -9,8 +11,9 @@ class ServerServiceTest extends Specification {
 
     def serverRepository = Mock(ServerRepository)
     def virtualMachineService = Mock(VirtualMachineService)
+    def persistScheduler = Mock(PersistScheduler)
 
-    @Subject service = new ServerService(serverRepository, virtualMachineService)
+    @Subject service = new ServerService(serverRepository, virtualMachineService, persistScheduler)
 
     def 'should get servers from repository'() {
         when:
@@ -20,7 +23,7 @@ class ServerServiceTest extends Specification {
         1 * serverRepository.getServersList()
     }
 
-    def 'should add server'() {
+    def 'should add server and schedule persistence'() {
         given:
         def server = Mock(Server)
 
@@ -29,6 +32,19 @@ class ServerServiceTest extends Specification {
 
         then:
         1 * serverRepository.add(server)
+        1 * persistScheduler.schedulePersistence(PersistenceType.SERVER)
+    }
+
+    def 'should put server without scheduling persistence'() {
+        given:
+        def server = Mock(Server)
+
+        when:
+        service.put(server)
+
+        then:
+        1 * serverRepository.add(server)
+        0 * persistScheduler.schedulePersistence(PersistenceType.SERVER)
     }
 
     def 'should remove server and corresponding vms'() {
@@ -65,5 +81,17 @@ class ServerServiceTest extends Specification {
         then:
         1 * server.setServerState(ServerState.REACHABLE)
         1 * virtualMachineService.refresh(server, vms)
+    }
+
+    def 'should update unreachable'() {
+        given:
+        def server = Mock(Server)
+
+        when:
+        service.unreachable(server)
+
+        then:
+        1 * server.setServerState(ServerState.NOT_REACHABLE)
+        1 * virtualMachineService.unreachable(server)
     }
 }

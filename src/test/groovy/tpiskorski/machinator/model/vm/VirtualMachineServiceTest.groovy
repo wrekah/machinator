@@ -1,17 +1,20 @@
 package tpiskorski.machinator.model.vm
 
-import tpiskorski.machinator.model.server.Server
 import javafx.collections.ObservableList
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
+import tpiskorski.machinator.lifecycle.state.manager.PersistenceType
+import tpiskorski.machinator.model.server.Server
 
 class VirtualMachineServiceTest extends Specification {
 
     def virtualMachineRepository = Mock(VirtualMachineRepository)
+    def persistScheduler = Mock(PersistScheduler)
 
     @Subject service = new VirtualMachineService(virtualMachineRepository, persistScheduler)
 
-    def 'should add vm'() {
+    def 'should add vm and schedule persistence'() {
         given:
         def vm = Mock(VirtualMachine)
 
@@ -20,6 +23,19 @@ class VirtualMachineServiceTest extends Specification {
 
         then:
         1 * virtualMachineRepository.add(vm)
+        1 * persistScheduler.schedulePersistence(PersistenceType.VIRTUAL_MACHINE)
+    }
+
+    def 'should add vm without scheduling persistence'() {
+        given:
+        def vm = Mock(VirtualMachine)
+
+        when:
+        service.put(vm)
+
+        then:
+        1 * virtualMachineRepository.add(vm)
+        0 * persistScheduler.schedulePersistence(PersistenceType.VIRTUAL_MACHINE)
     }
 
     def 'should get vms'() {

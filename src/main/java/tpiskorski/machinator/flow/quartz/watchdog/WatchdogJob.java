@@ -66,9 +66,9 @@ public class WatchdogJob extends QuartzJobBean {
             String latestBackupFilePath = backupService.findLatestBackup(vm);
 
             VirtualMachine placeholder = VirtualMachine.placeholderFor(vm, watchdogServer);
+            placeholder.lock();
             virtualMachineService.add(placeholder);
 
-            placeholder.lock();
             try {
                 if (watchdogServer.getServerType() == ServerType.LOCAL) {
 

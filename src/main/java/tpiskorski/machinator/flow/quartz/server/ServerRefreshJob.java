@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import tpiskorski.machinator.config.ConfigService;
 import tpiskorski.machinator.flow.quartz.service.VmLister;
 import tpiskorski.machinator.model.server.Server;
 import tpiskorski.machinator.model.server.ServerService;
@@ -28,13 +27,16 @@ public class ServerRefreshJob extends QuartzJobBean {
     static final String JOB_NAME = "ServerRefreshJob";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerRefreshJob.class);
+
     private final ServerService serverService;
-    @Autowired private VmLister vmLister;
-    @Autowired private PlatformThreadUpdater platformThreadUpdater;
+    private final VmLister vmLister;
+    private final PlatformThreadUpdater platformThreadUpdater;
 
     @Autowired
-    public ServerRefreshJob(@Lazy ServerService serverService) {
+    public ServerRefreshJob(@Lazy ServerService serverService, VmLister vmLister, PlatformThreadUpdater platformThreadUpdater) {
         this.serverService = serverService;
+        this.vmLister = vmLister;
+        this.platformThreadUpdater = platformThreadUpdater;
     }
 
     @Override protected void executeInternal(JobExecutionContext jobExecutionContext) {

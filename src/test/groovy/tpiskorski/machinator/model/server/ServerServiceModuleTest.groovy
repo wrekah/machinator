@@ -2,6 +2,7 @@ package tpiskorski.machinator.model.server
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
 import tpiskorski.machinator.model.vm.VirtualMachine
 import tpiskorski.machinator.model.vm.VirtualMachineRepository
 import tpiskorski.machinator.model.vm.VirtualMachineService
@@ -10,9 +11,10 @@ class ServerServiceModuleTest extends Specification {
 
     def serverRepository = new ServerRepository()
     def virtualMachineRepository = new VirtualMachineRepository()
-    def virtualMachineService = new VirtualMachineService(virtualMachineRepository, persistScheduler)
+    def virtualMachineService = new VirtualMachineService(virtualMachineRepository, Mock(PersistScheduler))
+    def persistScheduler = Mock(PersistScheduler)
 
-    @Subject service = new ServerService(serverRepository, virtualMachineService)
+    @Subject service = new ServerService(serverRepository, virtualMachineService, persistScheduler)
 
     def server1 = new Server('some', '123')
     def server2 = new Server('some', '321')
@@ -87,6 +89,10 @@ class ServerServiceModuleTest extends Specification {
         def vm1 = new VirtualMachine(server1, 'vm1')
         def vm2 = new VirtualMachine(server1, 'vm2')
         def vm3 = new VirtualMachine(server1, 'v1')
+
+        vm1.vmName = 'vm1'
+        vm2.vmName = 'vm2'
+        vm3.vmName = 'v1'
 
         when:
         service.refresh(server1, [vm1, vm2, vm3])

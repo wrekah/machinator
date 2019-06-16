@@ -11,38 +11,30 @@ class PropertiesConfigConverterTest extends Specification {
     def 'should convert properties to config'() {
         given:
         def properties = new Properties([
-                'ssh.user'       : 'root',
-                'ssh.password'   : 'root',
                 'poll.interval'  : '20',
-                'backup.location': 'some/location'
+                'backup.location': 'dev/null'
         ])
 
         when:
         def config = converter.convert(properties)
 
         then:
-        config.sshUser == 'root'
-        config.sshPassword == 'root'
         config.pollInterval == 20
-        config.backupLocation == 'some/location'
+        config.backupLocation == 'dev/null'
     }
 
     def 'should convert config to properties'() {
         given:
         def config = Config.builder()
-                .sshUser('root')
-                .sshPassword('root')
                 .pollInterval(20)
-                .backupLocation('some/location')
+                .backupLocation('dev/null')
                 .build()
 
         when:
         def properties = converter.convert(config)
 
         then:
-        properties.get('ssh.user') == 'root'
-        properties.get('ssh.password') == 'root'
         properties.get('poll.interval') == '20'
-        properties.get('backup.location') == 'some/location'
+        properties.get('backup.location') == 'dev/null'
     }
 }

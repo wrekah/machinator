@@ -45,7 +45,7 @@ class ServerStateManagerTest extends Specification {
 
         then:
         1 * objectRestorer.restore(_) >> servers
-        3 * serverService.add(_)
+        3 * serverService.put(_)
     }
 
     def 'should not restore anything if io exception is thrown'() {

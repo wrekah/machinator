@@ -1,5 +1,6 @@
 package tpiskorski.machinator.model.vm
 
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
 import tpiskorski.machinator.model.server.Server
 import spock.lang.Shared
 import spock.lang.Specification
@@ -9,6 +10,7 @@ import spock.lang.Unroll
 class VirtualMachineServiceModuleTest extends Specification {
 
     def virtualMachineRepository = new VirtualMachineRepository()
+    def persistScheduler = Mock(PersistScheduler)
 
     @Subject service = new VirtualMachineService(virtualMachineRepository, persistScheduler)
 

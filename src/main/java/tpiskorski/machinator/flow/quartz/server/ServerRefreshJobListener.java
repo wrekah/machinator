@@ -64,7 +64,8 @@ public class ServerRefreshJobListener implements JobListener {
         job.setEndTime(now);
 
         job.setStatus(JobStatus.FAILED);
-        String unwrappedMessage = ((SchedulerException) jobException.getCause()).getUnderlyingException().getMessage();
+        SchedulerException cause = (SchedulerException) jobException.getCause();
+        String unwrappedMessage = cause.getUnderlyingException().getMessage();
         job.setErrorCause(unwrappedMessage);
 
         return job;

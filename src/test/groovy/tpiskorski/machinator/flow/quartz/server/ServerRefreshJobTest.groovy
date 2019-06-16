@@ -4,16 +4,21 @@ import javafx.collections.ObservableList
 import org.quartz.JobExecutionContext
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.flow.quartz.service.VmLister
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.server.ServerService
 import tpiskorski.machinator.model.server.ServerType
+import tpiskorski.machinator.ui.core.PlatformThreadUpdater
 
 class ServerRefreshJobTest extends Specification {
 
-    def serverRefreshService = Mock(ServerRefreshService)
     def serverService = Mock(ServerService)
+    def vmLister = Mock(VmLister)
+    def platformThreadUpdater = Mock(PlatformThreadUpdater)
 
-    @Subject job = new ServerRefreshJob(serverRefreshService, serverService)
+    @Subject job = new ServerRefreshJob(
+            serverService, vmLister, platformThreadUpdater
+    )
 
     def 'should not do server refresh job if there are no servers'() {
         given:
@@ -24,8 +29,8 @@ class ServerRefreshJobTest extends Specification {
 
         then:
         1 * serverService.getServers() >> ([] as ObservableList)
-        0 * serverRefreshService.monitor(_)
-        0 * serverService.refresh(_, _)
+        0 * vmLister.list(_)
+        0 * platformThreadUpdater.runLater(_)
     }
 
     def 'should refresh each server'() {
@@ -43,8 +48,7 @@ class ServerRefreshJobTest extends Specification {
 
         then:
         1 * serverService.getServers() >> ([server1, server2] as ObservableList)
-        1 * serverRefreshService.monitor(server1)
-        1 * serverRefreshService.monitor(server2)
-        2 * serverService.refresh(_, _)
+        2 * vmLister.list(_)
+        2 * platformThreadUpdater.runLater(_)
     }
 }

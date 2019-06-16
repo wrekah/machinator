@@ -47,7 +47,7 @@ class WatchdogStateManagerTest extends Specification {
 
         then:
         1 * objectRestorer.restore(_) >> watchdogs
-        3 * watchdogService.add(_)
+        3 * watchdogService.put(_)
     }
 
     def 'should not restore anything if io exception is thrown'() {

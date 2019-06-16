@@ -3,6 +3,7 @@ package tpiskorski.machinator.model.backup
 import spock.lang.Specification
 import spock.lang.Subject
 import tpiskorski.machinator.flow.quartz.backup.BackupScheduler
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.vm.VirtualMachine
 
@@ -10,9 +11,10 @@ class BackupDefinitionServiceModuleTest extends Specification {
 
     def backupRepository = new BackupDefinitionRepository()
     def backupScheduler = Mock(BackupScheduler)
+    def persistScheduler = Mock(PersistScheduler)
 
     @Subject service = new BackupDefinitionService(
-            backupRepository, backupScheduler
+            backupRepository, backupScheduler, persistScheduler
     )
 
     def server1 = new Server('some', '123')

@@ -37,4 +37,9 @@ class CredentialsTest extends Specification {
         expect:
         first != second
     }
+
+    def 'should get credentials when factory method used'() {
+        expect:
+        Credentials.none()
+    }
 }

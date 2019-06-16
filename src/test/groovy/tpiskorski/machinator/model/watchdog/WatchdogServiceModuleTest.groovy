@@ -2,14 +2,18 @@ package tpiskorski.machinator.model.watchdog
 
 import spock.lang.Specification
 import spock.lang.Subject
+import tpiskorski.machinator.flow.quartz.watchdog.WatchdogScheduler
+import tpiskorski.machinator.lifecycle.quartz.PersistScheduler
 import tpiskorski.machinator.model.server.Server
 import tpiskorski.machinator.model.vm.VirtualMachine
 
 class WatchdogServiceModuleTest extends Specification {
 
     def watchdogRepository = new WatchdogRepository()
+    def watchdogScheduler = Mock(WatchdogScheduler)
+    def persistScheduler = Mock(PersistScheduler)
 
-    @Subject service = new WatchdogService(watchdogRepository)
+    @Subject service = new WatchdogService(watchdogRepository, watchdogScheduler, persistScheduler)
 
     def server1 = new Server('some', '123')
     def server2 = new Server('some', '321')
