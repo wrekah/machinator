@@ -54,17 +54,17 @@ public class ScpClient {
             throw new ExecutionException("Scp client failure!");
         }
 
-        File _lfile = new File(from);
+        File fromFile = new File(from);
 
-        command = "T" + (_lfile.lastModified() / 1000) + " 0";
-        command += (" " + (_lfile.lastModified() / 1000) + " 0\n");
+        command = "T" + (fromFile.lastModified() / 1000) + " 0";
+        command += (" " + (fromFile.lastModified() / 1000) + " 0\n");
         out.write(command.getBytes());
         out.flush();
         if (checkStatus(in) != 0) {
             throw new ExecutionException("Scp client failure!");
         }
 
-        long filesize = _lfile.length();
+        long filesize = fromFile.length();
         command = "C0644 " + filesize + " ";
         if (from.lastIndexOf('/') > 0) {
             command += from.substring(from.lastIndexOf('/') + 1);
