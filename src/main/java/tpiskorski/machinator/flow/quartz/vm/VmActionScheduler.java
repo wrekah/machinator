@@ -12,8 +12,6 @@ import tpiskorski.machinator.model.vm.VirtualMachine;
 
 import java.util.UUID;
 
-//todo refactor
-//todo abstract all jobs classes
 @Service
 public class VmActionScheduler implements InitializingBean {
 

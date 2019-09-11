@@ -65,8 +65,10 @@ public class Watchdog {
             && Objects.equals(this.getWatchdogServer(), that.getWatchdogServer());
     }
 
-    //todo
     public String id() {
-        return "to-implement";
+        if (watchdogServer != null) {
+            return virtualMachine.toString() + "-" + watchdogServer.getAddress();
+        }
+        return virtualMachine.toString();
     }
 }
