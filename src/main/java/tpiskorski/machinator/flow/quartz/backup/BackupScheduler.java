@@ -31,15 +31,7 @@ public class BackupScheduler implements InitializingBean {
     }
 
     public void addTaskToScheduler(BackupDefinition backupDefinition) {
-        JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("backupDefinition", backupDefinition);
-
-        JobDetail jobDetail = JobBuilder.newJob(BackupJob.class)
-            .withIdentity(backupDefinition.id(), "backups")
-            .usingJobData(jobDataMap)
-            .storeDurably()
-            .build();
-
+        JobDetail jobDetail = buildJobDetail(backupDefinition);
         CronTrigger trigger = buildTrigger(backupDefinition, jobDetail);
 
         try {
@@ -49,6 +41,17 @@ public class BackupScheduler implements InitializingBean {
         } catch (SchedulerException e) {
             LOGGER.warn("Could not add job to scheduler", e);
         }
+    }
+
+    private JobDetail buildJobDetail(BackupDefinition backupDefinition) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("backupDefinition", backupDefinition);
+
+        return JobBuilder.newJob(BackupJob.class)
+            .withIdentity(backupDefinition.id(), "backups")
+            .usingJobData(jobDataMap)
+            .storeDurably()
+            .build();
     }
 
     public void removeTaskFromScheduler(BackupDefinition backupDefinition) {

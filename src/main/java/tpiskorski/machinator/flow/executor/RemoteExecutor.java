@@ -17,13 +17,14 @@ import java.io.InputStreamReader;
 public class RemoteExecutor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteExecutor.class);
+    private static final int CONNECT_TIMEOUT = 10000;
     private CommandResultFactory commandResultFactory = new CommandResultFactory();
 
     public CommandResult execute(ExecutionContext executionContext) {
         try {
             Session session = prepareSession(executionContext);
             LOGGER.debug("About to connect");
-            session.connect(10000);
+            session.connect(CONNECT_TIMEOUT);
             LOGGER.debug("Connected");
             ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
             LOGGER.debug("Channel created");
@@ -34,12 +35,9 @@ public class RemoteExecutor {
 
             channelExec.connect();
             LOGGER.debug("Channel connected");
-
             String stdout = read(inputStream);
             String stderr = read(errStream);
-
             LOGGER.debug("Exit status of remote command {}", channelExec.getExitStatus());
-
             channelExec.disconnect();
             LOGGER.debug("Channel disconnected");
 
