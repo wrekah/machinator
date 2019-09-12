@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import tpiskorski.machinator.config.Config;
@@ -26,6 +28,8 @@ import java.io.IOException;
 
 @Controller
 public class BackupController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackupController.class);
 
     @Autowired private ConfigService configService;
     @Autowired private ContextAwareSceneLoader contextAwareSceneLoader;
@@ -114,10 +118,11 @@ public class BackupController {
 
     @FXML
     public void browseHomeDirectory() {
+        String backupLocation = configService.getConfig().getBackupLocation();
         try {
-            Desktop.getDesktop().open(new File(System.getProperty("user.home")));
+            Desktop.getDesktop().open(new File(backupLocation));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warn("Could not open directory {}", backupLocation);
         }
     }
 
