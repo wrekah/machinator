@@ -26,7 +26,9 @@ public class FileMenuController {
 
     @FXML
     public void initialize() {
-        monitoringMenuItem.setText(serverRefreshScheduler.isPaused() ? "Start Monitoring" : "Stop Monitoring");
+        boolean isPaused = serverRefreshScheduler.isPaused();
+        monitoringMenuItem.setText(isPaused ? "Start Monitoring" : "Stop Monitoring");
+        monitorAlert.setContentText(isPaused ? "Monitoring started!" : "Monitoring stopped!");
     }
 
     @FXML
@@ -39,9 +41,11 @@ public class FileMenuController {
         if (serverRefreshScheduler.isPaused()) {
             serverRefreshScheduler.resume();
             monitoringMenuItem.setText("Stop Monitoring");
+            monitorAlert.setContentText("Monitoring started!");
         } else {
             serverRefreshScheduler.pause();
             monitoringMenuItem.setText("Start Monitoring");
+            monitorAlert.setContentText("Monitoring stopped!");
         }
         monitorAlert.showAndWait();
     }
